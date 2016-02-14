@@ -1,0 +1,402 @@
+body {
+	margin:0px;
+	padding:0px;
+}
+div#pseudoWindow {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	display: none;
+	z-index:100;
+	top:0px;
+	left:0px;
+}
+div#pseudoWindow div#popBackground {
+	background-color: white;
+	opacity: 0.3;
+	z-index: -1;
+	width: 100%;
+	height: 100%;
+	top: 0px;
+	left: 0px;
+}
+div#pseudoWindow ul.popWindow {
+	border: 1px solid #DDD;
+	box-shadow: 0px 0px 5px #777;
+	position: absolute;
+	padding: 10px;
+	width: 50%;
+	height: auto;
+	min-height:50%;
+	top: 25%;
+	left: 25%;
+	font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
+	background-color: white;
+	cursor: default;
+	display: none;
+}
+div#pseudoWindow ul.popWindow>li {
+	display: block;
+}
+div#pseudoWindow ul#popQuestion>li#qcredit {
+	color: maroon;
+	font-size: 14px;
+	right: 10px;
+	position: absolute;
+	padding: 2px;
+	margin: 2px;
+	border: 1px solid maroon;
+}
+div#pseudoWindow ul#popQuestion>li#qcontent {
+	margin-top: 30px;
+}
+div#pseudoWindow ul#popQuestion>li#qanswers ul {
+	margin: 5px;
+	padding: 3px;
+	font-family: "Yu Gothic", SimHei;
+}
+div#pseudoWindow ul#popQuestion>li#qanswers ul li {
+	display: block;
+	padding: 3px;
+	margin: 1px;
+	border: 1px solid white;
+	padding-left: 7px;
+	padding-right: 7px;
+	transition: all 0.2s;
+	transition-delay: 300ms;
+}
+div#pseudoWindow ul#popQuestion>li#qanswers ul li:hover {
+	border: 1px solid #C66;
+	color: #C66;
+}
+div#pseudoWindow ul#popQuestion>li#qanswers ul li:active {
+	border: 1px solid #C66;
+	color: white;
+	background-color: #C66;
+	transition: none;
+}
+div#pseudoWindow ul#popMessage {
+	width: 30%;
+	height: auto;
+	top: 33%;
+	left: 33%;
+	z-index: 80;
+}
+div#pseudoWindow ul#popMessage>li {
+	display: block;
+}
+div#pseudoWindow ul#popMessage>li#ptitle {
+	text-align: center;
+	font-size:20px;
+}
+li.buttonarea {
+	position: absolute;
+	bottom:0px;
+	width: 90%;
+}
+li.buttonarea ul {
+	margin: 3px;
+	padding: 1px;
+	position: absolute;
+	right: 0px;
+	bottom: 0px;
+}
+li.buttonarea ul li.button {
+	display: block;
+	width: auto;
+	height: 20px;
+	float: left;
+	margin:2px;
+	padding: 3px;
+	border: 3px solid #06C;
+	color: #FFF;
+	background-color: #06C;
+	cursor: default;
+	min-width: 50px;
+	text-align: center;
+	transition: all 0.2s;
+	transition-delay: 300ms;
+}
+li.buttonarea ul li.button:hover {
+	border: 3px solid #09F;
+}
+li.buttonarea ul li.button:active {
+	border: 3px solid #06C;
+	color: #06C;
+	background-color: white;
+	transition: none;
+}
+li#custombuttons {
+	width:500px;
+	right: 0px;
+}
+div#pseudoWindow ul#popMessage>li#pcontent {
+	width: 60%;
+	float: left;
+	margin: 5px 5px 5px 10%;
+}
+div#pseudoWindow ul#popMessage>li#picon {
+	width: 48px;
+	margin: 5px 5px 5px 5%;
+	float: left;
+	display: block;
+	text-align: center;
+}
+div#pseudoWindow ul#popInfo {
+	overflow: hidden;
+	font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
+}
+div#pseudoWindow ul#popInfo>li#iownericon {
+	transform: rotate(20deg);
+	position: absolute;
+	right: -5px;
+	font-size: 40px;
+	top: -30px;
+	text-align: center;
+	color: #EEE;
+}
+div#pseudoWindow ul#popInfo>li#iownericon i {
+	display: block;
+	font-size: 180px;
+}
+div#pseudoWindow ul#popInfo>li#iicon {
+	float: left;
+	margin-top: 20px;
+	margin-left: 20px;
+	height: 90px;
+}
+div#pseudoWindow ul#popInfo>li#iicon i#imapicon {
+	color: #999;
+}
+div#pseudoWindow ul#popInfo>li#iicon i#iinfoicon {
+	position: relative;
+	display: block;
+	right: -60px;
+	bottom: 40px;
+}
+div#pseudoWindow ul#popInfo>li#iInfo {
+	margin-top: 20px;
+	padding-left: 130px;
+}
+div#pseudoWindow ul#popInfo>li#iInfo>h1 {
+	margin: 5px 0px;
+	font-size: 25px;
+	font-weight: normal;
+	font-family: "Yu Gothic", SimHei;
+	line-height: 25px;
+}
+div#pseudoWindow ul#popInfo>li#iInfo>h2 {
+	margin: 1px;
+	font-weight: normal;
+	font-size: 14px;
+}
+div#pseudoWindow ul#popInfo>li#iInfo>h3 {
+	margin: 2px 0px;
+	font-size: 16px;
+	color: maroon;
+	text-align: right;
+	position: absolute;
+	right: 30%;
+	top: 5%;
+}
+div#pseudoWindow ul#popInfo>li#iInfo>p {
+	margin: 5px;
+	padding-right: 20%;
+}
+div#pseudoWindow ul#popInfo>li#uSets {
+	border: 1px solid #DDD;
+	box-shadow: 0px 0px 5px #777;
+	padding: 10px;
+	width: 70%;
+	padding: 5px;
+	position: absolute;
+	top:50px;
+	left:15%;
+	background-color: white;
+}
+div#pseudoWindow ul#popInfo>li#uSets h2 {
+	margin: 3px;
+	font-size: 18px;
+	font-weight: normal;
+}
+div#pseudoWindow ul#popInfo>li#eSets, div#pseudoWindow ul#popInfo>li#uSets {
+	clear: both;
+}
+div#pseudoWindow ul#popInfo>li#eSets h2 {
+	margin: 3px;
+	font-size: 18px;
+	font-weight: normal;
+}
+div#pseudoWindow ul#popInfo>li#eSets li {
+	display: block;
+}
+div#pseudoWindow ul#popInfo>li#eSets li i {
+	margin: 1px;
+}
+div#pseudoWindow ul#popInfo>li#eSets li span.renttip {
+	font-size: 15px;
+	margin-left: 10px;
+}
+div#pseudoWindow ul#popInfo>li#uSets li {
+	display:block;
+}
+div#pseudoWindow ul#popInfo>li#uSets li#upgradeRoll {
+	margin:5px;
+	padding-left:15px;
+	padding-right:15px;
+	display: flex;
+}
+div#pseudoWindow ul#popInfo>li#uSets li#upgradeRoll span.item {
+	color: black;
+	width: 100px;
+	display: block;
+	border:3px solid white;
+	transition: all 0.2s;
+	transition-delay: 300ms;
+}
+div#pseudoWindow ul#popInfo>li#uSets li#upgradecontainer {
+	width:100%;
+	height:100%;
+}
+div#pseudoWindow ul#popInfo>li#uSets li#upgradeRoll span.unavaiableUpgrade {
+	color: #EEE;
+	cursor: not-allowed;
+}
+div#pseudoWindow ul#popInfo>li#uSets li#upgradeRoll span.avaiableUpgrade:hover {
+	color:#666;
+	border:3px solid #666;
+}
+div#pseudoWindow ul#popInfo>li#uSets li#upgradeRoll span.avaiableUpgrade:active {
+	color:white;
+	border:3px solid #666;
+	background-color: #666;
+	transition: none;
+}
+div#pseudoWindow ul#popInfo>li#uSets li#upgradeRoll span.item h1 {
+	font-family: "Yu Gothic", SimHei;
+	font-size: 20px;
+	line-height: 20px;
+	margin: 2px;
+	text-align: center;
+	font-weight: normal;
+}
+div#pseudoWindow ul#popInfo>li#uSets li#upgradeRoll span.item h2 {
+	font-size: 13px;
+	line-height: 15px;
+	margin: 2px;
+	text-align: center;
+	font-weight: normal;
+}
+div#pseudoWindow ul#popInfo>li#uSets li#upgradeRoll span.item i {
+	display: block;
+	margin: 5px;
+	text-align: center;
+}
+div#pseudoWindow ul#popInfo>li#uSets li#upgradeRoll span.item span.rent {
+	font-size: 13px;
+	color: maroon;
+	display: block;
+	text-align: center;
+}
+div#pseudoWindow ul#popInfo>li#uSets li.upgradeController {
+	margin: 2px;
+	position: absolute;
+	cursor: default;
+	transition: all 0.2s;
+	transition-delay: 300ms;
+	z-index:10;
+	top: 0px;
+	height: 150px;
+}
+div#pseudoWindow ul#popInfo>li#uSets li.upgradeController i {
+	margin-top:70px;
+}
+div#pseudoWindow ul#popInfo>li#uSets li#upgradescrollbar {
+	display:block;
+}
+div#pseudoWindow ul#popInfo>li#uSets li.upgradeController:hover {
+	color: #999;
+}
+div#pseudoWindow ul#popInfo>li#uSets li.upgradeController:active {
+	color: #EEE;
+	transition: none;
+}
+div#pseudoWindow ul#popInfo>li#uSets li#upgradeup {
+	left: 0px;
+}
+div#pseudoWindow ul#popInfo>li#uSets li#upgradedown {
+	right: 0px;
+}
+div#pseudoWindow ul#popInfo>li#buyBrick>ul>li {
+	display:none;
+}
+div#pseudoWindow ul#popChance>li#ctitle {
+	text-align: center;
+	font-size: 20px;
+	font-family: "Yu Gothic", SimHei;
+}
+div#pseudoWindow ul#popChance>li#cresult {
+	color: maroon;
+	font-size: 14px;
+	text-align: center;
+}
+div#pseudoWindow ul#popChance>li#cicon {
+	width: 48px;
+	margin: 5px 5px 5px 10%;
+	float: left;
+	display: block;
+	text-align: center;
+}
+div#pseudoWindow ul#popChance>li#ccontent {
+	width: 60%;
+	float: left;
+	padding-left: 5%;
+}
+div#pseudoWindow ul#popShortcut>li#stitle {
+	text-align: center;
+	font-size: 20px;
+	font-family: "Yu Gothic", SimHei;
+}
+div#pseudoWindow ul#popShortcut>li#sconnection {
+	color: maroon;
+	font-size: 14px;
+	text-align: center;
+}
+div#pseudoWindow ul#popShortcut>li#sicon {
+	width: 48px;
+	margin: 5px 5px 5px 10%;
+	float: left;
+	display: block;
+	text-align: center;
+}
+div#pseudoWindow ul#popShortcut>li#sdesc {
+	width: 60%;
+	float: left;
+	padding-left: 5%;
+}
+div#pseudoWindow ul#popSwitchuser>li#utitle {
+	text-align: center;
+	font-size: 20px;
+	font-family: "Yu Gothic", SimHei;
+}
+div#pseudoWindow ul#popSwitchuser>li#uicon {
+	width: 48px;
+	margin: 5px 5px 5px 10%;
+	float: left;
+	display: block;
+	text-align: center;
+}
+div#pseudoWindow ul#popSwitchuser>li#udesc {
+	width: 60%;
+	float: left;
+	padding-left: 5%;
+}
+div#pseudoWindow ul#popError>li#elogo {
+	float:left;
+	margin:5px;
+}
+div#pseudoWindow ul#popError>li#etitle {
+	text-align: center;
+	font-size: 20px;
+	font-family: "Yu Gothic", SimHei;
+}

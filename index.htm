@@ -1,970 +1,256 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-Hant">
 	<head>
-		<title>線上大富翁</title>
-		 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<!-- CSS -->
-		<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-		<link rel="stylesheet" type="text/css" href="http://cdn.jsdelivr.net/jquery.slick/1.5.7/slick.css"/>
+		<title>線上大富翁：登入遊戲</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+		<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"/>
+		<link rel="stylesheet" href="pseudoWindow.css"/>
 		<style type="text/css">
-			div#anmiblock {
-				z-index: 80;
-			}
-			div#upanblock {
-				z-index: 1000;
-			}
-			div.moveblock {
-				position: absolute;
-				visibility: hidden;
-			}
-			div#gameboard {
-				left: 50%;
+			body>footer {
+				font-family: Verdana, Geneva, sans-serif;
+				font-size: 10px;
 				position: fixed;
+				bottom:0px;
+				left:0px;
+				width:100%;
+				height: 15px;
+				text-align: right;
+				border-top: 1px solid #EEE;
+			}
+			ul.popWindow h1 {
+				font-family: "Yu Gothic", SimHei;
+				margin:2px;
+				text-align:center;
+				padding:0px;
+			}
+			ul#popWelcome>li#wlogo {
+				float:left;
+				margin:5px;
+			}
+			body {
+				font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
+			}
+			article#logonZone {
+				position: absolute;
+				left:50%;
+				width: 400px;
+				top: 100px;
+				margin-left: -200px;
+				text-align: center;
+			}
+			input.username {
+				font-size: 20px;
+				font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
+				margin: 2px;
+			}
+			button {
+				background:white;
+				border:1px solid black;
+				font-size: 18px;
+				margin:5px;
+				height:30px;
+				font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
+				transition: all 0.2s;
+				transition-delay: 300ms;
+			}
+			button:hover {
+				background-color:#EEE;
+			}
+			button:active {
+				background-color:black;
+				color:white;
+				transition: none;
 			}
 			header {
-				height: 80px;
-			}
-			header h1 {
-				font-family: "Yu Gothic", SimHei;
-				line-height: 24px;
-				font-size: 24px;
-				text-align: center;
-				font-weight: normal;
-				margin: 0px;
-				padding: 5px;
-				border-bottom : 2px solid #666;
-				color: black;
-			}
-			header ul#gameinfo {
-				position: absolute;
-				top: 0px;
-				right: 15px;
-				border: 2px solid #666;
-				background-color: white;
-				margin: 0px;
-				padding: 5px;
-				width: 200px;
-			}
-			header ul#gameinfo li {
-				display: inline;
-				font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
-				font-size: 15px;
-			}
-			header ul#gameinfo li h2 {
-				font-family: "Microsoft YaHei";
-				font-size: 20px;
-				font-weight: normal;
-				margin: 0px;
-			}
-			header div#bulletin {
-				height: 20px;
-				line-height: 18px;
-				font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
-				font-size:16px;
-				overflow: hidden;
-				margin: 3px;
-				margin-top:10px;
-			}
-			header div#bulletin ul {
-				margin: 0px;
-			}
-			header div#bulletin ul li {
-				display: block;
-				cursor: default;
-			}
-			header div#bulletin ul li span {
-				display: inline-block;
-				min-width: 60px;
-				font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
-				font-size: 14px;
-				background-color: navy;
-				padding: 1px;
-				height: 16px;
-				margin:2px;
-				color: white;
-				text-align: center;
-			}
-			header div#bulletin ul li span.stageicon {
-				background-color:#336;
-			}
-			header div#bulletin ul li span.turnicon {
-				background-color: #339;
-			}
-			div#board {
-				float: left;
-			}
-			aside {
-				width: 216px;
-				right: 15px;
-				position: absolute;
-			}
-			div#board div.brick {
-				width: 80px;
-				height: 80px;
-				border: 4px solid #FFF;
-				float: left;
-				margin:1px;
-				cursor: default;
-			}
-			div#board div.brick h1 {
-				display: block;
-				position: relative;
-				margin: 0px;
-				padding: 0px;
-				font-size: 14px;
-				font-weight: normal;
-				text-align: center;
-				top: -20px;
-				font-family: "Microsoft YaHei";
-				font-size: 22px;
-			}
-			div#board div.brick div.tokenzone {
-				position: relative;
-				width: 78px;
-				top: -25px;
-				margin: 3px;
-				padding: 2px;
-			}
-			div#board div.brick div.tokenzone i {
-				margin:1px;
-				min-width: 16px;
-				height: 16px;
-				overflow: hidden;
-				text-align: center;
-			}
-			div#board div.brick div.upgrades {
-				width:78px;
-				height: 18px;
-				padding: 1px;
-				background: #CCC;
-				color: #FFF;
+				position:fixed;
+				top:0px;
+				width:95%;
 				text-align: right;
-				position: relative;
-				top: 60px;
+				margin-top: 5px;
 			}
-			div#board div.brick div.upgrades i {
-				margin: 2px;
-			}
-			div#board div.active {
-				width: 80px;
-				height: 80px;
-				border: 4px solid #CCC;
-				margin: 1px;
-				transition: all 0.2s;
-				transition-delay: 300ms;
-			}
-			div#board div.active:hover {
-				border: 4px solid #DDD;
-			}
-			div#board div.active:active {
-				border: 4px solid #EEE;
-				background-color: #EEE;
-				transition: none;
-			}
-			div#board div.shortcut {
-				width: 80px;
-				height: 80px;
-				border: 4px solid #F66;
-				margin: 1px;
-				transition: all 0.2s;
-				transition-delay: 300ms;
-			}
-			div#board div.shortcut div.upgrades {
-				background-color: #F66;
-			}
-			aside nav {
-				border: 3px solid #06C;
-				color: #FFF;
-				width: 170px;
-				padding: 5px 20px;
-				height: 65px;
-				background-color: #06C;
-				cursor: default;
-				transition: all 0.2s;
-				transition-delay: 300ms;
-			}
-			aside nav:hover {
-				border: 3px solid #39C;
-			}
-			aside nav:active {
-				border: 3px solid #06C;
-				color: #06C;
-				background-color: white;
-				transition: none;
-			}
-			aside nav i {
-				float: left;
-			}
-			aside nav div {
-				vertical-align: middle;
-				height: 48px;
-				line-height: 48px;
-				margin-left: 60px;
-				font-family: "Yu Gothic", SimHei;
-				font-size:30px;
-				overflow: hidden;
-				text-align: center;
-			}
-			aside nav span {
+			header a {
+				border-bottom: 3px solid black;
+				height:30px;
 				font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
-				font-size: 15px;
+				display:inline;
+				margin-right: 5px;
+				padding:2px;
+				cursor: pointer;
+				text-decoration:none;
+				color:black;
+				transition: all 0.2s;
+				transition-delay: 300ms;
 			}
-			aside nav div ul {
+			header a:hover {
+				border-bottom:3px solid #CCC;
+				color:#CCC;
+			}
+			header a:active {
+				border-bottom:none;
+				transition: none;
+			}
+			a.tip {
+				color: #333;
+				text-decoration: none;
+				font-size: 12px;
+				transition: all 0.2s;
+				transition-delay: 300ms;
+			}
+			a.tip:hover {
+				text-decoration:underline;
+			}
+			a.tip:active {
+				color: #333;
+				transition: none;
+			}
+			span.tip {
+				color: #AAA;
+				font-size:12px;
+				cursor: default;
+			}
+			article#logonZone p {
+				color: maroon;
+				font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
+				font-size: 13px;
+				cursor: default;
 				margin: 0px;
-				padding: 0px;
-			}
-			aside nav div ul {
-				list-style-type: none;
-			}
-			aside nav div ul li.hidden {
-				visibility: hidden;
-			}
-			footer {
-				position: absolute;
-				bottom: 0px;
-				text-align: right;
-				width:90%;
-				font-size: 13px;
-				font-family: Arial,serif;
-				color: #999;
-			}
-			div#pseudoWindow {
-				position: fixed;
-				width: 100%;
-				height: 100%;
-				display: none;
-				z-index:100;
-			}
-			div#pseudoWindow div#popBackground {
-				background-color: white;
-				opacity: 0.3;
-				z-index: -1;
-				width: 100%;
-				height: 100%;
-				top: 0px;
-				left: 0px;
-			}
-			div#pseudoWindow ul.popWindow {
-				border: 1px solid #DDD;
-				box-shadow: 0px 0px 5px #777;
-				position: absolute;
-				padding: 10px;
-				width: 50%;
-				height: 50%;
-				top: 25%;
-				left: 25%;
-				font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
-				background-color: white;
-				cursor: default;
-				display: none;
-			}
-			div#pseudoWindow ul.popWindow>li {
-				display: block;
-			}
-			div#pseudoWindow ul#popQuestion>li#qcredit {
-				color: maroon;
-				font-size: 14px;
-				right: 10px;
-				position: absolute;
-				padding: 2px;
-				margin: 2px;
-				border: 1px solid maroon;
-			}
-			div#pseudoWindow ul#popQuestion>li#qcontent {
-				margin-top: 30px;
-			}
-			div#pseudoWindow ul#popQuestion>li#qanswers ul {
-				margin: 5px;
-				padding: 3px;
-				font-family: "Yu Gothic", SimHei;
-			}
-			div#pseudoWindow ul#popQuestion>li#qanswers ul li {
-				display: block;
-				padding: 3px;
-				margin: 1px;
-				border: 1px solid white;
-				padding-left: 7px;
-				padding-right: 7px;
-				transition: all 0.2s;
-				transition-delay: 300ms;
-			}
-			div#pseudoWindow ul#popQuestion>li#qanswers ul li:hover {
-				border: 1px solid #C66;
-				color: #C66;
-			}
-			div#pseudoWindow ul#popQuestion>li#qanswers ul li:active {
-				border: 1px solid #C66;
-				color: white;
-				background-color: #C66;
-				transition: none;
-			}
-			div#pseudoWindow ul#popMessage {
-				width: 30%;
-				height: 30%;
-				top: 33%;
-				left: 33%;
-				z-index: 80;
-			}
-			div#pseudoWindow ul#popMessage>li {
-				display: block;
-			}
-			div#pseudoWindow ul#popMessage>li#ptitle {
-				text-align: center;
-				font-size:20px;
-			}
-			li.buttonarea {
-				position: absolute;
-				bottom:0px;
-				width: 90%;
-			}
-			li.buttonarea ul {
-				margin: 3px;
-				padding: 1px;
-				position: absolute;
-				right: 0px;
-				bottom: 0px;
-			}
-			li.buttonarea ul li.button {
-				display: block;
-				width: auto;
-				height: 20px;
-				float: left;
-				margin:2px;
-				padding: 3px;
-				border: 3px solid #06C;
-				color: #FFF;
-				background-color: #06C;
-				cursor: default;
-				min-width: 50px;
-				text-align: center;
-				transition: all 0.2s;
-				transition-delay: 300ms;
-			}
-			li.buttonarea ul li.button:hover {
-				border: 3px solid #09F;
-			}
-			li.buttonarea ul li.button:active {
-				border: 3px solid #06C;
-				color: #06C;
-				background-color: white;
-				transition: none;
-			}
-			li#custombuttons {
-				width:500px;
-				right: 0px;
-			}
-			div#pseudoWindow ul#popMessage>li#pcontent {
-				width: 60%;
-				float: left;
-				margin: 5px 5px 5px 10%;
-			}
-			div#pseudoWindow ul#popMessage>li#picon {
-				width: 48px;
-				margin: 5px 5px 5px 5%;
-				float: left;
-				display: block;
-				text-align: center;
-			}
-			div#pseudoWindow ul#popInfo {
-				overflow: hidden;
-				font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
-			}
-			div#pseudoWindow ul#popInfo>li#iownericon {
-				transform: rotate(20deg);
-				position: absolute;
-				right: -5px;
-				font-size: 40px;
-				top: -30px;
-				text-align: center;
-				color: #EEE;
-			}
-			div#pseudoWindow ul#popInfo>li#iownericon i {
-				display: block;
-				font-size: 180px;
-			}
-			div#pseudoWindow ul#popInfo>li#iicon {
-				float: left;
-				margin-top: 20px;
-				margin-left: 20px;
-				height: 90px;
-			}
-			div#pseudoWindow ul#popInfo>li#iicon i#imapicon {
-				color: #999;
-			}
-			div#pseudoWindow ul#popInfo>li#iicon i#iinfoicon {
-				position: relative;
-				display: block;
-				right: -60px;
-				bottom: 40px;
-			}
-			div#pseudoWindow ul#popInfo>li#iInfo {
-				margin-top: 20px;
-				padding-left: 130px;
-			}
-			div#pseudoWindow ul#popInfo>li#iInfo>h1 {
-				margin: 5px 0px;
-				font-size: 25px;
-				font-weight: normal;
-				font-family: "Yu Gothic", SimHei;
-				line-height: 25px;
-			}
-			div#pseudoWindow ul#popInfo>li#iInfo>h2 {
-				margin: 1px;
-				font-weight: normal;
-				font-size: 14px;
-			}
-			div#pseudoWindow ul#popInfo>li#iInfo>h3 {
-				margin: 2px 0px;
-				font-size: 16px;
-				color: maroon;
-				text-align: right;
-				position: absolute;
-				right: 30%;
-				top: 5%;
-			}
-			div#pseudoWindow ul#popInfo>li#iInfo>p {
-				margin: 5px;
-				padding-right: 20%;
-			}
-			div#pseudoWindow ul#popInfo>li#uSets {
-				border: 1px solid #DDD;
-				box-shadow: 0px 0px 5px #777;
-				padding: 10px;
-				width: 70%;
-				padding: 5px;
-				position: absolute;
-				top:50px;
-				left:15%;
-				background-color: white;
-			}
-			div#pseudoWindow ul#popInfo>li#uSets h2 {
-				margin: 3px;
-				font-size: 18px;
-				font-weight: normal;
-			}
-			div#pseudoWindow ul#popInfo>li#eSets, div#pseudoWindow ul#popInfo>li#uSets {
-				clear: both;
-			}
-			div#pseudoWindow ul#popInfo>li#eSets h2 {
-				margin: 3px;
-				font-size: 18px;
-				font-weight: normal;
-			}
-			div#pseudoWindow ul#popInfo>li#eSets li {
-				display: block;
-			}
-			div#pseudoWindow ul#popInfo>li#eSets li i {
-				margin: 1px;
-			}
-			div#pseudoWindow ul#popInfo>li#eSets li span.renttip {
-				font-size: 15px;
-				margin-left: 10px;
-			}
-			div#pseudoWindow ul#popInfo>li#uSets ul#upgradeRoll {
-				margin:5px;
-				padding-left:15px;
-				padding-right:15px;
-			}
-			div#pseudoWindow ul#popInfo>li#uSets ul#upgradeRoll button.slick-arrow{
-				height: 150px;
-				position: absolute;
-				background-color: transparent;
-				border: none;
-				top: 0px;
-			}
-			div#pseudoWindow ul#popInfo>li#uSets ul#upgradeRoll button.slick-prev{
-				left: -15px;
-			}
-			div#pseudoWindow ul#popInfo>li#uSets ul#upgradeRoll button.slick-next{
-				right: -15px;
-			}
-			div#pseudoWindow ul#popInfo>li#uSets ul#upgradeRoll li.item {
-				color: black;
-				width: 100px;
-				border:3px solid white;
-				transition: all 0.2s;
-				transition-delay: 300ms;
-			}
-			div#pseudoWindow ul#popInfo>li#uSets ul#upgradeRoll li.unavaiableUpgrade {
-				color: #EEE;
-				cursor: not-allowed;
-			}
-			div#pseudoWindow ul#popInfo>li#uSets ul#upgradeRoll li.avaiableUpgrade:hover {
-				color:#666;
-				border:3px solid #666;
-			}
-			div#pseudoWindow ul#popInfo>li#uSets ul#upgradeRoll li.avaiableUpgrade:active {
-				color:white;
-				border:3px solid #666;
-				background-color: #666;
-				transition: none;
-			}
-			div#pseudoWindow ul#popInfo>li#uSets ul#upgradeRoll li.item h1 {
-				font-family: "Yu Gothic", SimHei;
-				font-size: 20px;
-				line-height: 20px;
-				margin: 2px;
-				text-align: center;
-				font-weight: normal;
-			}
-			div#pseudoWindow ul#popInfo>li#uSets ul#upgradeRoll li.item h2 {
-				font-size: 13px;
-				line-height: 15px;
-				margin: 2px;
-				text-align: center;
-				font-weight: normal;
-			}
-			div#pseudoWindow ul#popInfo>li#uSets ul#upgradeRoll li.item i {
-				display: block;
-				margin: 5px;
-				text-align: center;
-			}
-			div#pseudoWindow ul#popInfo>li#uSets ul#upgradeRoll li.item span.rent {
-				font-size: 13px;
-				color: maroon;
-				display: block;
-				text-align: center;
-			}
-			div#pseudoWindow ul#popInfo>li#buyBrick>ul>li {
-				display:none;
-			}
-			div#pseudoWindow ul#popChance>li#ctitle {
-				text-align: center;
-				font-size: 20px;
-				font-family: "Yu Gothic", SimHei;
-			}
-			div#pseudoWindow ul#popChance>li#cresult {
-				color: maroon;
-				font-size: 14px;
-				text-align: center;
-			}
-			div#pseudoWindow ul#popChance>li#cicon {
-				width: 48px;
-				margin: 5px 5px 5px 10%;
-				float: left;
-				display: block;
-				text-align: center;
-			}
-			div#pseudoWindow ul#popChance>li#ccontent {
-				width: 60%;
-				float: left;
-				padding-left: 5%;
-			}
-			ul#playerzone {
-				margin:0px;
-				padding:0px;
-				margin-top:5px;
-			}
-			ul#playerzone>li {
-				display: block;
-				cursor: default;
-			}
-			ul#playerzone>li>h2 {
-				margin: 3px 5px;
-				font-size: 17px;
-				font-weight: normal;
-				font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
-			}
-			ul.player {
-				border: 3px solid white;
-				background: white;
-				color: white;
-				padding: 5px;
-				height: 55px;
-				overflow: hidden;
-				margin: 3px 0px;
-			}
-			ul.player>li.detaiil {
-				display: block;
-				font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
-				font-size: 14px;
-			}
-			ul.player>li#playericon {
-				float: left;
-				margin-right: 10px;
-				min-width:80px;
-				text-align:center;
-			}
-			ul#playerzone>li:first-child {
-				width:210px;
-				border-right:6px solid maroon;
-			}
-			ul#leaderboard {
-				margin: 0px;
-				padding: 0px;
-			}
-			ul#leaderboard>li {
-				margin:0px;
-				padding:0px;
-				display:block;
-			}
-			ul#leaderboard button.slick-arrow {
-				border: none;
-				background-color: transparent;
-				text-align: center;
-				width: 100%;
 			}
 		</style>
 	</head>
 	<body>
-		<div id="anmiblock" class="moveblock">&nbsp;</div>
-		<div id="upanblock" class="moveblock">&nbsp;</div>
-		<div id="gameboard">
-			<header>
-				<h1>大富翁</h1>
-				<ul id="gameinfo"></ul>
-				<div id="bulletin"><ul></ul></div>
-			</header>
-			<div id="board">
-			</div>
-			<aside>
-				<nav>
-					<i class="fa fa-3x"></i>
-					<div id="dice">開始！</div>
-					<span id="remainstep" class="dicetip">剩餘步數：<span id="diceCounter"></span></span>
-					<span id="keytip" class="dicetip">按空白或是點開始擲骰子</span>
-				</nav>
-				<ul id="playerzone">
-					<li></li>
-					<li><h2>即時排名</h2>
-						<ul id="leaderboard"></ul>
-					</li>
-				</ul>
-			</aside>
-			<footer>
-				Kelunyang(kelunyang@outlook.com) CC-BY-SA 2015
-			</footer>
-		</div>
+		<header>
+			<a href="#" title="登出遊戲" class="logout" style="display:none"><i class="fa fa-sign-out"></i>登出遊戲</li></a>
+			<a href="admin.htm" target="_top" title="系統設定"><i class="fa fa-1x fa-cog"></i>系統設定</a>
+		</header>
+		<article id="logonZone">
+			<p>載入中...</p>
+			<span id="loginarea"><button id="loginbtn"><i class="fa fa-google fa-fw"></i>用Google帳號登入</button></span>
+			<span id="hubarea">
+				<button id="logoutbtn"><i class="fa fa-sign-out"></i>登出遊戲</button>
+				<button id="configbtn"><i class="fa fa-1x fa-cog"></i>系統設定</button>
+				<button id="enterbtn"><i class="fa fa-th"></i>進入遊戲</button>
+			</span>
+			<br/>
+			<a href="https://login.persona.org/" target="_blank" class="tip"><i class="fa fa-firefox fa-fw"></i>本遊戲使用Mozilla Persona服務管理登入</a><br/>
+			<span class="tip"><i class="fa fa-info-circle"></i>如果您曾使用過Mozilla Persona，也可使用您的帳號</a></span>
+		</article>
+		<footer>Kelunyang@2016 CC-BY-NC-SA</footer>
+		<form action="/auth/browserid" method="post" style="display:none;" id="loginform"><input id="assertion" type="text" name="assertion"/></form>
 		<div id="pseudoWindow">
 			<div id="popBackground">&nbsp;</div>
-			<ul id="popQuestion" class="popWindow">
-				<li id="qcredit"></li>
-				<li id="qcontent"></li>
-				<li id="qanswers"><ul></ul></li>
-			</ul>
-			<ul id="popMessage" class="popWindow">
-				<li id="ptitle">這是訊息標題</li>
-				<li id="picon"><i class="fa fa-exclamation fa-4x"></i></li>
-				<li id="pcontent">這是訊息內容</li>
-				<li id="pbutton" class="buttonarea">
+			<ul class="popWindow" id="popWelcome">
+				<li><h1>線上大富翁</h1></li>
+				<li id="wlogo"><i class="fa fa-5x fa-bullhorn"></i></li>
+				<li>歡迎進入本遊戲，如果已經建立過帳號，請登入，否則請按新增玩家繼續</li>
+				<li id="wbutton" class="buttonarea">
 					<ul>
-						<li class="button">確定</li>
-						<li class="button">是</li>
-						<li class="button">否</li>
-						<li id="custombuttons" class="buttonarea"><ul></ul></li>
-					</ul>
-				</li>
-			</ul>
-			<ul id="popInfo" class="popWindow">
-				<li id="iownericon"><i class="fa fa-question fa-5x"></i></li>
-				<li id="iicon"><i id="imapicon" class="fa fa-map-o fa-5x"></i><i id="iinfoicon" class="fa fa-info-circle fa-3x"></i></li>
-				<li id="iInfo">
-					<h1>測試名稱</h1>
-					<h2>測試玩家</h2>
-					<h3>過路費：200</h3>
-					<p>這是測試名稱</p>
-				</li>
-				<li id="eSets">
-					<h2>城鎮擴建</h2>
-					<ul></ul>
-				</li>
-				<li id="uSets">
-					<h2>選擇要升級的項目</h2>
-					<ul id="upgradeRoll"></ul>
-				</li>
-				<li id="buyBrick" class="buttonarea">
-					<ul>
-						<li id="sellButton" class="button">八折出清</li>
-						<li id="buyButton" class="button">購買土地</li>
-						<li id="feeButton" class="button">付過路費</li>
-						<li id="cinfoButton" class="button">關閉視窗</li>
-					</ul>
-				</li>
-			</ul>
-			<ul id="popChance" class="popWindow">
-				<li id="ctitle">突發事件</li>
-				<li id="cresult">得到一百塊</li>
-				<li id="cicon"><i class="fa fa-exclamation fa-4x"></i></li>
-				<li id="ccontent">扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊</li>
-				<li id="cbutton" class="buttonarea">
-					<ul>
-						<li class="button">確定</li>
+						<li class="button" id="enter"><i class="fa fa-sign-in"></i>進入遊戲</li>
 					</ul>
 				</li>
 			</ul>
 		</div>
-		<!-- Script Area -->
+		<script src="/socket.io/socket.io.js"></script>
 		<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
 		<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
-		<script type="text/javascript" src="http://cdn.jsdelivr.net/jquery.slick/1.5.7/slick.min.js"></script>
-		<!-- <script src="slick.min.js"></script> -->
-		<script src="scrollbox.min.js"></script>
-		<script src="jquery.animateNumber.min.js"></script>
+		<script src="https://login.persona.org/include.js"></script>
 		<script src="ui.js"></script>
-		<script src="brick.js"></script>
-		<script src="board.js"></script>
-		<script src="player.js"></script>
-		<script src="dice.js"></script>
 		<script>
-			var shortcut = [
-				{
-					name:"草嶺古道",
-					bricks:[6,17,28,29,30,31,32],
-					turn:1,
-					endturn:10
-				}
-			]
-			var question = [
-				{
-					question:"這是測試問題",
-					answers:["選項一","選項二","選項三"],
-					answer:0,
-					credit:100,
-					stage:0
-				}
-			]
-			var stage = [
-				{
-					name: "康熙時代",
-					desc: "這是說明",
-					duration: 100
-				}
-			]
-			var upgrades = [
-				{
-					name: "租館",
-					rent: 0.1,
-					price: 300,
-					icon:"truck",
-					stage: 1,
-					desc: "武裝倉庫",
-					type: 0
-				},
-				{
-					name: "商行",
-					rent: 0.3,
-					price: 200,
-					icon: "bank",
-					stage: 0,
-					desc: "騙白癡",
-					type: 0
-				},
-				{
-					name: "廟宇",
-					rent: 0.2,
-					price: 100,
-					icon: "trophy",
-					stage: 0,
-					desc: "騙香油錢",
-					type: 0
-				},
-				{
-					name: "學堂",
-					rent: 0.2,
-					price: 200,
-					icon:"graduation-cap",
-					stage: 1,
-					desc: "騙學費",
-					type: 0
-				}
-			]
-			var incident = [
-				{
-					name: "遇到山洪",
-					desc: "山洪爆發，失去一半財富",
-					effect:-0.5,
-					stage: 0,
-					brick:-1
-				},
-				{
-					name: "深入部落",
-					desc: "仇人相見，分外眼紅，被原住民追殺，失去500點",
-					effect:-500,
-					stage:0,
-					brick:5
-				},
-				{
-					name: "港口淤積",
-					desc: "港口發生自然淤積，支付維護費用",
-					effect: -800,
-					stage:0,
-					brick:3
-				},
-				{
-					name: "發現肥沃土地",
-					desc: "發現河岸沖積地，獲得500點",
-					effect: 500,
-					stage:0,
-					brick:-1
-				}
-			]
-			var leaderboard = [
-				{
-					name: "測試玩家二",
-					asset: 99,
-					color: "#099",
-					icon: "flash"
-				},
-				{
-					name: "測試玩家三",
-					asset: 97,
-					color: "#F33",
-					icon: "rocket"
-				},
-				{
-					name: "測試玩家四",
-					asset: 101,
-					color: "#6C6",
-					icon: "bug"
-				}
-			]
-			var roads = [
-				{
-					name: "萬華",
-					brick: 0,
-					next: 1,
-					price: 100,
-					previous: false
-				},
-				{
-					name: "松山",
-					brick: 1,
-					next: 2,
-					price: 200,
-					previous: 0
-				},
-				{
-					name: "南港",
-					brick: 2,
-					next: 3,
-					price: 150,
-					previous: 1
-				},
-				{
-					name: "汐止",
-					brick: 3,
-					next: 4,
-					price: 50,
-					previous: 2
-				},
-				{
-					name: "八堵",
-					brick: 4,
-					next: 5,
-					price: 150,
-					previous: 3
-				},
-				{
-					name: "瑞芳",
-					brick: 5,
-					next: 6,
-					price: 60,
-					previous: 4
-				},
-				{
-					name: "九份",
-					brick: 6,
-					next: 7,
-					price: 150,
-					previous: 5
-				},
-				{
-					name: "雙溪",
-					brick: 7,
-					next: 8,
-					price: 80,
-					previous: 6
-				},
-				{
-					name: "貢寮",
-					brick: 8,
-					next: 9,
-					price: 90,
-					previous: 7
-				},
-				{
-					name: "福隆",
-					brick: 9,
-					next: 10,
-					price: 70,
-					previous: 8
-				},
-				{
-					name: "大里",
-					brick: 10,
-					next: 21,
-					price: 180,
-					previous: 9
-				},
-				{
-					name: "頭城",
-					brick: 21,
-					next: 32,
-					price: 160,
-					previous: 10
-				},
-				{
-					name: "宜蘭",
-					brick: 32,
-					next: false,
-					price: 90,
-					previous: 21
-				},
-			]
+			$("span#hubarea").css("display","none");
+			$("span#loginarea").css("display","inline");
+			var socket = io.connect();
+			socket.on('message', function(data){
+				console.log(data.message);
+			});
+			socket.on('login', function(data){
+				console.log(data);
+			});
+			/*$("button#newbutton").on("click",function(){
+				socket.emit('createuser', {
+					'name': $("input#newname").val(),
+					'pass': $("input#newpass").val(),
+					'icon': 0,
+					'color': "#FFF"
+				});
+				socket.on('createdone', function(data){
+					console.log(data.message);
+					socket.off('createdone');
+				});
+			});*/
+			$("button#loginbtn").on("click",function() {
+				navigator.id.request();
+			});
+			$("button#logoutbtn").on("click", function() {
+				navigator.id.logout();
+			});
+			$("button#configbtn").on("click", function() {
+				location.href = "admin.htm";
+			});
+			$("button#enterbtn").on("click", function() {
+				location.href = "board.htm";
+			});
+			navigator.id.watch({
+			  onlogin: function(assertion) {
+				$.ajax({
+					url: "/persona/verify",
+					data: JSON.stringify({assertion: assertion}),
+					type: "POST",
+					beforeSend: function(xhr){xhr.setRequestHeader('Content-Type', 'application/json');},
+					success: function(data) { 
+						if (data && data.status === "okay") {
+							$("article#logonZone p").text(data.email+"已登入");
+							$("a.logout").css("display","inline");
+							$(".logout").on("click",function() {
+								navigator.id.logout();
+							});
+							$("span#hubarea").css("display","inline");
+							$("span#loginarea").css("display","none");
+						} else {
+							$("span#hubarea").css("display","none");
+							$("span#loginarea").css("display","inline");
+							popWindows.messageWindow("登入失敗","你可能未授權Mozilla Persona服務使用你的Gmail，如果持續發生錯誤，請聯絡網頁管理員",{
+								ok:{
+									enable: true,
+									func: function() {
+										oriobj.endPseudo();
+									}
+								},
+								yes:{
+									enable: false,
+									func: function() {
+										oriobj.endPseudo();
+									}
+								},
+								no:{
+									enable: false,
+									func: function() {
+										oriobj.endPseudo();
+									}
+								},
+								custombuttons: new Array()
+							},"exclamation-triangle");
+						}
+					}
+				});
+			  },
+			  onlogout: function() {
+				$.ajax({
+					url: "/persona/logout",
+					type: "POST",
+					success: function(data) {
+						socket.emit('checkUser');
+						$("article#logonZone p").text("您已登出或是尚未登入");
+						$("a.logout").css("display","none");
+						$("span#hubarea").css("display","none");
+						$("span#loginarea").css("display","inline");
+					}
+				});
+			  }
+			});
 			$().ready(function() {
-				var players = new Array();	//player 一定要比gameboard早出現，初始化之後再新增玩家
-				var popWindows = new pseudoWindow($("div#pseudoWindow"),upgrades.length);
-				var gameboard = new board("北台灣的開墾",11,6,shortcut,question,stage,players,$("div#board"),$("header"),popWindows,$("div#anmiblock"),upgrades,incident);
-				gameboard.initBricks();
-				$("div#gameboard").css("width",(gameboard.width*92)+230+"px");
-				$("div#gameboard").css("marginLeft",((gameboard.width*92)+230)/2*(-1)+"px");
-				gameboard.loadRoads(roads);
-				$("header").animate({opacity:100},700,function() {
-					gameboard.scanPlayer(true);
-					//gameboard.addTurn();
-				});
-				//gameboard.upgradeBrick(0,1);
-				var localplayer = new player("測試玩家","paw","#F99",0,gameboard,gameboard.bricks[0],true,$("<ul id=\"localplayer\"></ul>"),$("aside > ul#playerzone > li:first-child"));
-				players.push(localplayer);
-				for(var i=0;i<leaderboard.length;i++) {
-					$("aside > ul#playerzone > li > ul#leaderboard").append($("<li></li>"));
-					players.push(new player(leaderboard[i].name,leaderboard[i].icon,leaderboard[i].color,leaderboard[i].asset,gameboard,gameboard.bricks[0],false,$("<ul></ul>"),$("aside > ul#playerzone > li > ul#leaderboard > li:last-child")));
-				}
-				$("ul#leaderboard").slick({
-					infinite: true,
-					slidesToShow: 4,
-					slidesToScroll: 4,
-					vertical: true
-				});
-				$("ul#leaderboard button.slick-arrow").text("");
-				var arrowup = $("<i class=\"fa fa-arrow-circle-o-up fa-1x\"></i>");
-				$("ul#leaderboard button.slick-prev").append(arrowup);
-				var arrowdown = $("<i class=\"fa fa-arrow-circle-o-down fa-1x\"></i>");
-				$("ul#leaderboard button.slick-next").append(arrowdown);
-				var dices = new dice($("nav"),localplayer,gameboard);
-				gameboard.diceElement = dices;
-				popWindows.dice = dices;
-				popWindows.messageWindow("歡迎進入遊戲！","目前地圖等所有資料都是測試使用",{
-					ok:{
-						enable: true,
-						func: function() {
-							popWindows.endPseudo();
-						}
-					},
-					yes:{
-						enable: false,
-						func: function() {
-							popWindows.endPseudo();
-						}
-					},
-					no:{
-						enable: false,
-						func: function() {
-							popWindows.endPseudo();
-						}
-					},
-					custombuttons: new Array()
-				},"road");
+				popWindows.resetWindows();
+				popWindows.opacityValue = 0.7;
+				popWindows.welcomeWindow();
 			});
 		</script>
 	</body>

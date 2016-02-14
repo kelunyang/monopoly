@@ -1,10 +1,11 @@
 //角色模組
-function player(name,icon,color,asset,board,initpost,local,htmlElement,destination) {
+function player(name,icon,color,asset,board,initpost,local,htmlElement,destination,uid) {
 	this.local = local;
 	this.bricks = new Array();
 	this.asset = asset;
 	this.credit = 0;
 	this.name = name;
+	this.uid = uid
 	this.icon = icon;
 	this.mainColor = color;
 	this.position = initpost;
@@ -14,6 +15,7 @@ function player(name,icon,color,asset,board,initpost,local,htmlElement,destinati
 	this.iconElement.addClass("fa-5x");
 	this.iconElement.addClass("fa-"+icon);
 	this.tokenElement = $("<i></i>").addClass("fa");
+	this.tokenElement.addClass("swiper-slide");
 	this.tokenElement.addClass("fa-1x");
 	this.tokenElement.addClass("fa-"+icon);
 	this.tokenElement.css("color",this.mainColor);
@@ -28,9 +30,15 @@ function player(name,icon,color,asset,board,initpost,local,htmlElement,destinati
 	this.htmlElement.find("li#playericon").append(this.iconElement);
 	var displayname = this.local ? this.name+"(本機)" : this.name;
 	this.htmlElement.find("li#playername").text(displayname);
+	if(!this.local) {
+		this.htmlElement.find("li#playercredit").css("visibility","hidden");
+	}
 	destination.append(this.htmlElement);
 	this.creditCal(0);
 	
+}
+player.prototype.refresh = function() {	//重整成績
+	this.htmlElement.find("span.playernum").text(this.asset);
 }
 player.prototype.assetCal = function() {
 	var oldasset = this.asset;

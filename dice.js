@@ -53,18 +53,22 @@ dice.prototype.reset = function() {
 	this.board.moveCounter(false);
 }
 dice.prototype.throwDice = function() {
-	if(this.available) {
-		this.available = false;
-		this.dicenum = this.dicenum.sort(function(a,b) { return 0.5-Math.random();});
-		this.htmlElement.find("div").empty();
-		this.anmiElement.empty();
-		this.htmlElement.find("div").append(this.anmiElement);
-		for(var i=0;i<this.diceRange;i++) {
-			var num = $("<li>"+this.dicenum[i]+"</li>");
-			if(i==0) num.addClass("hidden");
-			num.data("value",this.dicenum[i]);
-			this.anmiElement.append(num);
+	if(this.board.sameUser) {
+		if(this.available) {
+			this.available = false;
+			this.dicenum = this.dicenum.sort(function(a,b) { return 0.5-Math.random();});
+			this.htmlElement.find("div").empty();
+			this.anmiElement.empty();
+			this.htmlElement.find("div").append(this.anmiElement);
+			for(var i=0;i<this.diceRange;i++) {
+				var num = $("<li>"+this.dicenum[i]+"</li>");
+				if(i==0) num.addClass("hidden");
+				num.data("value",this.dicenum[i]);
+				this.anmiElement.append(num);
+			}
+			this.htmlElement.find("div").trigger("forwardHover");
 		}
-		this.htmlElement.find("div").trigger("forwardHover");
+	} else {
+		this.board.popElement.errorWindow("目前不是你的回合，骰子停用！",0);
 	}
 }

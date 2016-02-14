@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+	<head>
+		<title>線上大富翁：北台灣開發</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+		<!-- CSS -->
+		<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"/>
+		<link rel="stylesheet" href="http://cdn.bootcss.com/Swiper/3.1.2/css/swiper.min.css"/>
+		<link rel="stylesheet" href="pseudoWindow.css"/>
+		<style type="text/css">
+			div#anmiblock {
+				z-index: 80;
+			}
+			div#upanblock {
+				z-index: 1000;
+			}
+			div.moveblock {
+				position: absolute;
+				visibility: hidden;
+			}
+			div#gameboard {
+				left: 50%;
+				position: fixed;
+			}
+			header {
+				height: 80px;
+			}
+			header h1 {
+				font-family: "Yu Gothic", SimHei;
+				line-height: 24px;
+				font-size: 24px;
+				text-align: center;
+				font-weight: normal;
+				margin: 0px;
+				padding: 5px;
+				border-bottom : 2px solid #666;
+				color: black;
+			}
+			header ul#gameinfo {
+				position: absolute;
+				top: 0px;
+				right: 15px;
+				border: 2px solid #666;
+				background-color: white;
+				margin: 0px;
+				padding: 5px;
+				width: 200px;
+			}
+			header ul#gameinfo li {
+				display: inline;
+				font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
+				font-size: 15px;
+			}
+			header ul#gameinfo li h2 {
+				font-family: "Microsoft YaHei";
+				font-size: 20px;
+				font-weight: normal;
+				margin: 0px;
+			}
+			header div#bulletin {
+				height: 20px;
+				line-height: 18px;
+				font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
+				font-size:16px;
+				overflow: hidden;
+				margin: 3px;
+				margin-top:10px;
+			}
+			header div#bulletin ul {
+				margin: 0px;
+			}
+			header div#bulletin ul li {
+				display: block;
+				cursor: default;
+			}
+			header div#bulletin ul li span {
+				display: inline-block;
+				min-width: 60px;
+				font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
+				font-size: 14px;
+				background-color: navy;
+				padding: 1px;
+				height: 16px;
+				margin:2px;
+				color: white;
+				text-align: center;
+			}
+			header div#bulletin ul li span.stageicon {
+				background-color:#336;
+			}
+			header div#bulletin ul li span.turnicon {
+				background-color: #339;
+			}
+			div#board {
+				float: left;
+			}
+			aside {
+				width: 216px;
+				right: 15px;
+				position: absolute;
+			}
+			div#board div.brick {
+				width: 80px;
+				height: 80px;
+				border: 4px solid #FFF;
+				float: left;
+				margin:1px;
+				cursor: default;
+			}
+			div#board div.brick h1 {
+				display: block;
+				position: relative;
+				margin: 0px;
+				padding: 0px;
+				font-size: 14px;
+				font-weight: normal;
+				text-align: center;
+				top: -20px;
+				font-family: "Microsoft YaHei";
+				font-size: 22px;
+			}
+			div#board div.brick li.tokenzone i {
+				margin:1px;
+				min-width: 16px;
+				height: 16px;
+				overflow: hidden;
+				text-align: center;
+				display: block;
+			}
+			div#board div.brick li.brickplayerUB {
+				top:0px;
+				left:0px;
+				position: absolute;
+				z-index:10;
+				background-color:white;
+			}
+			div#board div.brick li.brickplayerDB {
+				top:0px;
+				right:0px;
+				position: absolute;
+				z-index:10;
+			}
+			div#board div.brick div.upgrades {
+				width:78px;
+				height: 18px;
+				padding: 1px;
+				background: #CCC;
+				color: #FFF;
+				text-align: right;
+				position: relative;
+				top: 60px;
+			}
+			div#board div.brick ul.brickplayerContainer {
+				padding: 0px;
+				width: 70px;
+				height: 20px;
+				margin-top: -15px;
+				display: none;
+				overflow: hidden;
+			}
+			div#board div.brick ul.brickplayerContainer li {
+				display: block;
+			}
+			div#board div.brick ul.brickplayerContainer li.tokenzone {
+				position: relative;
+				width: 100%;
+				margin: 3px;
+				padding: 2px;
+				display: flex;
+			}
+			div#board div.brick div.upgrades i {
+				margin: 2px;
+			}
+			div#board div.active {
+				width: 80px;
+				height: 80px;
+				border: 4px solid #CCC;
+				margin: 1px;
+				transition: all 0.2s;
+				transition-delay: 300ms;
+			}
+			div#board div.active:hover {
+				border: 4px solid #DDD;
+			}
+			div#board div.active:active {
+				border: 4px solid #EEE;
+				background-color: #EEE;
+				transition: none;
+			}
+			div#board div.shortcut {
+				width: 80px;
+				height: 80px;
+				border: 4px solid #F66;
+				margin: 1px;
+				transition: all 0.2s;
+				transition-delay: 300ms;
+			}
+			div#board div.shortcut div.upgrades {
+				background-color: #F66;
+			}
+			aside nav {
+				border: 3px solid #06C;
+				color: #FFF;
+				width: 170px;
+				padding: 5px 20px;
+				height: 65px;
+				background-color: #06C;
+				cursor: default;
+				transition: all 0.2s;
+				transition-delay: 300ms;
+			}
+			aside nav:hover {
+				border: 3px solid #39C;
+			}
+			aside nav:active {
+				border: 3px solid #06C;
+				color: #06C;
+				background-color: white;
+				transition: none;
+			}
+			aside nav i {
+				float: left;
+			}
+			aside nav div {
+				vertical-align: middle;
+				height: 48px;
+				line-height: 48px;
+				margin-left: 60px;
+				font-family: "Yu Gothic", SimHei;
+				font-size:30px;
+				overflow: hidden;
+				text-align: center;
+			}
+			aside nav span {
+				font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
+				font-size: 15px;
+			}
+			aside nav div ul {
+				margin: 0px;
+				padding: 0px;
+			}
+			aside nav div ul {
+				list-style-type: none;
+			}
+			aside nav div ul li.hidden {
+				visibility: hidden;
+			}
+			body>footer {
+				font-family: Verdana, Geneva, sans-serif;
+				font-size: 10px;
+				position: fixed;
+				bottom:0px;
+				left:0px;
+				width:100%;
+				height: 15px;
+				text-align: right;
+				border-top: 1px solid #EEE;
+			}
+			ul#playerzone {
+				margin:0px;
+				padding:0px;
+				margin-top:5px;
+			}
+			ul#playerzone>li {
+				display: block;
+				cursor: default;
+			}
+			ul#playerzone>li>h2 {
+				margin: 3px 5px;
+				font-size: 17px;
+				font-weight: normal;
+				font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
+			}
+			ul.player {
+				border: 3px solid white;
+				background: white;
+				color: white;
+				padding: 5px;
+				height: 55px;
+				overflow: hidden;
+				margin: 1px 0px;
+			}
+			ul.player>li.detaiil {
+				display: block;
+				font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
+				font-size: 14px;
+			}
+			ul.player>li#playericon {
+				float: left;
+				margin-right: 10px;
+				min-width:60px;
+				text-align:center;
+			}
+			ul#playerzone>li:first-child {
+				width:210px;
+				border-right:6px solid maroon;
+			}
+			li#playerlist {
+				height: 225px;
+			}
+			ul#leaderboardcontainer {
+				width: 100%;
+				height: 100%;
+			}
+			ul#leaderboardcontainer>li {
+				display:block;
+			}
+			li#leaderboard {
+				display: flex;
+				cursor: default;
+				padding:0px;
+			}
+			li#leaderboard>span.boarditem {
+				display:block;
+				height: 75px;
+			}
+			li.leaderController {
+				background-color: #E6E6E6;
+				margin: 2px;
+				position: absolute;
+				cursor: default;
+				transition: all 0.2s;
+				transition-delay: 300ms;
+				z-index:10;
+				left: -2px;
+			}
+			li#leaderscrollbar {
+				display:block;
+			}
+			li.leaderController:hover {
+				color: #999;
+			}
+			li.leaderController:active {
+				color: #EEE;
+				transition: none;
+			}
+			li#leaderboardup {
+				top: -2px;
+			}
+			li#leaderboarddown {
+				top: 206px;
+			}
+			ul.swiper-container {
+				padding: 0px;
+			}
+			ul#loaditems li {
+				list-style: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="anmiblock" class="moveblock">&nbsp;</div>
+		<div id="upanblock" class="moveblock">&nbsp;</div>
+		<div id="gameboard">
+			<header>
+				<h1>大富翁</h1>
+				<ul id="gameinfo"></ul>
+				<div id="bulletin"><ul></ul></div>
+			</header>
+			<div id="board">
+			</div>
+			<aside>
+				<nav>
+					<i class="fa fa-3x"></i>
+					<div id="dice">開始！</div>
+					<span id="remainstep" class="dicetip">剩餘步數：<span id="diceCounter"></span></span>
+					<span id="keytip" class="dicetip">按空白或是點開始擲骰子</span>
+				</nav>
+				<ul id="playerzone">
+					<li></li>
+					<li id="playerlist"><h2>即時排名</h2>
+						<ul id="leaderboardcontainer" class="swiper-container">
+							<li id="leaderboard" class="swiper-wrapper"></li>
+							<li id="leaderscrollbar" class="swiper-scrollbar"></li>
+							<li id="leaderboardup" class="leaderController"><i class="fa-arrow-up fa fa-1x"></i></li>
+							<li id="leaderboarddown" class="leaderController"><i class="fa-arrow-down fa fa-1x"></i></li>
+						</ul>
+					</li>
+				</ul>
+			</aside>
+		</div>
+		<footer>Kelunyang@2016 CC-BY-NC-SA</footer>
+		<div id="pseudoWindow">
+			<div id="popBackground">&nbsp;</div>
+			<ul id="popQuestion" class="popWindow">
+				<li id="qcredit"></li>
+				<li id="qcontent"></li>
+				<li id="qanswers"><ul></ul></li>
+			</ul>
+			<ul id="popMessage" class="popWindow">
+				<li id="ptitle">這是訊息標題</li>
+				<li id="picon"><i class="fa fa-exclamation fa-4x"></i></li>
+				<li id="pcontent">這是訊息內容</li>
+				<li id="pbutton" class="buttonarea">
+					<ul>
+						<li class="button">確定</li>
+						<li class="button">是</li>
+						<li class="button">否</li>
+						<li id="custombuttons" class="buttonarea"><ul></ul></li>
+					</ul>
+				</li>
+			</ul>
+			<ul id="popInfo" class="popWindow">
+				<li id="iownericon"><i class="fa fa-question fa-5x"></i></li>
+				<li id="iicon"><i id="imapicon" class="fa fa-map-o fa-5x"></i><i id="iinfoicon" class="fa fa-info-circle fa-3x"></i></li>
+				<li id="iInfo">
+					<h1>測試名稱</h1>
+					<h2>測試玩家</h2>
+					<h3>過路費：200</h3>
+					<p>這是測試名稱</p>
+				</li>
+				<li id="eSets">
+					<h2>城鎮擴建</h2>
+					<ul></ul>
+				</li>
+				<li id="uSets">
+					<h2>選擇要升級的項目</h2>
+					<ul id="upgradecontainer" class="swiper-container">
+						<li id="upgradeRoll" class="swiper-wrapper"></li>
+						<li id="upgradescrollbar" class="swiper-scrollbar"></li>
+						<li id="upgradeup" class="upgradeController"><i class="fa-arrow-left fa fa-1x"></i></li>
+						<li id="upgradedown" class="upgradeController"><i class="fa-arrow-right fa fa-1x"></i></li>
+					</ul>
+				</li>
+				<li id="buyBrick" class="buttonarea">
+					<ul>
+						<li id="sellButton" class="button">八折出清</li>
+						<li id="buyButton" class="button">購買土地</li>
+						<li id="feeButton" class="button">付過路費</li>
+						<li id="cinfoButton" class="button">關閉視窗</li>
+					</ul>
+				</li>
+			</ul>
+			<ul id="popChance" class="popWindow">
+				<li id="ctitle">突發事件</li>
+				<li id="cresult">得到一百塊</li>
+				<li id="cicon"><i class="fa fa-exclamation fa-4x"></i></li>
+				<li id="ccontent">扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊</li>
+				<li id="cbutton" class="buttonarea">
+					<ul>
+						<li class="button">確定</li>
+					</ul>
+				</li>
+			</ul>
+			<ul id="popShortcut" class="popWindow">
+				<li id="stitle">突發事件</li>
+				<li id="sconnection">得到一百塊</li>
+				<li id="sicon"><i class="fa fa-map-signs fa-4x"></i></li>
+				<li id="sdesc">扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊</li>
+				<li id="sbutton" class="buttonarea">
+					<ul>
+						<li class="button">確定</li>
+					</ul>
+				</li>
+			</ul>
+			<ul id="popSwitchuser" class="popWindow">
+				<li id="utitle">切換玩家</li>
+				<li id="uicon"><i class="fa fa-users fa-4x"></i></li>
+				<li id="udesc">扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊</li>
+				<li id="ubutton" class="buttonarea">
+					<ul>
+						<li class="button">確定</li>
+					</ul>
+				</li>
+			</ul>
+			<ul class="popWindow" id="popError">
+				<li id="etitle">操作停用</li>
+				<li id="elogo"><i class="fa fa-5x fa-exclamation-triangle"></i></li>
+				<li id="emessage">你尚未登入，或者是你的權限無法存取本功能，如果錯誤訊息重複發生，請聯絡管理員</li>
+				<li id="ebutton" class="buttonarea">
+					<ul>
+						<li class="button" id="enter">關閉視窗</li>
+						<li class="embutton" id="enter"><i class="fa fa-home"></i>回到首頁</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+		<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+		<script src="http://cdn.bootcss.com/Swiper/3.1.2/js/swiper.jquery.min.js"></script>
+		<script src="scrollbox.min.js"></script>
+		<script src="jquery.animateNumber.min.js"></script>
+		<script src="ui.js"></script>
+		<script src="brick.js"></script>
+		<script src="board.js"></script>
+		<script src="player.js"></script>
+		<script src="dice.js"></script>
+		<script>
+			var socket = io.connect();
+			var connection = null;
+			var currentplayer = null;
+			var dataprepared = null;
+			var shortcut = null;
+			var stage = null;
+			var upgrades = null;
+			var question = null;
+			var incident = null;
+			var roads = null;
+			var players = new Array();
+			var tempplayer = new Object();
+			var gameboard = null;
+			var localuid = null;
+			var localplayer = null;
+			var sessionid = null;
+			var leadermenu = new Swiper($('#leaderboardcontainer'), {
+				scrollbar: '#leaderscrollbar',
+				nextButton: '#leaderboarddown',
+				prevButton: '#leaderboardup',
+				direction: 'vertical',
+				slidesPerView: 3
+			});
+			$().ready(function() {
+				socket.on('socketon', function(data){
+					if(data.status) {
+						connection = true;
+						socket.off('socketon');
+						checkData();
+					}
+				});
+				socket.on("boardprepared", function(data) {
+					if(data.status) {
+						dataprepared = data.status;
+						upgrades = data.upgrades;
+						shortcut = data.shortcut;
+						roads = data.roads;
+						stage = data.stage;
+						incident = data.incident;
+						localuid = data.localplayer;
+						sessionid = data.id;
+						currentplayer = data.currentplayer;
+						checkData();
+					}
+				});
+				popWindows = new pseudoWindow($("div#pseudoWindow"));
+				popWindows.opacityValue = 1;
+				popWindows.messageWindow("載入遊戲資料","<p>正在載入遊戲地圖資料，請稍候...</p><ul id=\"loaditems\"></ul>",{
+					ok:{
+						enable: false,
+						func: function() {
+							popWindows.endPseudo();
+						}
+					},
+					yes:{
+						enable: false,
+						func: function() {
+							popWindows.endPseudo();
+						}
+					},
+					no:{
+						enable: false,
+						func: function() {
+							popWindows.endPseudo();
+						}
+					},
+					custombuttons: new Array()
+				},"cloud-download");
+				socket.emit("preparemapbackend");
+				console.log("gameboard sent");
+				checkData();
+			});
+			function checkData() {
+				var gameObj = [{
+					name:"主機連線",
+					data:connection
+				},{
+					name:"伺服器準備完成",
+					data:dataprepared
+				},{
+					name:"升級物件",
+					data:upgrades
+				},{
+					name:"捷徑清單",
+					data:shortcut
+				},{
+					name:"道路物件",
+					data:roads
+				},{
+					name:"時代清單",
+					data:stage
+				},{
+					name:"事件清單",
+					data:incident
+				}];
+				var k = 0;
+				$("ul#loaditems").empty();
+				for(var i=0;i<gameObj.length;i++) {
+					var item = $("<li></li>");
+					var icon = $("<i></i>");
+					icon.addClass("fa");
+					icon.addClass("fa-fw");
+					item.append(icon);
+					item.append(gameObj[i].name);
+					$("ul#loaditems").append(item);
+					if(gameObj[i].data != null) {
+						k++;
+						icon.addClass("fa-check");
+					} else {
+						icon.addClass("fa-times");
+					}
+				}
+				if(k == gameObj.length) {
+					setLayout();
+				}
+			}
+			socket.on("updatelivescore", function(data) {
+				for(var i=0;i<data.length;i++) {
+					for(var k=0;k<players.length;k++) {
+						if(data[i].uid == players[k].uid) {
+							if(data[i].uid != localplayer.uid) {
+								players[k].asset = data[i].score;
+								players[k].refresh();
+							}
+						}
+					}
+				}
+			});
+			socket.on("getliveplayerList", function(data) {
+				for(var i=0;i<data.users.length;i++) {
+					tempplayer[data.users[i].uid] = new Object;
+					tempplayer[data.users[i].uid].asset = data.users[i].score;
+					socket.emit("requestspecificUser", {user: data.users[i].uid});
+				}
+			});
+			socket.on("getspecificUser", function(data) {
+				data = data[0];
+				tempplayer[data.email].color = "#"+data.color;
+				tempplayer[data.email].icon = data.icon;
+				tempplayer[data.email].name = data.nickname;
+				tempplayer[data.email].uid = data.email;
+				var slide = $("<span></span>");
+				slide.addClass("swiper-slide");
+				slide.addClass("boarditem");
+				if(data.email == localuid) {
+					localplayer = new player(tempplayer[data.email].name,tempplayer[data.email].icon,tempplayer[data.email].color,tempplayer[data.email].asset,gameboard,gameboard.bricks[0],true,$("<ul id=\"localplayer\"></ul>"),$("aside > ul#playerzone > li:first-child"), tempplayer[data.email].uid);
+					players.push(localplayer);
+					gameboard.localplayer = localplayer;
+					var dices = new dice($("nav"),localplayer,gameboard);
+					gameboard.diceElement = dices;
+					popWindows.dice = dices;
+					popWindows.messageWindow("歡迎進入遊戲！","目前地圖等所有資料都是測試使用，請務必使用Microsoft Edge、Google Chrome、Mozilla Firefox或是平板電腦設備開啟",{
+						ok:{
+							enable: true,
+							func: function() {
+								popWindows.endPseudo();
+								popWindows.switchWindow(currentplayer);
+							}
+						},
+						yes:{
+							enable: false,
+							func: function() {
+								popWindows.endPseudo();
+							}
+						},
+						no:{
+							enable: false,
+							func: function() {
+								popWindows.endPseudo();
+							}
+						},
+						custombuttons: new Array()
+					},"road");
+				} else {
+					players.push(new player(tempplayer[data.email].name,tempplayer[data.email].icon,tempplayer[data.email].color,tempplayer[data.email].asset,gameboard,gameboard.bricks[0],false,$("<ul></ul>"),slide, tempplayer[data.email].uid));
+					leadermenu.appendSlide(slide);
+				}
+				gameboard.scanPlayer(true);
+			});
+			function setLayout() {
+				popWindows.opacityValue = 0.5;	//半透明
+				gameboard = new board("北台灣的開墾",11,6,shortcut,socket,stage,players,$("div#board"),$("header"),popWindows,$("div#anmiblock"),upgrades,incident);
+				gameboard.initBricks();
+				socket.emit("requestliveplayerList", {id: sessionid});
+				$("div#gameboard").css("width",(gameboard.width*92)+230+"px");
+				$("div#gameboard").css("marginLeft",((gameboard.width*92)+230)/2*(-1)+"px");
+				gameboard.loadRoads(roads);
+				/*$("header").animate({opacity:100},700,function() {
+					gameboard.scanPlayer(true);
+					//gameboard.addTurn();
+				}); //這是暫時的啟動器，已經沒有作用了 */
+				//gameboard.upgradeBrick(0,1);
+				/*$("ul#leaderboard").slick({
+					infinite: true,
+					slidesToShow: 4,
+					slidesToScroll: 4,
+					vertical: true
+				});*/
+				/*$("ul#leaderboard button.slick-arrow").text("");
+				var arrowup = $("<i class=\"fa fa-arrow-circle-o-up fa-1x\"></i>");
+				$("ul#leaderboard button.slick-prev").append(arrowup);
+				var arrowdown = $("<i class=\"fa fa-arrow-circle-o-down fa-1x\"></i>");
+				$("ul#leaderboard button.slick-next").append(arrowdown);*/
+			}
+		</script>
+	</body>
+</html>

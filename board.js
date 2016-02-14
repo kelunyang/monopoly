@@ -1,6 +1,8 @@
 //棋盤模組
-function board(name,width,height,shortcuts,questions,stages,players,boardElement,titleElement,popElement,anmiblock,upgradeDB,incidentDB) {
+function board(name,width,height,shortcuts,socket,stages,players,boardElement,titleElement,popElement,anmiblock,upgradeDB,incidentDB) {
+	var oriobj = this;
 	this.diceElement = null;
+	this.sameUser = true;
 	this.remainmoves = 0;
 	this.interrupt = false;
 	this.diceThrowed = false;
@@ -19,7 +21,7 @@ function board(name,width,height,shortcuts,questions,stages,players,boardElement
 	this.bricks = new Array();
 	this.events = new Array();
 	this.shortcuts = shortcuts;
-	this.questions = questions;
+	this.socket = socket;
 	this.questionDB = new Array();
 	this.currentQuestion = null;
 	this.turn = 0;
@@ -34,9 +36,50 @@ function board(name,width,height,shortcuts,questions,stages,players,boardElement
 	this.boardElement.css("height",height*92+"px");
 	this.messageElement = this.titleElement.find("div#bulletin");
 	this.messageElement.scrollbox({delay: 0, speed: 100, infiniteLoop: false, onMouseOverPause: false, autoPlay: false, autoPlay: true});
-	this.sortingQuestion();
+	//this.sortingQuestion();
 	this.moveCounter(false);
+	this.socket.on('sendQuestion', function(data){
+		console.log(data.question);
+		oriobj.currentQuestion = data.question;
+		oriobj.scanPlayer(false);
+		oriobj.popElement.questionWindow(oriobj.currentQuestion.question,oriobj.currentQuestion.credit,oriobj.currentQuestion.answers,oriobj.players[0],oriobj);
+		for(var i=0;i<oriobj.shortcuts.length;i++) {
+			if(oriobj.turn == oriobj.shortcuts[i].startturn) {
+				bricks = oriobj.shortcuts[i].bricks;
+				oriobj.showShortcut(bricks,oriobj.shortcuts[i].name,oriobj.shortcuts[i].desc);
+			}
+			if(oriobj.turn == oriobj.shortcuts[i].endturn) {
+				bricks = oriobj.shortcuts[i].bricks;
+				oriobj.hideShortcut(bricks,oriobj.shortcuts[i].name);
+			}
+		}
+		oriobj.popElement.dice = oriobj.diceElement;
+		oriobj.popElement.board = oriobj;
+		switch(oriobj.players[0].position.type) {	//踩到機會命運的機率
+			case 1:
+				var chance = [0];
+				chance.sort(function(a,b) { return 0.5-Math.random(); });
+				if(chance[0] == 0) {	//也就是說有四分之一的機率
+					oriobj.popElement.chanceWindow(oriobj.players[0],oriobj.socket);
+				}
+			break;
+			case 2:
+				oriobj.popElement.chanceWindow(oriobj.players[0],oriobj.socket);	//100%機率
+			break;
+		}
+	});
+	this.socket.on('turnadded', function(data) {
+		oriobj.turn = data.currentturn;
+		oriobj.stage = data.currentstage;
+		oriobj.stageElement.find("h2").text(oriobj.stages[oriobj.stage].name);
+		oriobj.turnElement.find("span#stagetitle").text(oriobj.turn);
+		oriobj.turnElement.find("span#stageturns").text(oriobj.stages[oriobj.stage].duration - oriobj.turn);
+		var bricks = null;
+		oriobj.sameUser = oriobj.localplayer.uid == data.currentplayer;
+		oriobj.popElement.switchWindow(data.currentplayer);
+	});
 }
+//所有的原件都需要load
 board.prototype.moveCounter = function(move) {
 	if(!move) {
 		$("span#remainstep").css("display","none");
@@ -47,62 +90,21 @@ board.prototype.moveCounter = function(move) {
 		$("span#remainstep>span#diceCounter").prop('number',this.diceElement.diceValue).animateNumber({ number: this.remainmoves });
 	}
 }
-board.prototype.sortingQuestion = function() {
-	this.questions.sort(function(a,b) {
-		return a.stage - b.stage;
-	});
-	for(var i=0;i<this.stages.length;i++) {
-		this.questionDB.push(new Array());
-	}
-	for(var i=0;i<this.questions.length;i++) {
-		this.questionDB[this.questions[i].stage].push(this.questions[i]);
-	}
-	for(var i=0;i<this.stages.length;i++) {
-		this.questionDB[i].sort(function(a,b){
-			return 0.5-Math.random();
-		});
-	}
-}
 board.prototype.turnQueue = function() {
 	//wait server response
 	this.addTurn();
 }
+
 board.prototype.addTurn = function() {
-	this.turn++;
+	/*this.turn++;
 	this.stages[this.stage].duration--;
 	if(this.stages[this.stage].duration == 0) {
 		this.stage++;
-	}
-	this.stageElement.find("h2").text(this.stages[this.stage].name);
-	this.turnElement.find("span#stagetitle").text(this.turn);
-	this.turnElement.find("span#stageturns").text(this.stages[this.stage].duration);
-	var oriobj = this;
-	var bricks = null;
-	for(var i=0;i<this.shortcuts.length;i++) {
-		if(this.turn == this.shortcuts[i].turn) {
-			bricks = this.shortcuts[i].bricks;
-			this.showShortcut(bricks,this.shortcuts[i].name);
-		}
-		if(this.turn == this.shortcuts[i].endturn) {
-			bricks = this.shortcuts[i].bricks;
-			this.hideShortcut(bricks,this.shortcuts[i].name);
-		}
-	}
-	this.currentQuestion = this.questionDB[this.stage][this.turn % this.questionDB[this.stage].length];
-	this.scanPlayer(false);
-	this.popElement.questionWindow(this.currentQuestion.question,this.currentQuestion.credit,this.currentQuestion.answers,this.players[0],this);
-	switch(this.players[0].position.type) {	//踩到機會命運的機率
-		case 1:
-			var chance = [0,1,2,3];
-			chance.sort(function(a,b) { return 0.5-Math.random(); });
-			if(chance[0] == 0) {	//也就是說有四分之一的機率
-				this.popElement.chanceWindow(this.players[0]);
-			}
-		break;
-		case 2:
-			this.popElement.chanceWindow(this.players[0]);	//100%機率
-		break;
-	}
+	}*/
+	this.socket.emit("addTurn");
+	this.socket.emit('queryQuestion', {
+		'stage': this.stage
+	});
 }
 board.prototype.pushEvent = function(message) {
 	this.messageElement.find("ul").append($("<li><span class=\"stageicon\">"+this.stages[this.stage].name+"</span><span class=\"turnicon\">第"+this.turn+"回合</span>"+message+"</li>"));
@@ -248,6 +250,7 @@ board.prototype.initBricks = function() {	//初始化
 }
 board.prototype.loadRoads = function(roadDB) {
 	for(var i=0;i<roadDB.length;i++) {
+		if(roadDB[i].stage != this.stage) continue;
 		this.bricks[roadDB[i].brick].setBrick(roadDB[i],1);
 		this.bricks[roadDB[i].brick].next.push(this.bricks[roadDB[i].next]);
 		this.bricks[roadDB[i].brick].previous.push(this.bricks[roadDB[i].previous]);
@@ -262,8 +265,9 @@ board.prototype.loadRoads = function(roadDB) {
 board.prototype.activeBricks = function() {
 	//this.boardElement.find("div.active").animate({opacity:1},300);
 }
-board.prototype.showShortcut = function(shortcut,name) {
+board.prototype.showShortcut = function(shortcut,name,desc) {
 	this.pushEvent("啟動"+name+"，連接"+this.bricks[shortcut[0]].name+"和"+this.bricks[shortcut[shortcut.length-1]].name);
+	this.popElement.shortcutWindow(name,this.bricks[shortcut[0]].name,this.bricks[shortcut[shortcut.length-1]].name,desc);
 	for(var s=0;s<shortcut.length;s++) {
 		if(this.bricks[shortcut[s+1]] === undefined) {
 			this.bricks[shortcut[s]].next.push(this.bricks[shortcut[s-1]]);
@@ -328,7 +332,6 @@ board.prototype.scanPlayer = function(first) {
 	var orileft = 0;
 	for(var i=0;i<this.bricks.length;i++) {
 		this.bricks[i].players.length = 0;	//empty array;
-		this.bricks[i].htmlElement.find("div.tokenzone").empty();
 	}
 	for(var i = 0;i<this.players.length;i++) {
 		var player = this.players[i];
@@ -336,12 +339,21 @@ board.prototype.scanPlayer = function(first) {
 			oritop = player.tokenElement.offset().top;
 			orileft = player.tokenElement.offset().left;
 		}
+		var parent = player.tokenElement.parent();
+		player.tokenElement.detach();
+		if(player.tokenElement.data("lastPos") != undefined) {
+			if(player.tokenElement.data("lastPos").tokenElement.children().length == 0) { 
+				player.tokenElement.data("lastPos").tokenElement.parent().css("display","none"); 
+			}
+		}
 		player.position.players.push(player);
-		player.position.htmlElement.find("div.tokenzone").append(player.tokenElement);
+		player.position.tokenElement.append(player.tokenElement);
+		player.tokenElement.data("lastPos",player.position);
+		player.position.tokenElement.parent().css("display","block");
 		if(player.local) {
 			if(!first) {
 				var localplayer = player;
-				var usercontainer = player.position.htmlElement.find("div.tokenzone");
+				var usercontainer = player.position.tokenElement;
 				var anmiblock = this.anmiblock;
 				var newtop= player.tokenElement.offset().top;
 				var newleft= player.tokenElement.offset().left;
@@ -357,6 +369,9 @@ board.prototype.scanPlayer = function(first) {
 			}
 		}
 		player.creditCal(player.credit);
+		if(player.position.tokenElement.children().length > 0) {
+			player.position.playermenu.update(true);
+		}
 	}
 }
 board.prototype.upgradeBrick = function(brick,type) {

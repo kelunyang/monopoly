@@ -1,0 +1,854 @@
+﻿<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+	<meta charset="utf-8">
+	<title>遊戲設定</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.1.2/css/swiper.min.css">
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css">
+	<link rel="stylesheet" href="pseudoWindow.css"/>
+	<style>
+	body {
+		background-color: #E6E6E6;
+		margin: 20px;
+	}
+	body>footer {
+		font-family: Verdana, Geneva, sans-serif;
+		font-size: 10px;
+		position: fixed;
+		bottom:0px;
+		left:0px;
+		width:100%;
+		height: 15px;
+		text-align: right;
+		border-top: 1px solid #EEE;
+	}
+	body>h1 {
+		font-family: "Microsoft YaHei";
+		font-size: 30px;
+		font-weight: normal;
+		cursor: default;
+		position: fixed;
+		top:0px;
+		width: 100%;
+		margin: 0px;
+		padding: 10px 0px;
+		background-color: #E6E6E6;
+	}
+	div.subcontrol {
+		display: none;
+	}
+	div.subcontrol>h2 {
+		font-family: "Yu Gothic", SimHei;
+		font-size: 22px;
+		font-weight: normal;
+	}
+	div.subcontrol h3 {
+		font-family: "Yu Gothic", SimHei;
+		font-size: 18px;
+		font-weight: normal;
+		margin: 5px;
+	}
+	div.subcontrol {
+		font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
+		margin-top: 30px;
+	}
+	div.subcontrol>p>i {
+		display: block;
+		float: left;
+		margin: 5px;
+	}
+	div.subcontrol>p>span {
+		display: block;
+	}
+	div.subcontrol>p.message,p.message {
+		text-align:center;
+		font-size:16px;
+		font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
+		cursor: default;
+	}
+	div.subcontrol>p.message>i,p.message>i {
+		display:inline-block;
+		float: none;
+		margin:3px;
+	}
+	div.subcontrol>p.error,div.subcontrol>p.empty {
+		display: none;
+	}
+	div#board {
+		width: 800px;
+		height: 300px;
+	}
+	ul#boardmenucontainer {
+		width: 100%;
+		height: 100%;
+	}
+	ul#boardmenucontainer>li {
+		display:flex;
+	}
+	span.boarditem {
+		font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
+		font-size: 18px;
+		color: black;
+		transition: all 0.2s;
+		transition-delay: 300ms;
+		text-align: center;
+		display: block;
+		cursor: default;
+	}
+	span.boarditem:hover {
+		background-color: #EEE;
+	}
+	span.boarditem:active {
+		background-color: #666;
+		color: white;
+		transition: none;
+	}
+	li.positionController {
+		background-color: #E6E6E6;
+		margin: 2px;
+		position: absolute;
+		cursor: default;
+		transition: all 0.2s;
+		transition-delay: 300ms;
+		z-index:10;
+	}
+	li.positionController:hover {
+		color: #999;
+	}
+	li.positionController:active {
+		color: #EEE;
+		transition: none;
+	}
+	li#boardup {
+		top: 0px;
+	}
+	li#boarddown {
+		top: 50px;
+	}
+	li.button,li.disabled,li.embutton {
+		display: inline-block;
+		font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
+		width: auto;
+		height: 20px;
+		margin:2px;
+		padding: 3px;
+		border: 3px solid #06C;
+		color: #FFF;
+		background-color: #06C;
+		cursor: default;
+		min-width: 50px;
+		text-align: center;
+		transition: all 0.2s;
+		transition-delay: 300ms;
+	}
+	li.button>i {
+		margin:2px;
+	}
+	li.button:hover {
+		border: 3px solid #09F;
+	}
+	li.button:active,li.embutton:active {
+		background-color: white;
+		transition: none;
+	}
+	li.button,li.disabled {
+		border: 3px solid #06C;
+		background-color: #06C;
+	}
+	li.button:active {
+		border: 3px solid #06C;
+		color: #06C;
+	}
+	li.embutton {
+		border: 3px solid #933;
+		background-color: #933;
+	}
+	li.embutton:hover {
+		border: 3px solid #C33;
+	}
+	li.embutton:active {
+		border: 3px solid #933;
+		color: #933;
+	}
+	li.disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
+	div#boardDetail {
+		width: 800px;
+	}
+	div#boardDetail>form>ol>li>ul>li {
+		display: block;
+	}
+	div#boardDetail>form>ol>li>ul>li>a.mapsources {
+		color: #036;
+		text-decoration: none;
+		transition: all 0.2s;
+		transition-delay: 300ms;
+	}
+	div#boardDetail>form>ol>li>ul>li>a.mapsources:hover {
+		color: #06C;
+		text-decoration: underline;
+	}
+	div#boardDetail>form>ol>li>ul>li>a.mapsources:active {
+		color:#039;
+		transition: none;
+	}
+	i.hlogos {
+		margin:3px;
+		width: 35px;
+		text-align: center;
+		color: #2972CC;
+		transition: all 0.2s;
+		transition-delay: 300ms;
+	}
+	i.hlogos:hover {
+		color: black;
+		background-color: #999;
+	}
+	i.hlogos:active {
+		color: black;
+		transition: none;
+	}
+	div#content {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	ul.controlitem {
+		display: inline-block;;
+		width: 150px;
+		height: 150px;
+		cursor: default;
+		padding: 0px;
+		border: 3px solid #E6E6E6;
+		transition: all 0.2s;
+		transition-delay: 300ms;
+	}
+	ul.controlitem:hover {
+		border:3px solid #EEE;
+	}
+	ul.controlitem:active {
+		border: 3px solid #EEE;
+		background-color: #EEE;
+		transition: none;
+	}
+	ul.controlitem li {
+		display: block;
+		font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
+		font-size: 14px;
+		padding: 0px;
+		margin: 0px;
+		text-align: center;
+		height: 20px;
+	}
+	ul.controlitem li:first-child {
+		color: #2972CC;
+		height: 80px;
+		padding: 10px;
+	}
+	span#subitem {
+		font-size: 22px;
+		margin-left: 5px;
+	}
+    button.userdetailBtn {
+		background-color: white;
+		border: 1px solid white;
+		padding: 0px;
+		transition: all 0.2s;
+		transition-delay: 300ms;
+    }
+    button.userdetailBtn:hover {
+		color: #06C;
+    }
+    button.userdetailBtn:active {
+		border: 1px solid white;
+		transition: none;
+    }
+	table.usertables>thead>tr>th {
+		min-width: 35px;
+	}
+	table.usertables>tbody>tr>td {
+		text-align: center;
+	}
+	</style>
+</head>
+<body>
+	<h1><i class="fa fa-1x fa-home hlogos" id="homelogo"></i><i class="fa fa-1x fa-cogs hlogos" id="clogo"></i>遊戲設定<span id="subitem"><i class="fa fa-1x fa-angle-double-right"></i><span>測試</span></span></h1>
+	<div id="content">
+		<div id="icons" class="subcontrol"></div>
+		<div id="board" class="subcontrol">
+			<h2>選擇一個棋盤</h2>
+			<ul>
+				<li id="newmap" class="button"><i class="fa fa-plus"></i>新增棋盤</li>
+			</ul>
+			<p class="loading message"><i class="fa fa-spinner fa-pulse"></i>載入中...</p>
+			<p class="error message"><i class="fa fa-exclamation-triangle"></i>載入失敗</p>
+			<p class="empty message"><i class="fa fa-exclamation"></i>無資料</p>
+			<ul id="boardmenucontainer" class="swiper-container">
+				<li id="boardmenu" class="swiper-wrapper"></li>
+				<li class="swiper-scrollbar"></li>
+				<li id="boardup" class="positionController"><i class="fa-arrow-up fa fa-2x"></i></li>
+				<li id="boarddown" class="positionController"><i class="fa-arrow-down fa fa-2x"></i></li>
+			</ul>
+		</div>
+		<div id="user" class="subcontrol">
+			<h2>檢視用戶資訊</h2>
+			<p class="loading message"><i class="fa fa-spinner fa-pulse"></i>載入中...</p>
+			<p class="error message"><i class="fa fa-exclamation-triangle"></i>載入失敗</p>
+			<p class="empty message"><i class="fa fa-exclamation"></i>無資料</p>
+			<table cellspacing="0" width="100%" id="userlist" class="usertables">
+				<thead>
+					<tr>
+						<th>帳號</th>
+						<th>稱呼</th>
+						<th>圖示</th>
+						<th>權限</th>
+						<th>&nbsp;</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+		<div id="userDetail" class="subcontrol">
+			<h2>檢視用戶資訊</h2>
+			<p class="loading message"><i class="fa fa-spinner fa-pulse"></i>載入中...</p>
+			<p class="error message"><i class="fa fa-exclamation-triangle"></i>載入失敗</p>
+			<p class="empty message"><i class="fa fa-exclamation"></i>無資料</p>
+			<table cellspacing="0" width="100%" id="userdetaillist" class="usertables">
+				<thead>
+					<tr>
+						<th>操作時間</th>
+						<th>動作</th>
+						<th>內容</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+		<div class="subcontrol" id="boardDetail">
+			<h2>設定棋盤</h2>
+			<p><i class="fa-exclamation-triangle fa fa-3x"></i><span>請按照下面檔名上傳指定檔案，本系統支援的棋盤資料格式檔案為Excel-XML（XML資料表2003）格式，或下載棋盤檔案下方的範例檔／之前上傳的版本，編輯後上傳，請勿在Excel檔案中放置任何圖片</span></p>
+			<p class="loading message"><i class="fa fa-spinner fa-pulse"></i><span>上傳中...</span></p>
+			<p class="error message"><i class="fa fa-exclamation-triangle"></i>上傳失敗</p>
+			<p class="success message"><i class="fa fa-check"></i>上傳完成</p>
+			<form id="mapeditor">
+				<ol><input type="hidden" id="mapeditMode"/>
+					<li>
+						<h3>地圖名稱</h3>
+						<input type="text" id="mapname" placeholder="請輸入地圖名稱"/>
+					</li>
+					<li>
+						<h3>地圖備註</h3>
+						<textarea id="mapcomment" placeholder="請輸入地圖名稱"></textarea>
+					</li>
+					<li>
+						<h3>捷徑設定檔</h3>
+						<ul>
+							<li><span>範例檔案：</span><a href="data/shortcuts.xml" target="_blank" title="捷徑設定檔" class="mapsources">shortcuts.xml</a></li>
+							<li><input type="file" class="mapfile" id="shortcutsConfig" name="pic" accept="text/xml"></li>
+							<li class="preview">
+								<p class="loading message"><i class="fa fa-spinner fa-pulse"></i>載入中...</p>
+								<p class="wrong message"><i class="fa fa-times"></i>格式錯誤，請檢查檔案須為XML格式</p>
+								<p class="error message"><i class="fa fa-exclamation-triangle"></i>讀取錯誤，請檢查檔案是否完整</p>
+								<p class="viewer message"><i class="fa fa-search"></i><span>&nbsp;</span></p>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<h3>問題設定檔</h3>
+						<ul>
+							<li><span>範例檔案：</span><a href="data/questions.xml" target="_blank" title="問題設定檔" class="mapsources">questions.xml</a></li>
+							<li><input type="file" class="mapfile" id="questionsConfig" name="pic" accept="text/xml"></li>
+							<li class="preview">
+								<p class="loading message"><i class="fa fa-spinner fa-pulse"></i>載入中...</p>
+								<p class="wrong message"><i class="fa fa-times"></i>格式錯誤，請檢查檔案須為XML格式</p>
+								<p class="error message"><i class="fa fa-exclamation-triangle"></i>讀取錯誤，請檢查檔案是否完整</p>
+								<p class="viewer message"><i class="fa fa-search"></i><span>&nbsp;</span></p>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<h3>時代設定檔</h3>
+						<ul>
+							<li><span>範例檔案：</span><a href="data/stages.xml" target="_blank" title="時代設定檔" class="mapsources">stages.xml</a></li>
+							<li><input type="file" class="mapfile" id="stagesConfig" name="pic" accept="text/xml"></li>
+							<li class="preview">
+								<p class="loading message"><i class="fa fa-spinner fa-pulse"></i>載入中...</p>
+								<p class="wrong message"><i class="fa fa-times"></i>格式錯誤，請檢查檔案須為XML格式</p>
+								<p class="error message"><i class="fa fa-exclamation-triangle"></i>讀取錯誤，請檢查檔案是否完整</p>
+								<p class="viewer message"><i class="fa fa-search"></i><span>&nbsp;</span></p>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<h3>升級物品設定檔</h3>
+						<ul>
+							<li><span>範例檔案：</span><a href="data/upgrades.xml" target="_blank" title="升級物品設定檔" class="mapsources">upgrades.xml</a></li>
+							<li><input type="file" class="mapfile" id="upgradesConfig" name="pic" accept="text/xml"></li>
+							<li class="preview">
+								<p class="loading message"><i class="fa fa-spinner fa-pulse"></i>載入中...</p>
+								<p class="wrong message"><i class="fa fa-times"></i>格式錯誤，請檢查檔案須為XML格式</p>
+								<p class="error message"><i class="fa fa-exclamation-triangle"></i>讀取錯誤，請檢查檔案是否完整</p>
+								<p class="viewer message"><i class="fa fa-search"></i><span>&nbsp;</span></p>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<h3>事件設定檔</h3>
+						<ul>
+							<li><span>範例檔案：</span><a href="data/incidents.xml" target="_blank" title="事件設定檔" class="mapsources">incidents.xml</a></li>
+							<li><input type="file" class="mapfile" id="incidentsConfig" name="pic" accept="text/xml"></li>
+							<li class="preview">
+								<p class="loading message"><i class="fa fa-spinner fa-pulse"></i>載入中...</p>
+								<p class="wrong message"><i class="fa fa-times"></i>格式錯誤，請檢查檔案須為XML格式</p>
+								<p class="error message"><i class="fa fa-exclamation-triangle"></i>讀取錯誤，請檢查檔案是否完整</p>
+								<p class="viewer message"><i class="fa fa-search"></i><span>&nbsp;</span></p>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<h3>地圖設定檔</h3>
+						<ul>
+							<li><span>範例檔案：</span><a href="data/roads.xml" target="_blank" title="地圖設定檔" class="mapsources">roads.xml</a></li>
+							<li><input type="file" class="mapfile" id="roadsConfig" name="pic" accept="text/xml"></li>
+							<li class="preview">
+								<p class="loading message"><i class="fa fa-spinner fa-pulse"></i>載入中...</p>
+								<p class="wrong message"><i class="fa fa-times"></i>格式錯誤，請檢查檔案須為XML格式</p>
+								<p class="error message"><i class="fa fa-exclamation-triangle"></i>讀取錯誤，請檢查檔案是否完整</p>
+								<p class="viewer message"><i class="fa fa-search"></i><span>&nbsp;</span></p>
+							</li>
+						</ul>
+					</li>
+				</ol>
+			</form>
+			<ul style="text-align:right">
+				<li id="uploadmap" class="button"><i class="fa fa-upload"></i>上傳地圖</li>
+				<li id="delmap" class="embutton"><i class="fa fa-trash"></i>刪除地圖</li>
+			</ul>
+		</div>
+	</div>
+	<footer>Kelunyang@2016 CC-BY-NC-SA</footer>
+	<div id="pseudoWindow">
+		<div id="popBackground">&nbsp;</div>
+		<ul class="popWindow" id="popError">
+			<li><h1>權限錯誤</h1></li>
+			<li id="elogo"><i class="fa fa-5x fa-exclamation-triangle"></i></li>
+			<li id="emessage">你尚未登入，或者是你的權限無法存取本功能，如果錯誤訊息重複發生，請聯絡管理員</li>
+			<li id="ebutton" class="buttonarea">
+				<ul>
+					<li class="button" id="enter"><i class="fa fa-arrow-left"></i>關閉視窗</li>
+					<li class="embutton" id="enter"><i class="fa fa-home"></i>回到首頁</li>
+				</ul>
+			</li>
+		</ul>
+	</div>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="/node_modules/socket.io-stream/socket.io-stream.js"></script>
+	<script src="https://login.persona.org/include.js"></script>
+	<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.1.2/js/swiper.jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+	<script src="http://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
+	<script src="ui.js"></script>
+    <script>
+	socket = io.connect();
+	fileupload = io.connect("/fileupload");
+	popWindows = new pseudoWindow($("div#pseudoWindow"));
+	mapFiles = new Array();
+	var controls = [
+		{
+			name:"系統設定",
+			icon:"cog",
+			item:"board",
+			behavior: function() {
+				socket.emit('requestboardList');
+			}
+		},
+		{
+			name:"地圖設定",
+			icon:"map-o",
+			item:"board",
+			behavior: function() {
+				socket.emit('requestboardList');
+			}
+		},
+		{
+			name:"用戶設定",
+			icon:"user",
+			item:"user",
+			behavior: function() {
+				socket.emit('requestuserList');
+			}
+		},
+		{
+			name:"排行榜",
+			icon:"list-ol",
+			item:"board",
+			behavior: function() {
+				socket.emit('requestboardList');
+			}
+		},
+	];
+	$().ready(function() {
+		var userTable = $("table#userlist").DataTable({
+		  columnDefs: [
+			{
+			  render: function ( data, type, full, meta ) {
+			      return "<button class=\"userdetailBtn fa fa-search viewuserBtn\" data-userid=\"" + data + "\">&nbsp;</button><button class='userdetailBtn removeuserBtn fa fa-trash' data-userid=\"" + data + "\">&nbsp</button>";
+			  },
+			  targets: -1
+			},
+			{
+				render: function( data, type, full, meta) {
+					return "<span style='text-align:left'>"+data+"</span>";
+				},
+				targets: 0
+			},
+			{
+				render: function( data, type, full, meta) {
+					var icon = $("<i></i>");
+					icon.addClass("fa");
+					icon.addClass("fa-"+data.icon);
+					icon.css("color","#"+data.color);
+					return icon[0].outerHTML;
+				},
+				targets: 2
+			},
+			{
+				render: function( data, type, full, meta) {
+					return data == 0 ? "一般" : "管理員";
+				},
+				targets: 3
+			}]
+		});
+		var userdTable = $("table#userdetaillist").DataTable({
+		  columnDefs: [
+			{
+			  render: function ( data, type, full, meta ) {
+				var date = moment.unix(data).format("YYYY-MM-DD HH:mm:ss");
+				return "<span style='text-align:center'>"+date+"</span>";
+			  },
+			  width: "150px",
+			  targets: 0
+			},
+			{
+			  render: function ( data, type, full, meta ) {
+				return data == 0 ? "創建" : data == 1 ? "登入" : data == 2 ? "登出" : data == 3 ? "修改" : "刪除";
+			  },
+			  width: "100px",
+			  targets: 1
+			}]
+		});
+		$(".subcontrol").css("display","block");
+		socket.on('login', function(data){
+			console.log(data);
+		});
+		socket.emit('checkUser', {level: 1});	//登入檢查
+		socket.on("getUser", function(data) {
+			if(data == null) {
+				popWindows.resetWindows();
+				popWindows.opacityValue = 0.7;
+				popWindows.errorWindow("你尚未登入，無法存取本功能，如果錯誤訊息重複發生，請聯絡管理員！",1);
+			}
+			if(data.level == 0) {
+				popWindows.resetWindows();
+				popWindows.opacityValue = 0.7;
+				popWindows.errorWindow("你的權限不足，無法存取本功能，如果錯誤訊息重複發生，請聯絡管理員！",0);
+			}
+		});
+		socket.on('userdeldone', function(data){
+			$("div#icons>ul:nth-child(3)").trigger("click");
+		});
+		socket.on('getuserList', function(data){
+			$("div#user>p.loading").css("display","none");
+			if(data != null) {
+				if(data.length > 0) {
+					$("table#userlist").css("display","block");
+					userTable.clear().draw();
+					for(var i=0;i<data.length;i++) {
+						var icon = { color:data[i].color, icon:data[i].icon };
+						userTable.row.add([
+							data[i].email,
+							data[i].nickname,
+							icon,
+							data[i].level,
+							data[i].email
+						]).draw(false);
+					}
+					$("button.userdetailBtn").off();
+					$("button.viewuserBtn").on("click",function() {
+						$("div.subcontrol").css("display","none");
+						$("p.message").css("display","none");
+						$("div#userDetail").css("display","block");
+						socket.emit('requestuserDetail', {user: $(this).data("userid")});
+					});
+					$("button.removeuserBtn").on("click",function() {
+						socket.emit('removeuser', {user: $(this).data("userid")});
+					});
+				} else {
+					$("table#userlist").css("display","none");
+					$("div#user>p.empty").css("display","block");
+				}
+			} else {
+				$("table#userlist").css("display","none");
+				$("div#user>p.error").css("display","block");
+			}
+		});
+		socket.on('getuserDetail', function(data){
+			$("div#userDetail>p.loading").css("display","none");
+			if(data != null) {
+				if(data.length > 0) {
+					$("table#userdetaillist").css("display","block");
+					userdTable.clear().draw();
+					for(var i=0;i<data.length;i++) {
+						userdTable.row.add([
+							data[i].date,
+							data[i].action,
+							data[i].comment,
+						]).draw(false);
+					}
+				} else {
+					$("table#userdetaillist").css("display","none");
+					$("div#userDetail>p.empty").css("display","block");
+				}
+			} else {
+				$("div#userDetail>p.loading").css("display","none");
+				$("div#userDetail>p.error").css("display","block");
+			}
+		});
+		socket.on('getboardList', function(data){
+			$("div#board>p.loading").css("display","none");
+			if(data != null) {
+				if(data.length > 0) {
+					boardmenu.removeAllSlides();
+					for(var i=0;i<data.length;i++) {
+						var slide = $("<span></span>");
+						slide.addClass("swiper-slide");
+						slide.addClass("boarditem");
+						slide.text(data[i].name+"(編號："+data[i].id+")");
+						//slide.text(data[i].name);
+						slide.data("id",data[i].id);
+						slide.on("click",function() {
+							mapFiles = new Array();
+							$("div#boardDetail>h2").text("修改地圖");
+							$("div.subcontrol").css("display","none");
+							$("li#delmap").css("display","inline-block");
+							$("div#boardDetail").css("display","block");
+							socket.emit("querymap", $(this).data("id"));
+						});
+						boardmenu.appendSlide(slide);
+					};
+					$("div#board>ul#boardmenucontainer").css("display","block");
+				} else {
+					$("div#board>p.empty").css("display","block");
+				}
+			} else {
+				$("div#board>p.error").css("display","block");
+			}
+		});
+		socket.on("gameboardModified", function(data) {
+			if(mapFiles.length > 0) {
+				var file = mapFiles.pop();
+				file.upload(data.type);
+			} else {
+				$("div#boardDetail>p.loading").css("display","none");
+				$("div#boardDetail>p.success").css("display","block");
+				$("form#mapeditor")[0].reset();
+			}
+		});
+		socket.on("gameboardRemoved", function(data) {
+			$("div#icons>ul:nth-child(2)").trigger("click");
+		});
+		socket.on("gameboardInfo", function(data) {
+			$("input#mapname").val(data.data.name);
+			$("textarea#mapcomment").val(data.data.comment);
+			$("input#mapeditMode").val(data.data.id);
+			var mapdetails = $("form#mapeditor>ol>li");
+			for(var i=3;i<mapdetails.length;i++) {
+				$(mapdetails[i]).find("span").text("範例檔案：");
+				$(mapdetails[i]).find("a.mapsources").attr("href","data/"+data.data.id+"/"+$(mapdetails[3]).find("a.mapsources").text());
+			}
+			for(var i=0;i<data.files.length;i++) {
+				if(data.files[i] == "shortcuts.xml") {
+					$(mapdetails[2]).find("span").text("已上傳的檔案：");
+					$(mapdetails[2]).find("a.mapsources").attr("href","data/"+data.data.id+"/shortcuts.xml");
+				} else if(data.files[i] == "questions.xml") {
+					$(mapdetails[3]).find("span").text("已上傳的檔案：");
+					$(mapdetails[3]).find("a.mapsources").attr("href","data/"+data.data.id+"/questions.xml");
+				} else if(data.files[i] == "stages.xml") {
+					$(mapdetails[4]).find("span").text("已上傳的檔案：");
+					$(mapdetails[4]).find("a.mapsources").attr("href","data/"+data.data.id+"/stages.xml");
+				} else if(data.files[i] == "upgrades.xml") {
+					$(mapdetails[5]).find("span").text("已上傳的檔案：");
+					$(mapdetails[5]).find("a.mapsources").attr("href","data/"+data.data.id+"/upgrades.xml");
+				} else if(data.files[i] == "incidents.xml") {
+					$(mapdetails[6]).find("span").text("已上傳的檔案：");
+					$(mapdetails[6]).find("a.mapsources").attr("href","data/"+data.data.id+"/incidents.xml");
+				} else if(data.files[i] == "roads.xml") {
+					$(mapdetails[7]).find("span").text("已上傳的檔案：");
+					$(mapdetails[7]).find("a.mapsources").attr("href","data/"+data.data.id+"/roads.xml");
+				}
+			}
+		});
+		socket.on("gameboardmanageError", function(data) {
+			$("div#boardDetail>p.message").css("display","none");
+			$("div#boardDetail>p.error").css("display","block");
+		});
+		var boardmenu = new Swiper('#boardmenucontainer', {
+			scrollbar: '.swiper-scrollbar',
+			scrollbarHide: false,
+			nextButton: '#boarddown',
+			prevButton: '#boardup',
+			direction: 'vertical',
+			slidesPerView: 8
+		});
+		$("div#board>ul#boardmenucontainer").css("display","none");
+		for(var i=0;i<controls.length;i++) {
+			var ul = $("<ul></ul>");
+			var icon = $("<li></li>");
+			icon.append("<i class=\"fa fa-5x fa-"+controls[i].icon+"\"></i>");
+			ul.append(icon);
+			var title = $("<li></li>");
+			title.text(controls[i].name);
+			ul.append(title);
+			ul.data("icon",controls[i].icon);
+			ul.data("name",controls[i].name);
+			ul.data("page",controls[i].item);
+			ul.data("behavior",controls[i].behavior);
+			ul.on("click",function() {
+				$("i#clogo").removeClass();
+				$("i#clogo").addClass("fa");
+				$("i#clogo").addClass("fa-1x");
+				$("i#clogo").addClass("fa-arrow-left");
+				$("span#subitem>span").text($(this).data("name"));
+				$("span#subitem").css("display","inline");
+				$("div.subcontrol").css("display","none");
+				$("p.message").css("display","none");
+				$("div#"+$(this).data("page")).css("display","block");
+				$("div#"+$(this).data("page")+">p.loading").css("display","block");
+				$(this).data("behavior")();
+			});
+			ul.addClass("controlitem");
+			$("div#icons").append(ul);
+		}
+		$("i#homelogo").on("click",function() {
+			location.href = "board.htm";
+		});
+		$("i#clogo").on("click",function() {
+			$("div.subcontrol").css("display","none");
+			$("i#clogo").removeClass();
+			$("i#clogo").addClass("fa");
+			$("i#clogo").addClass("fa-1x");
+			$("i#clogo").addClass("fa-cogs");
+			$("span#subitem").css("display","none");
+			$("div#icons").css("display","block");
+		});
+		$("span#subitem").css("display","none");
+		$("#board").css("display","none");
+		$("#boardDetail").css("display","none");
+		$("li#newmap").on("click",function() {
+			mapFiles = new Array();
+			$("div.subcontrol").css("display","none");
+			$("li#delmap").css("display","none");
+			$("div#boardDetail>h2").text("新增地圖");
+			$("form#mapeditor")[0].reset();
+			$("div#boardDetail").css("display","block");
+		});
+		$("li#uploadmap").on("click", function() {
+			$("div#boardDetail>p.message").css("display","none");
+			$("div#boardDetail>p.loading").css("display","block");
+			socket.emit('uploadmap', {type: $("input#mapeditMode").val(), name: $("input#mapname").val(),comment: $("textarea#mapcomment").val()});
+		});
+		$("li#delmap").on("click", function() {
+			$("div#boardDetail>p.message").css("display","none");
+			$("div#boardDetail>p.loading").css("display","block");
+			socket.emit('removemap', {id: $("input#mapeditMode").val()});
+		});
+		var inputlist = document.getElementsByTagName("input");
+		for(var i=0;i<inputlist.length;i++) {
+			if($(inputlist[i]).hasClass("mapfile")) {
+				inputlist[i].addEventListener('change', function(file) {
+					var node = $(this);
+					node.parent().next("li.preview").find("p.message").css("display","none");
+					node.parent().next("li.preview").find("p.loading").css("display","block");
+					var file = this.files[0];
+					if(file.type.match("text/xml")) {
+						var reader = new FileReader();
+						reader.onload = function(e) {
+							node.parent().next("li.preview").find("p.loading").css("display","none");
+							try {
+								var xmldoc = $.parseXML(reader.result);
+								var xml = $(xmldoc);
+								var worksheets = xml.find("Worksheet");
+								var rows = xml.find("Row");
+								var message = "";
+								switch(node.attr("id")) {
+									case "roadsConfig":
+										message = "共有"+worksheets.length+"個時代，"+rows.length+"個城鎮，第一個城鎮為："+$($(rows[0]).find("Cell>Data")[0]).text();
+									break;
+									case "incidentsConfig":
+										message = "共有"+worksheets.length+"個時代，"+rows.length+"個事件，第一個事件為："+$($(rows[0]).find("Cell>Data")[0]).text();
+									break;
+									case "upgradesConfig":
+										message = "共有"+worksheets.length+"個時代，"+rows.length+"個升級物品，第一個升級物件為："+$($(rows[0]).find("Cell>Data")[0]).text();
+									break;
+									case "stagesConfig":
+										message = "共有"+rows.length+"個時代，第一個時代為："+$($(rows[0]).find("Cell>Data")[0]).text();
+									break;
+									case "shortcutsConfig":
+										message = "共有"+rows.length+"條捷徑，第一個捷徑為："+$($(rows[0]).find("Cell>Data")[0]).text();
+									break;
+									case "questionsConfig":
+										message = "共有"+worksheets.length+"個時代，共有"+rows.length+"個問題";
+									break;
+								}
+								mapFiles.push({ 
+									id: node.attr("id"), 
+									file: file, 
+									upload: function(boardid) {
+										var stream = ss.createStream();
+										var uFile = this.file;
+										var blobStream = ss.createBlobReadStream(uFile);
+										var size = 0;
+										blobStream.on("data", function(chunk) {
+											size += chunk.length;
+											console.log(Math.floor(size / uFile.size * 100) + '%');
+											if(size == chunk.length) {
+												if(mapFiles.length > 0) {
+													var file = mapFiles.pop();
+													file.upload(boardid);
+												} else {
+													$("div#boardDetail>p.loading").css("display","none");
+													$("div#boardDetail>p.success").css("display","block");
+													$("form#mapeditor")[0].reset();
+												}
+											}
+										});
+										ss(fileupload).emit("mapConfigs", stream, {boardid: boardid,size:uFile.size, type: this.id.replace("Config","")});
+										blobStream.pipe(stream);
+									}
+								});
+								node.parent().next("li.preview").find("p.viewer>span").text(message);
+								node.parent().next("li.preview").find("p.viewer").css("display","block");
+							} catch(e) {
+								node.parent().next("li.preview").find("p.error").css("display","block");
+							}
+						}
+						reader.readAsText(this.files[0]); 
+					} else {
+						node.parent().next("li.preview").find("p.loading").css("display","none");
+						node.parent().next("li.preview").find("p.wrong").css("display","block");
+					}
+				});
+			}
+		}
+		$(".subcontrol").css("display","none");
+		$("#icons").css("display","block");
+	});
+    </script>
+</body>
+</html>

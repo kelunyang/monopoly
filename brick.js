@@ -22,10 +22,45 @@ function brick(upgrade,index) {
 	this.htmlElement.append(this.upgradeElement);
 	this.title = $("<h1></h1>");
 	this.htmlElement.append(this.title);
-	this.tokenElement = $("<div></div>");
+	var container = $("<ul></ul>");
+	container.addClass("brickplayerContainer");
+	container.addClass("swiper-container");
+	var slider = $("<li></li>");
+	slider.addClass("swiper-scrollbar");
+	var upbutton = $("<li></li>");
+	upbutton.addClass("brickplayerUB");
+	var upicon = $("<i></i>");
+	upicon.addClass("fa");
+	upicon.addClass("fa-arrow-left");
+	upicon.addClass("fa-1x");
+	upbutton.append(upicon);
+	var downbutton = $("<li></li>");
+	downbutton.addClass("brickplayerDB");
+	var downicon = $("<i></i>");
+	downicon.addClass("fa");
+	downicon.addClass("fa-arrow-right");
+	downicon.addClass("fa-1x");
+	downbutton.append(downicon);
+	this.tokenElement = $("<li></li>");
 	this.tokenElement.addClass("tokenzone");
-	this.htmlElement.append(this.tokenElement);
+	this.tokenElement.addClass("swiper-wrapper");
+	this.tokenElement.data("lastPos",undefined);
+	container.append(this.tokenElement);
+	container.append(slider);
+	container.append(upbutton);
+	container.append(downbutton);
+	this.htmlElement.append(container);
+	//this.htmlElement.append(this.tokenElement);
 	this.normalElement();
+	this.playermenu = new Swiper(container, {
+		scrollbar: slider,
+		nextButton: downbutton,
+		prevButton: upbutton,
+		slidesPerView:2,
+		height:20,
+		width:40,
+		loop:true
+	});
 }
 brick.prototype.activeElement = function() {
 	if(this.active) {
@@ -47,9 +82,15 @@ brick.prototype.normalElement = function() {
 	this.htmlElement.addClass("brick");
 	this.htmlElement.animate({opacity:0},300);
 }
-brick.prototype.getChance = function() {
-	this.incident.sort(function(a,b) {return 0.5-Math.random();});
-	return this.incident[0];
+brick.prototype.getChance = function(stage) {
+	var incidents = new Array();
+	for(var i=0;i<this.incident.length;i++) {
+		if(this.incident[i].stage == stage) {
+			incidents.push(this.incident[i]);
+		}
+	}
+	incidents.sort(function(a,b) {return 0.5-Math.random();});
+	return incidents[0];
 }
 brick.prototype.getCurrentValue = function() {
 	var rentsum = 0;
@@ -63,8 +104,8 @@ brick.prototype.getRent = function() {
 }
 brick.prototype.startWindow = function(window) {
 	var oriobj = this;
-	this.htmlElement.on("click",function() {
-		if($(this).hasClass("active")) {
+	this.upgradeElement.on("click",function() {
+		if(oriobj.htmlElement.hasClass("active")) {
 			window.infoWindow(oriobj.upgradeDB,0,oriobj.owner,oriobj,1);
 		}
 	});
