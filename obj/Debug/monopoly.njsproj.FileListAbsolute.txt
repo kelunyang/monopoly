@@ -1,0 +1,2 @@
+F:\onedrive\Webapps\monopoly\obj\Debug\monopoly.njsprojResolveAssemblyReference.cache
+F:\onedrive\Webapps\monopoly\bin\Microsoft.NodejsTools.WebRole.dll

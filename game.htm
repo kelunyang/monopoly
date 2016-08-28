@@ -4,8 +4,8 @@
 		<title>線上大富翁：北台灣開發</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 		<!-- CSS -->
-		<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"/>
-		<link rel="stylesheet" href="http://cdn.bootcss.com/Swiper/3.1.2/css/swiper.min.css"/>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/css/swiper.min.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
 		<link rel="stylesheet" href="pseudoWindow.css"/>
 		<style type="text/css">
 			div#anmiblock {
@@ -218,7 +218,58 @@
 				background-color: white;
 				transition: none;
 			}
-			aside nav i {
+			ul#exitgame {
+				font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
+				border: 3px solid #C60;
+				color: #FFF;
+				width: 170px;
+				padding: 5px 20px;
+				height: 20px;
+				background-color: #C60;
+				cursor: default;
+				transition: all 0.2s;
+				transition-delay: 300ms;
+			}
+			ul#exitgame li {
+				display: block;
+			}
+			ul#exitgame:hover {
+				border: 3px solid #FC0;
+			}
+			ul#exitgame:active {
+				border: 3px solid #FC0;
+				color: #FC0;
+				background-color: white;
+				transition: none;
+			}
+			aside nav>i, ul#exitgame>i {
+				float: left;
+			}
+			ul#nextstep {
+				font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
+				border: 3px solid #C30;
+				color: #FFF;
+				width: 170px;
+				padding: 5px 20px;
+				height: 20px;
+				background-color: #C30;
+				cursor: default;
+				transition: all 0.2s;
+				transition-delay: 300ms;
+			}
+			ul#nextstep li {
+				display: block;
+			}
+			ul#nextstep:hover {
+				border: 3px solid #C66;
+			}
+			ul#nextstep:active {
+				border: 3px solid #C66;
+				color: #C66;
+				background-color: white;
+				transition: none;
+			}
+			aside nav>i, ul#nextstep>i {
 				float: left;
 			}
 			aside nav div {
@@ -276,7 +327,7 @@
 				background: white;
 				color: white;
 				padding: 5px;
-				height: 55px;
+				/*height: 55px;*/
 				overflow: hidden;
 				margin: 1px 0px;
 			}
@@ -296,7 +347,25 @@
 				border-right:6px solid maroon;
 			}
 			li#playerlist {
-				height: 225px;
+				height: 130px;
+			}
+			li#playerlist ul.player {
+				padding-left: 20px;
+				height: 20px;
+				opacity: 0.2;
+			}
+			li#playerlist ul.player>li {
+				float: left;
+			}
+			li#playerlist ul.player>li#playericon {
+				min-width: 20px;
+				list-style: none;
+			}
+			li#playerlist ul.player>li#playericon>i {
+				font-size: 1.5em;
+			}
+			li#playerlist ul.player>li#playercredit {
+				display: none;
 			}
 			ul#leaderboardcontainer {
 				width: 100%;
@@ -312,7 +381,7 @@
 			}
 			li#leaderboard>span.boarditem {
 				display:block;
-				height: 75px;
+				height: 20px;
 			}
 			li.leaderController {
 				background-color: #E6E6E6;
@@ -338,13 +407,50 @@
 				top: -2px;
 			}
 			li#leaderboarddown {
-				top: 206px;
+				top: 110px;
 			}
 			ul.swiper-container {
 				padding: 0px;
 			}
 			ul#loaditems li {
 				list-style: none;
+			}
+			aside>div#messages {
+				padding: 0px;
+				margin-top: 30px;
+			}
+			aside>div#messages>ul#messagelist {
+				border: 1px solid #CCC;
+				padding: 3px;
+				height: 30px;
+				background: white;
+				text-align: left;
+				overflow-y: scroll;
+				margin: 0px;
+			}
+			aside>div#messages>ul#messagelist>li {
+				font-size: 12px;
+				font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
+				font-size: 14px;
+				list-style: none;
+			}
+			aside>div#messages>form#sendmsg>input#msg {
+				width: 160px;
+			}
+			li#playerlist li#playername {
+				display: none;
+			}
+			ol#seleaderboard {
+				margin-left: 20%;
+			}
+			ol#seleaderboard>li.leaderboarditem {
+				font-size: 12px;
+				font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
+				font-size: 14px;
+				list-style: none;
+			}
+			ol#seleaderboard>li.leaderboarditem>span.leaderboarditemid {
+				padding-left: 10px;
 			}
 		</style>
 	</head>
@@ -366,6 +472,12 @@
 					<span id="remainstep" class="dicetip">剩餘步數：<span id="diceCounter"></span></span>
 					<span id="keytip" class="dicetip">按空白或是點開始擲骰子</span>
 				</nav>
+				<ul id="nextstep">
+					<li><i class="fa fa-fast-forward"></i>結束這回合</li>
+				</ul>
+				<ul id="exitgame">
+					<li><i class="fa fa-sign-out"></i>退出遊戲</li>
+				</ul>
 				<ul id="playerzone">
 					<li></li>
 					<li id="playerlist"><h2>即時排名</h2>
@@ -377,9 +489,17 @@
 						</ul>
 					</li>
 				</ul>
+				<div id="messages">
+					<ul id="messagelist"></ul>
+					<form id="sendmsg">
+						<input id="msg" type="text" required placeholder="按Enter或「送出」發送訊息" disabled/><button id="msgbutton" type="button" disabled>送出</button>
+					</form>
+				</div>
 			</aside>
 		</div>
-		<footer>Kelunyang@2016 CC-BY-NC-SA</footer>
+		<footer>
+			Kelunyang@2016 CC-BY-NC-SA
+		</footer>
 		<div id="pseudoWindow">
 			<div id="popBackground">&nbsp;</div>
 			<ul id="popQuestion" class="popWindow">
@@ -397,6 +517,19 @@
 						<li class="button">是</li>
 						<li class="button">否</li>
 						<li id="custombuttons" class="buttonarea"><ul></ul></li>
+					</ul>
+				</li>
+			</ul>
+			<ul id="popSettle" class="popWindow">
+				<li id="setitle">成績結算</li>
+				<li id="seicon"><i class="fa fa-trophy fa-4x"></i></li>
+				<li id="semessage">這是訊息內容</li>
+				<li id="secontent">
+					<ol id="seleaderboard"></ol>
+				</li>
+				<li id="sebutton" class="buttonarea">
+					<ul>
+						<li class="button">確定</li>
 					</ul>
 				</li>
 			</ul>
@@ -476,9 +609,10 @@
 			</ul>
 		</div>
 		<script src="/socket.io/socket.io.js"></script>
-		<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
-		<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
-		<script src="http://cdn.bootcss.com/Swiper/3.1.2/js/swiper.jquery.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+		<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/js/swiper.jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>
 		<script src="scrollbox.min.js"></script>
 		<script src="jquery.animateNumber.min.js"></script>
 		<script src="ui.js"></script>
@@ -497,20 +631,20 @@
 			var question = null;
 			var incident = null;
 			var roads = null;
-			var players = new Array();
+			var players = new Object();
 			var tempplayer = new Object();
 			var gameboard = null;
 			var localuid = null;
 			var localplayer = null;
 			var sessionid = null;
-			var leadermenu = new Swiper($('#leaderboardcontainer'), {
-				scrollbar: '#leaderscrollbar',
-				nextButton: '#leaderboarddown',
-				prevButton: '#leaderboardup',
-				direction: 'vertical',
-				slidesPerView: 3
-			});
+			var leadermenu = null;
+			var msgqueue = new Array();
+			var inituser = true;
+			var onlinePlayer = new Object();
 			$().ready(function() {
+				socket.on("disconnect", function(){
+					socket.emit("disconnect");
+				});
 				socket.on('socketon', function(data){
 					if(data.status) {
 						connection = true;
@@ -603,7 +737,25 @@
 					setLayout();
 				}
 			}
-			socket.on("updatelivescore", function(data) {
+			socket.on("messagein", function(data) {
+				var time = moment.unix(data.time);
+				var ul = $("ul#messagelist");
+				msgqueue.push(data);
+				msgqueue.sort(function(a,b) {
+					return parseInt(b.time) - parseInt(a.time);
+				});
+				ul.empty();
+				for(var i=0;i<msgqueue.length;i++) {
+					var time = moment.unix(msgqueue[i].time);
+					var element = $("<li></li>");
+					element.text(msgqueue[i].name+":"+msgqueue[i].msg);
+					element.attr("tip","寄送者Email:"+msgqueue[i].email+" / 寄送時間:"+time.format("YYYY-MM-DD HH:mm:ss"));
+					ul.append(element);
+				}	
+				$("button#msgbutton").attr("disabled", false);
+				$("input#msg").attr("disabled", false);
+			});
+			/*socket.on("updatelivescore", function(data) {
 				for(var i=0;i<data.length;i++) {
 					for(var k=0;k<players.length;k++) {
 						if(data[i].uid == players[k].uid) {
@@ -614,26 +766,89 @@
 						}
 					}
 				}
-			});
-			socket.on("getliveplayerList", function(data) {
+			});*/
+			socket.on("getplayerList", function(data) {
+				leadermenu = new Swiper($('#leaderboardcontainer'), {
+					scrollbar: '#leaderscrollbar',
+					nextButton: '#leaderboarddown',
+					prevButton: '#leaderboardup',
+					direction: 'vertical',
+					slidesPerView: data.users.length - 3
+				});
+				$("button#msgbutton").attr("disabled", false);
+				$("input#msg").attr("disabled", false);
 				for(var i=0;i<data.users.length;i++) {
-					tempplayer[data.users[i].uid] = new Object;
-					tempplayer[data.users[i].uid].asset = data.users[i].score;
+					gameboard.players[data.users[i].uid] = new Object;
+					gameboard.players[data.users[i].uid].credit = data.users[i].score;
 					socket.emit("requestspecificUser", {user: data.users[i].uid});
 				}
 			});
+			socket.on("userOnline", function(data) {
+				onlinePlayer[data.user] = true;
+				socket.emit("teamOnline");
+				socket.emit("retrivesessionaliveUsers", { sid: false });
+			});
+			socket.on("userOffline", function(data) {
+				onlinePlayer[data.user] = false;
+				socket.emit("teamOnline");
+				socket.emit("retrivesessionaliveUsers", { sid: false });
+			});
+			socket.on("userEcho", function(data) {
+				onlinePlayer[data.user] = true;
+				socket.emit("retrivesessionaliveUsers", { sid: false });
+			});
+			socket.on("updatealiveList", function(data) {
+				if(gameboard != null) {
+					if(gameboard.hasOwnProperty("localplayer")) {
+						if(data.current.id != gameboard.localplayer.uid) {
+							gameboard.sameUser = false;
+							gameboard.diceElement.availablity(false);
+						} else {
+							gameboard.sameUser = true;
+							gameboard.diceElement.availablity(true);
+						}
+					}
+					Object.keys(data.players).forEach(function(tuser) {
+						if(gameboard.hasOwnProperty("localplayer")) {
+							if(!onlinePlayer.hasOwnProperty(tuser)) {
+								if(tuser != gameboard.localplayer.uid) {
+									gameboard.players[tuser].htmlElement.animate({opacity:0.2},1000);
+								}
+							} else {
+								var obj = data.players[tuser];
+								if(onlinePlayer[tuser]) {
+									if(obj.uid != gameboard.localplayer.uid) {
+										gameboard.players[obj.uid].htmlElement.animate({opacity:1},1000);
+									}
+									//tempplayer[data.users[i].email].obj.htmlElement.animate({opacity:0.2},1000);	//離線使用
+									gameboard.players[obj.uid].creditCal(obj.credit);
+									//tempplayer[data.user].obj.asset = data.asset;
+									//tempplayer[data.user].obj,assetCal();
+								} else {
+									gameboard.players[obj.uid].htmlElement.animate({opacity:0.2},1000);
+								}
+							}
+						}
+					})
+				}
+				/*data.forEach(function(obj) {
+					if(obj.id != gameboard.localplayer.uid) {
+						tempplayer[obj.id].obj.htmlElement.animate({opacity:1},1000);
+					}
+					//tempplayer[data.users[i].email].obj.htmlElement.animate({opacity:0.2},1000);	//離線使用
+					tempplayer[obj.id].obj.creditCal(obj.credit);
+					//tempplayer[data.user].obj.asset = data.asset;
+					//tempplayer[data.user].obj,assetCal();
+				});*/
+			});
 			socket.on("getspecificUser", function(data) {
-				data = data[0];
-				tempplayer[data.email].color = "#"+data.color;
-				tempplayer[data.email].icon = data.icon;
-				tempplayer[data.email].name = data.nickname;
-				tempplayer[data.email].uid = data.email;
 				var slide = $("<span></span>");
 				slide.addClass("swiper-slide");
 				slide.addClass("boarditem");
 				if(data.email == localuid) {
-					localplayer = new player(tempplayer[data.email].name,tempplayer[data.email].icon,tempplayer[data.email].color,tempplayer[data.email].asset,gameboard,gameboard.bricks[0],true,$("<ul id=\"localplayer\"></ul>"),$("aside > ul#playerzone > li:first-child"), tempplayer[data.email].uid);
-					players.push(localplayer);
+					localplayer = new player(data.nickname,data.icon,"#"+data.color,data.asset,gameboard,gameboard.bricks[data.position],true,$("<ul id=\"localplayer\"></ul>"),$("aside > ul#playerzone > li:first-child"), data.email);
+					gameboard.players[data.email].obj = localplayer;
+					players[localplayer.uid] = localplayer;
 					gameboard.localplayer = localplayer;
 					var dices = new dice($("nav"),localplayer,gameboard);
 					gameboard.diceElement = dices;
@@ -643,7 +858,7 @@
 							enable: true,
 							func: function() {
 								popWindows.endPseudo();
-								popWindows.switchWindow(currentplayer);
+								popWindows.switchWindow(currentplayer.id);
 							}
 						},
 						yes:{
@@ -661,19 +876,49 @@
 						custombuttons: new Array()
 					},"road");
 				} else {
-					players.push(new player(tempplayer[data.email].name,tempplayer[data.email].icon,tempplayer[data.email].color,tempplayer[data.email].asset,gameboard,gameboard.bricks[0],false,$("<ul></ul>"),slide, tempplayer[data.email].uid));
+					var obj = new player(data.nickname,data.icon,"#"+data.color,data.asset,gameboard,gameboard.bricks[data.position],false,$("<ul></ul>"),slide, data.email);
+					gameboard.players[data.email].obj = obj;
+					players[obj.uid] = obj;
 					leadermenu.appendSlide(slide);
 				}
-				gameboard.scanPlayer(true);
+				var enableScan = 0;
+				Object.keys(players).forEach(function(key) {
+					var item = players[key];
+					if(players[key].hasOwnProperty("board")) {
+						enableScan++;
+					}
+				});
+				if(enableScan == Object.keys(players).length) {
+					gameboard.scanPlayer(true);
+				}
+				socket.emit("onlineBroadcast");	//遊戲載入完成
 			});
 			function setLayout() {
 				popWindows.opacityValue = 0.5;	//半透明
-				gameboard = new board("北台灣的開墾",11,6,shortcut,socket,stage,players,$("div#board"),$("header"),popWindows,$("div#anmiblock"),upgrades,incident);
+				gameboard = new board("北台灣的開墾",11,6,shortcut,socket,stage,players,$("div#board"),$("header"),popWindows,$("div#anmiblock"),upgrades,incident,$("ul#nextstep"),$("ul#exitgame"));
 				gameboard.initBricks();
-				socket.emit("requestliveplayerList", {id: sessionid});
+				socket.emit("requestplayerList", {id: sessionid});
 				$("div#gameboard").css("width",(gameboard.width*92)+230+"px");
 				$("div#gameboard").css("marginLeft",((gameboard.width*92)+230)/2*(-1)+"px");
 				gameboard.loadRoads(roads);
+				$("button#msgbutton").on("click", function() {
+					$("form#sendmsg").submit();
+				});
+				$("input#msg").keypress(function(event) {
+					/*if(event.which == 13) {
+						$("form#sendmsg").submit();
+					}*/
+				});
+				$("form#sendmsg").on("submit", function(event) {
+					event.preventDefault();
+					if($("input#msg").val() != "") {
+						var msg = $("input#msg").val();
+						socket.emit("sendroommsg", msg);
+						$("button#msgbutton").attr("disabled", true);
+						$("input#msg").attr("disabled", true);
+						$("input#msg").val("");
+					}
+				});
 				/*$("header").animate({opacity:100},700,function() {
 					gameboard.scanPlayer(true);
 					//gameboard.addTurn();

@@ -1,0 +1,16 @@
+{
+    "remotePath": "/mnt/www/monopoly",
+    "host": "163.21.114.152",
+    "username": "kelunyang",
+    "password": "75*0F*d4b6",
+    "port": 22,
+    "protocol": "sftp",
+    "uploadOnSave": false,
+    "passive": false,
+    "debug": false,
+    "privateKeyPath": null,
+    "ignore": [
+        "\\.vscode",
+        "\\.git"
+    ]
+}
