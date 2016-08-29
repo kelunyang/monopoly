@@ -3,9 +3,9 @@
 <head>
 	<meta charset="utf-8">
 	<title>遊戲設定</title>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.1.2/css/swiper.min.css">
-	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/css/swiper.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
 	<link rel="stylesheet" href="pseudoWindow.css"/>
 	<style>
 	body {
@@ -449,10 +449,11 @@
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="/node_modules/socket.io-stream/socket.io-stream.js"></script>
 	<script src="https://login.persona.org/include.js"></script>
-	<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.1.2/js/swiper.jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
-	<script src="http://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/js/swiper.jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>
+	<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
 	<script src="ui.js"></script>
     <script>
 	socket = io.connect();
@@ -622,8 +623,9 @@
 		});
 		socket.on('getboardList', function(data){
 			$("div#board>p.loading").css("display","none");
+			$("input#mapeditMode").val("");
 			if(data != null) {
-				if(data.length > 0) {
+				if(data.length >= 0) {
 					boardmenu.removeAllSlides();
 					for(var i=0;i<data.length;i++) {
 						var slide = $("<span></span>");
@@ -653,7 +655,7 @@
 		socket.on("gameboardModified", function(data) {
 			if(mapFiles.length > 0) {
 				var file = mapFiles.pop();
-				file.upload(data.type);
+				file.upload(data.id);
 			} else {
 				$("div#boardDetail>p.loading").css("display","none");
 				$("div#boardDetail>p.success").css("display","block");

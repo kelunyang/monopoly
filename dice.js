@@ -1,5 +1,5 @@
 //骰子模組
-function dice(htmlElement,player,board) {
+function dice(htmlElement, player, board) {
 	var oriobj = this;
 	this.available = true;
 	this.diceValue = -1;
@@ -52,6 +52,20 @@ dice.prototype.reset = function() {
 	this.htmlElement.find("div").text("開始");
 	this.board.moveCounter(false);
 }
+dice.prototype.availablity = function(control) {
+	var oriobj = this;
+	if(!control) {
+		oriobj.available = false;
+		oriobj.htmlElement.find("i").removeClass("fa-cube");
+		oriobj.htmlElement.find("i").addClass("fa-ban");
+		oriobj.htmlElement.css("cursor","not-allowed");
+	} else {
+		oriobj.available = true;
+		oriobj.htmlElement.find("i").removeClass("fa-ban");
+		oriobj.htmlElement.find("i").addClass("fa-cube");
+		oriobj.htmlElement.css("cursor","default");
+	}
+}
 dice.prototype.throwDice = function() {
 	if(this.board.sameUser) {
 		if(this.available) {
@@ -69,6 +83,6 @@ dice.prototype.throwDice = function() {
 			this.htmlElement.find("div").trigger("forwardHover");
 		}
 	} else {
-		this.board.popElement.errorWindow("目前不是你的回合，骰子停用！",0);
+		this.board.popElement.errorWindow("目前不是你的回合或是你已經投過了，骰子停用！",0);
 	}
 }

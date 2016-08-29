@@ -5,6 +5,7 @@ function pseudoWindow(htmlElement) {
 	this.board = null;
 	this.opacityValue = 0;
 	this.placeArray = null;
+	this.placeMap = null;
 	this.upgrademenu = new Swiper('#upgradecontainer', {
 		scrollbar: '#upgradescrollbar',
 		nextButton: '#upgradedown',
@@ -28,15 +29,8 @@ pseudoWindow.prototype.loadWindows = function() {
 }
 pseudoWindow.prototype.closeWindow = function(name) {
 	this.htmlElement.find("ul#"+name).css("display","none");
-	var elements = this.htmlElement.find("ul.popWindow");
-	var zerocount = true;
-	for(var i=0;i<elements.length;i++) {
-		if($(elements[i]).css("display") == "block") {
-			zerocount = false;
-			break;
-		}
-	}
-	if(zerocount) {
+	var windowcount = $("ul.popWindow").filter(function() { return $(this).css("display") == "block"; }).length;
+	if(windowcount == 0) {
 		this.endPseudo();
 	}
 }
@@ -92,6 +86,14 @@ pseudoWindow.prototype.chanceWindow = function(player, socket) {
 			descword = chance.desc;
 		break;
 		case 1:
+			this.placeArray = new Array();
+			this.placeMap = new Object();
+			for(var i=0;i<this.board.bricks.length;i++) {
+				if(this.board.bricks[i].type == 1) {
+					this.placeArray.push(this.board.bricks[i]);	//deep clone, only road
+					this.placeMap[this.board.bricks[i].index] = this.board.bricks[i];
+				}
+			}
 			window.find("li#cicon>i").addClass("fa-map-signs");
 			if(chance.effect == -1) {
 				this.placeArray.sort(function(a,b) { return 0.5-Math.random(); });
@@ -101,9 +103,9 @@ pseudoWindow.prototype.chanceWindow = function(player, socket) {
 
 			} else {
 				this.dice.diceValue = 0;
-				resultword = "不小心到了"+this.placeArray[chance.effect].name;
+				resultword = "不小心到了"+this.placeMap[chance.effect].name;
 				descword = chance.desc;
-				player.position = this.placeArray[chance.effect];
+				player.position = this.placeMap[chance.effect];
 			}
 			this.board.remainmoves = 0;
 			player.manualMove(false);
@@ -131,7 +133,7 @@ pseudoWindow.prototype.shortcutWindow = function(name,start,end,desc) {
 	window.find("li#sdesc").text(desc);
 	window.find("li#sbutton>ul>li").off();
 	window.find("li#sbutton>ul>li").on("click",function() {
-		window.css("display","none");
+		oriobj.closeWindow("popShortcut");
 	})
 	this.loadWindows();
 	window.css("display","block");
@@ -153,6 +155,48 @@ pseudoWindow.prototype.switchWindow = function(message) {
 	window.find("li#ubutton>ul>li").off();
 	window.find("li#ubutton>ul>li:nth-child(1)").on("click",function() {
 		oriobj.closeWindow("popSwitchuser");
+	});
+	this.loadWindows();
+	window.css("display","block");
+}
+pseudoWindow.prototype.settleWindow = function(message) {
+	var oriobj = this;
+	var window = this.htmlElement.find("ul#popSettle");
+	window.find("li#semessage").text(message.message);
+	var leaderboard = new Array();
+	Object.keys(message.leaderboard).forEach(function(key) {
+		leaderboard.push({
+			asset: message.leaderboard[key].asset,
+			credit: message.leaderboard[key].credit,
+			id: message.leaderboard[key].id,
+			order: message.leaderboard[key].order,
+			position: message.leaderboard[key].position,
+			score: message.leaderboard[key].score
+		});
+	});
+	leaderboard.sort(function(a,b) {
+		return b.asset - a.asset;
+	})
+	leaderboard.forEach(function(item) {
+		var li = $("<li></li>");
+		li.addClass("leaderboarditem");
+		var name = $("<span></span>");
+		name.text(item.id);
+		name.addClass("leaderboarditemid");
+		var asset = $("<span></span>");
+		var asseticon = $("<i></i>");
+		asseticon.addClass("fa");
+		asseticon.addClass("fa-usd");
+		asset.append(asseticon);
+		asset.append(item.asset)
+		li.append(asseticon);
+		li.append(asset);
+		li.append(name);
+		$("ul#popSettle>li#secontent>ol#seleaderboard").append(li);
+	});
+	window.find("li#sebutton>ul>li").off();
+	window.find("li#sebutton>ul>li:nth-child(1)").on("click",function() {
+		oriobj.closeWindow("popSettle");
 	});
 	this.loadWindows();
 	window.css("display","block");
@@ -213,7 +257,7 @@ pseudoWindow.prototype.messageWindow = function(title,message,control,icon) {
 		window.find("li#pbutton>ul>li:nth-child(4)>ul").append(control.custombuttons[i]);
 	}
 	this.loadWindows();
-	window.css("display","block");
+	window.show("shake")
 	if(control.custombuttons.length > 0) {
 		window.find("li#pbutton>ul>li:nth-child(4)").css("display","block");
 		var custombuttonwidth = 0;
@@ -248,7 +292,7 @@ pseudoWindow.prototype.questionWindow = function(question,credit,answers,player,
 								socket.emit("updatescore", {
 									score: player.asset
 								});
-								oriobj.dice.reset();
+								//oriobj.dice.reset();
 								oriobj.infoWindow(board.upgradeDB,board.stage,player,player.position,0);
 							}
 						},
@@ -276,7 +320,7 @@ pseudoWindow.prototype.questionWindow = function(question,credit,answers,player,
 								socket.emit("updatescore", {
 									score: player.asset
 								});
-								oriobj.dice.reset();
+								//oriobj.dice.reset();
 								oriobj.infoWindow(board.upgradeDB,board.stage,player,player.position,0);
 							}
 						},
@@ -353,22 +397,22 @@ pseudoWindow.prototype.infoWindow = function(upgradeDB,stage,player,brick,mode) 
 			window.find("li#buyBrick").css("display","block");
 			window.find("li#buyBrick>ul>li#cinfoButton").css("display","block");
 			window.find("li#buyBrick>ul>li#cinfoButton").on("click",function() {
-				oriobj.dice.available = true;
+				//oriobj.dice.available = true;
 				oriobj.endPseudo();
 			}); 
 			if(brick.type == 1) {
 				window.find("li#buyBrick>ul>li#buyButton").css("display","block");
 				window.find("li#buyBrick>ul>li#buyButton").on("click",function() {
 					if(player.addBrick(brick)) {
-						oriobj.dice.available = true;
+						//oriobj.dice.available = true;
 						oriobj.endPseudo();
 					} else {
 						oriobj.messageWindow("無法購買","你手上點數不足，無法購買"+brick.name,{
 							ok:{
 								enable: true,
 								func: function() {
-									oriobj.dice.reset();
-									oriobj.dice.available = true;
+									//oriobj.dice.reset();
+									//oriobj.dice.available = true;
 									oriobj.endPseudo();
 								}
 							},
@@ -393,7 +437,7 @@ pseudoWindow.prototype.infoWindow = function(upgradeDB,stage,player,brick,mode) 
 			window.find("li#buyBrick").css("display","block");
 			window.find("li#buyBrick>ul>li#cinfoButton").css("display","block");
 			window.find("li#buyBrick>ul>li#cinfoButton").on("click",function() {
-				oriobj.dice.available = true;
+				//oriobj.dice.available = true;
 				oriobj.endPseudo();
 			}); 
 		}
@@ -405,80 +449,81 @@ pseudoWindow.prototype.infoWindow = function(upgradeDB,stage,player,brick,mode) 
 		icon.addClass("fa-"+brick.owner.icon);
 		if(viewmode) {
 			window.find("li#uSets").css("display","block");
-			for(var i=0;i<upgradeDB.length;i++) {
-				if(upgradeDB[i].type == 1) continue;
-				var item = $("<span></span>");
-				item.addClass("item");
-				var ability = $("<span class=\"rent\"></span>");
-				ability.text("過路費加乘："+upgradeDB[i].rent);
-				item.data("upgradeItem",upgradeDB[i]);
-				if(brick.upgrades.indexOf(upgradeDB[i]) >= 0) {
-					item.addClass("unavaiableUpgrade");
-					ability.text("已購買");
-				} else if(upgradeDB[i].price > player.credit) {
-					item.addClass("unavaiableUpgrade");
-					ability.text("點數不足");
-				} else if(upgradeDB[i].stage <= stage) {
-					item.addClass("unavaiableUpgrade");
-					ability.text("尚未開啟");
-				} else {
-					item.addClass("avaiableUpgrade");
-					item.on("click", function() {
-						var itemObj = $(this);
-						oriobj.messageWindow("小知識："+itemObj.data("upgradeItem").name,itemObj.data("upgradeItem").desc,{
-							ok:{
-								customtext: "完成購買",
-								enable: true,
-								func: function() {
-									$("div#upanblock").empty();
-									$("div#upanblock").css("top",itemObj.offset().top);
-									$("div#upanblock").css("left",itemObj.offset().left);
-									$("div#upanblock").append($(itemObj.children()[2]));
-									$("div#upanblock").css("visibility","visible");
-									$("div#upanblock").css("opacity",1);
-									$("div#upanblock").animate({top: brick.htmlElement.offset().top, left: brick.htmlElement.offset().left,opacity: 0.3},500,function() {
-										$("div#upanblock").css("visibility","hidden");
-										brick.addUpgrade(itemObj.data("upgradeItem"));
-										player.creditCal(player.credit - itemObj.data("upgradeItem").price);
-									});
-									oriobj.dice.available = true;
-									oriobj.endPseudo();
-								}
-							},
-							yes:{
-								enable: false,
-								func: function() {
-									oriobj.endPseudo();
-								}
-							},
-							no:{
-								enable: false,
-								func: function() {
-									oriobj.endPseudo();
-								}
-							},
-							custombuttons: new Array()
-						},"pencil");
-					});
+			Object.keys(upgradeDB).forEach(function(upgrade) {
+				if(upgrade.type != 1) {
+					var item = $("<span></span>");
+					item.addClass("item");
+					var ability = $("<span class=\"rent\"></span>");
+					ability.text("過路費加乘："+upgrade.rent);
+					item.data("upgradeItem",upgrade);
+					if(Object.keys(brick.upgrades).indexOf(upgrade.name) >= 0) {
+						item.addClass("unavaiableUpgrade");
+						ability.text("已購買");
+					} else if(upgrade.price > player.credit) {
+						item.addClass("unavaiableUpgrade");
+						ability.text("點數不足");
+					} else if(upgrade.stage <= stage) {
+						item.addClass("unavaiableUpgrade");
+						ability.text("尚未開啟");
+					} else {
+						item.addClass("avaiableUpgrade");
+						item.on("click", function() {
+							var itemObj = $(this);
+							oriobj.messageWindow("小知識："+itemObj.data("upgradeItem").name,itemObj.data("upgradeItem").desc,{
+								ok:{
+									customtext: "完成購買",
+									enable: true,
+									func: function() {
+										$("div#upanblock").empty();
+										$("div#upanblock").css("top",itemObj.offset().top);
+										$("div#upanblock").css("left",itemObj.offset().left);
+										$("div#upanblock").append($(itemObj.children()[2]));
+										$("div#upanblock").css("visibility","visible");
+										$("div#upanblock").css("opacity",1);
+										$("div#upanblock").animate({top: brick.htmlElement.offset().top, left: brick.htmlElement.offset().left,opacity: 0.3},500,function() {
+											$("div#upanblock").css("visibility","hidden");
+											brick.addUpgrade(itemObj.data("upgradeItem"));
+											player.creditCal(player.credit - itemObj.data("upgradeItem").price);
+										});
+										//oriobj.dice.available = true;
+										oriobj.endPseudo();
+									}
+								},
+								yes:{
+									enable: false,
+									func: function() {
+										oriobj.endPseudo();
+									}
+								},
+								no:{
+									enable: false,
+									func: function() {
+										oriobj.endPseudo();
+									}
+								},
+								custombuttons: new Array()
+							},"pencil");
+						});
+					}
+					var name = $("<h1></h1>");
+					name.text(upgrade.name);
+					var uicon = $("<i></i>");
+					uicon.addClass("fa");
+					uicon.addClass("fa-"+upgrade.icon);
+					uicon.addClass("fa-5x");
+					var price = $("<h2></h2>");
+					price.text("價格："+upgrade.price);
+					item.append(name);
+					item.append(price);
+					item.append(uicon);
+					item.append(ability);
+					item.addClass("swiper-slide");
+					console.log(item);
+					//window.find("li#uSets>ul#upgradeRoll").slick('slickAdd',item);
+					this.upgrademenu.appendSlide(item);
+					//window.find("li#uSets>div#upgradeRoll").append(item);
 				}
-				var name = $("<h1></h1>");
-				name.text(upgradeDB[i].name);
-				var uicon = $("<i></i>");
-				uicon.addClass("fa");
-				uicon.addClass("fa-"+upgradeDB[i].icon);
-				uicon.addClass("fa-5x");
-				var price = $("<h2></h2>");
-				price.text("價格："+upgradeDB[i].price);
-				item.append(name);
-				item.append(price);
-				item.append(uicon);
-				item.append(ability);
-				item.addClass("swiper-slide");
-				console.log(item);
-				//window.find("li#uSets>ul#upgradeRoll").slick('slickAdd',item);
-				this.upgrademenu.appendSlide(item);
-				//window.find("li#uSets>div#upgradeRoll").append(item);
-			}
+			});
 			window.find("li#iInfo>h3").text("過路費："+brick.getRent()+"/現值："+brick.getCurrentValue());
 			this.loadWindows();
 			window.css("display","block");
@@ -495,13 +540,13 @@ pseudoWindow.prototype.infoWindow = function(upgradeDB,stage,player,brick,mode) 
 			$("ul#upgradeRoll button.slick-next").append(arrowdown);
 			window.find("li#buyBrick>ul>li#cinfoButton").css("display","block");
 			window.find("li#buyBrick>ul>li#cinfoButton").on("click",function() {
-				oriobj.dice.available = true;
+				//oriobj.dice.available = true;
 				oriobj.endPseudo();
 			}); 
 			window.find("li#buyBrick>ul>li#sellButton").css("display","block");
 			window.find("li#buyBrick>ul>li#sellButton").on("click",function() {
 				player.removeBrick(brick);
-				oriobj.dice.available = true;
+				//oriobj.dice.available = true;
 				oriobj.endPseudo();
 			}); 
 		} else {
@@ -528,21 +573,21 @@ pseudoWindow.prototype.infoWindow = function(upgradeDB,stage,player,brick,mode) 
 			if(viewmode) {
 				window.find("li#buyBrick>ul>li#cinfoButton").css("display","block");
 				window.find("li#buyBrick>ul>li#cinfoButton").on("click",function() {
-					oriobj.dice.available = true;
+					//oriobj.dice.available = true;
 					oriobj.endPseudo();
 				}); 
 				window.find("li#buyBrick>ul>li#buyButton").css("display","block");
 				window.find("li#buyBrick>ul>li#buyButton").on("click",function() {
 					if(player.addBrick(brick)) {
-						oriobj.dice.available = true;
+						//oriobj.dice.available = true;
 						oriobj.endPseudo();
 					} else {
 						oriobj.messageWindow("無法購買","你手上點數不足，無法購買"+brick.name,{
 							ok:{
 								enable: true,
 								func: function() {
-									oriobj.dice.reset();
-									oriobj.dice.available = true;
+									//oriobj.dice.reset();
+									//oriobj.dice.available = true;
 									oriobj.endPseudo();
 								}
 							},
@@ -564,14 +609,14 @@ pseudoWindow.prototype.infoWindow = function(upgradeDB,stage,player,brick,mode) 
 				}); 
 				window.find("li#buyBrick>ul>li#feeButton").css("display","block");
 				window.find("li#buyBrick>ul>li#feeButton").on("click",function() {
-					oriobj.dice.available = true;
+					//oriobj.dice.available = true;
 					oriobj.endPseudo();
 				}); 
 			} else {
 				window.find("li#buyBrick").css("display","block");
 				window.find("li#buyBrick>ul>li#cinfoButton").css("display","block");
 				window.find("li#buyBrick>ul>li#cinfoButton").on("click",function() {
-					oriobj.dice.available = true;
+					//oriobj.dice.available = true;
 					oriobj.endPseudo();
 				}); 
 			}

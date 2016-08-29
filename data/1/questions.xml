@@ -1,0 +1,485 @@
+<?xml version="1.0"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
+  <Title>questions</Title>
+  <Author>楊可倫</Author>
+  <LastAuthor>楊可倫</LastAuthor>
+  <Created>2015-09-29T01:28:12Z</Created>
+  <LastSaved>2015-09-29T03:09:52Z</LastSaved>
+  <Version>16.00</Version>
+ </DocumentProperties>
+ <OfficeDocumentSettings xmlns="urn:schemas-microsoft-com:office:office">
+  <AllowPNG/>
+ </OfficeDocumentSettings>
+ <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
+  <WindowHeight>9690</WindowHeight>
+  <WindowWidth>14385</WindowWidth>
+  <WindowTopX>0</WindowTopX>
+  <WindowTopY>0</WindowTopY>
+  <ActiveSheet>1</ActiveSheet>
+  <ProtectStructure>False</ProtectStructure>
+  <ProtectWindows>False</ProtectWindows>
+ </ExcelWorkbook>
+ <Styles>
+  <Style ss:ID="Default" ss:Name="Normal">
+   <Alignment ss:Vertical="Bottom"/>
+   <Borders/>
+   <Font ss:FontName="Calibri" x:CharSet="136" x:Family="Swiss" ss:Size="12"
+    ss:Color="#000000"/>
+   <Interior/>
+   <NumberFormat/>
+   <Protection/>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="工作表1">
+  <Table ss:ExpandedColumnCount="8" ss:ExpandedRowCount="20" x:FullColumns="1"
+   x:FullRows="1" ss:DefaultColumnWidth="54" ss:DefaultRowHeight="15.75">
+   <Column ss:AutoFitWidth="0" ss:Width="129"/>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題1</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由一</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題2</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由二</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題3</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由三</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題4</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由四</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題5</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由五</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題6</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由一</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題7</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由二</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題8</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由三</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題9</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由四</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題10</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由五</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題11</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由一</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題12</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由二</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題13</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由三</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題14</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由四</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題15</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由五</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題16</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由一</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題17</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由二</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題18</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由三</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題19</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由四</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題20</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由五</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <PageSetup>
+    <Header x:Margin="0.3"/>
+    <Footer x:Margin="0.3"/>
+    <PageMargins x:Bottom="0.75" x:Left="0.7" x:Right="0.7" x:Top="0.75"/>
+   </PageSetup>
+   <Unsynced/>
+   <Panes>
+    <Pane>
+     <Number>3</Number>
+     <RangeSelection>R1C1:R20C8</RangeSelection>
+    </Pane>
+   </Panes>
+   <ProtectObjects>False</ProtectObjects>
+   <ProtectScenarios>False</ProtectScenarios>
+  </WorksheetOptions>
+ </Worksheet>
+ <Worksheet ss:Name="工作表2">
+  <Table ss:ExpandedColumnCount="8" ss:ExpandedRowCount="20" x:FullColumns="1"
+   x:FullRows="1" ss:DefaultColumnWidth="54" ss:DefaultRowHeight="15.75">
+   <Column ss:Width="84"/>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題11</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由十一</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題12</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由十二</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題13</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由十三</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題14</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由十一</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題15</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由十二</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題16</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由十三</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題17</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由十一</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題18</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由十二</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題19</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由十三</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題20</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由十一</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題21</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由十二</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題22</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由十三</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題23</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由十一</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題24</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由十二</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題25</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由十三</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題26</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由十一</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題27</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由十二</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題28</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由十三</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題29</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由十一</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">這是主要問題30</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">理由十二</Data></Cell>
+    <Cell><Data ss:Type="String">選項一</Data></Cell>
+    <Cell><Data ss:Type="String">選項二</Data></Cell>
+    <Cell><Data ss:Type="String">選項三</Data></Cell>
+    <Cell><Data ss:Type="String">選項四</Data></Cell>
+   </Row>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <PageSetup>
+    <Header x:Margin="0.3"/>
+    <Footer x:Margin="0.3"/>
+    <PageMargins x:Bottom="0.75" x:Left="0.7" x:Right="0.7" x:Top="0.75"/>
+   </PageSetup>
+   <Unsynced/>
+   <Selected/>
+   <Panes>
+    <Pane>
+     <Number>3</Number>
+     <ActiveRow>17</ActiveRow>
+     <ActiveCol>2</ActiveCol>
+    </Pane>
+   </Panes>
+   <ProtectObjects>False</ProtectObjects>
+   <ProtectScenarios>False</ProtectScenarios>
+  </WorksheetOptions>
+ </Worksheet>
+</Workbook>

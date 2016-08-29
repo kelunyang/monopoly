@@ -400,3 +400,27 @@ div#pseudoWindow ul#popError>li#etitle {
 	font-size: 20px;
 	font-family: "Yu Gothic", SimHei;
 }
+div#pseudoWindow ul#popSettle>li#setitle {
+	text-align: center;
+	font-size: 20px;
+	font-family: "Yu Gothic", SimHei;
+}
+div#pseudoWindow ul#popSettle>li#semessage {
+	color: maroon;
+	font-size: 14px;
+	width: 80%;
+	margin-left: 30px;
+	text-align: center;
+}
+div#pseudoWindow ul#popSettle>li#seicon {
+	width: 48px;
+	margin: 5px 5px 5px 10%;
+	float: left;
+	display: block;
+	text-align: center;
+}
+div#pseudoWindow ul#popSettle>li#sedesc {
+	width: 60%;
+	float: left;
+	padding-left: 5%;
+}
