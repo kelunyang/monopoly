@@ -60,12 +60,8 @@ player.prototype.manualMove = function(manual) {
 	if(this.board.detectMove(this)) {
 		this.board.turnQueue();
 	} else {
-		this.board.diceElement.reset();
 		this.board.scanPlayer(false);
 	}
-	/*this.board.detectMove(this);
-	this.board.diceElement.reset();
-	this.board.scanPlayer(false);*/
 }
 player.prototype.addBrick = function(brick) {
 	if(this.bricks.indexOf(brick) == -1) {
@@ -73,7 +69,6 @@ player.prototype.addBrick = function(brick) {
 			this.bricks.push(brick);
 			this.creditCal(this.credit - brick.getCurrentValue());
 			brick.changeOwner(this);
-			this.board.addturnLog(brick);
 			return true;
 		}
 	}
@@ -84,7 +79,6 @@ player.prototype.removeBrick = function(brick) {
 		this.bricks.splice(this.bricks.indexOf(brick),1);
 		this.creditCal(this.credit + brick.getCurrentValue() * 0.8);
 		brick.changeOwner(null);
-		this.board.addturnLog(brick);
 	}
 }
 player.prototype.constructor = function() {

@@ -4,8 +4,8 @@
 		<title>線上大富翁：加入遊戲</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/css/swiper.min.css">
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+		<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"/>
+		<link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/Swiper/3.1.2/css/swiper.min.css"/>
 		<link rel="stylesheet" href="pseudoWindow.css"/>
 		<style type="text/css">
 		body {
@@ -335,7 +335,6 @@
 				</li>
 				<li>回合數：<span class="turns">30</span>回合</li>
 				<li>
-					<button id="entergame" class="embutton">啟動遊戲</button>
 					<button id="joingame" class="button">加入遊戲</button>
 					<button id="leavegame" class="button">退出遊戲</button>
 				</li>
@@ -380,27 +379,14 @@
 					</ul>
 				</li>
 			</ul>
-			<ul id="popMessage" class="popWindow">
-				<li id="ptitle">這是訊息標題</li>
-				<li id="picon"><i class="fa fa-exclamation fa-4x"></i></li>
-				<li id="pcontent">這是訊息內容</li>
-				<li id="pbutton" class="buttonarea">
-					<ul>
-						<li class="button">確定</li>
-						<li class="button">是</li>
-						<li class="button">否</li>
-						<li id="custombuttons" class="buttonarea"><ul></ul></li>
-					</ul>
-				</li>
-			</ul>
 		</div>
 		<script src="/socket.io/socket.io.js"></script>
 		<script src="/node_modules/socket.io-stream/socket.io-stream.js"></script>
 		<script src="https://login.persona.org/include.js"></script>
-		<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
-		<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/js/swiper.jquery.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>
+		<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.1.2/js/swiper.jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+		<script src="http://cdn.bootcss.com/Swiper/3.1.2/js/swiper.jquery.min.js"></script>
 		<script src="ui.js"></script>
 		<script>
 			currentUser = null;
@@ -408,7 +394,7 @@
 			socket = io.connect();
 			socket.emit("requestboardList");
 			$("button#entergame").on("click", function() {
-				socket.emit("startgame", { sid: $(this).parent().parent().data("obj").id });
+				socket.emit("startgame", { sid: $("aside>ul#host").data("obj").id });
 			});
 			$("button#removegame").on("click", function() {
 				socket.emit('removesession', {
@@ -424,8 +410,8 @@
 			$("button#creategame").on("click", function() {
 				socket.emit('createsession', {
 					bid: $("select#maplist").find(":selected").val(),
-					maxplayer: $("input#maxplayer").val() == "" ? 4 : $("input#maxplayer").val(),
-					maxround: $("input#maxround").val() == "" ? 30 : $("input#maxround").val()
+					maxplayer: $("input#maxplayer").val() == undefined ? 4 : $("input#maxplayer").val(),
+					maxround: $("input#maxround").val() == undefined ? 30 : $("input#maxround").val()
 				});
 			});
 			$("button#joingame").on("click", function() {
@@ -433,29 +419,6 @@
 					sid: $("aside>ul#join").data("obj").id, 
 					bid: $("aside>ul#join").data("obj").bid 
 				});
-			});
-			socket.on("gamesessionmanageerror", function(data) {
-				popWindows.messageWindow("無法建立遊戲","一個視窗只能同時建立一個遊戲，請刪除原本的遊戲再重新建立，錯誤代碼："+data.error,{
-					ok:{
-						enable: true,
-						func: function() {
-							popWindows.endPseudo();
-						}
-					},
-					yes:{
-						enable: false,
-						func: function() {
-							popWindows.endPseudo();
-						}
-					},
-					no:{
-						enable: false,
-						func: function() {
-							popWindows.endPseudo();
-						}
-					},
-					custombuttons: new Array()
-				},"exclamation-triangle");
 			});
 			socket.on("getboardList", function(data) {
 				$("select#maplist").empty();
@@ -480,8 +443,8 @@
 			});
 			socket.on("sessionleaved", function(data) {
 				$("button#joingame").css("display","block");
-				$("button#entergame").css("display","none");
 				$("button#leavegame").css("display","none");
+				socket.emit("requestliveplayerList",{"id": $("aside>ul#join").data("obj").id, "hosted": $("aside>ul#join").data("obj").hosteduser });
 			});
 			socket.on("getsessionList", function(data) {
 				$("article>ul").empty();
@@ -544,15 +507,12 @@
 					$(this).find("i").addClass("fa-sign-in");
 				});
 				$("article>ul>li.noncreateblock").on("click", function() {
-					socket.emit("retrivesessionaliveUsers",{sid: $(this).data("note").id, filter: false });
+					socket.emit("requestliveplayerList",{"id": $(this).data("note").id, "host": $(this).data("note").hosteduser });
 					$("aside>ul#join>li>ul#playerlist").empty();
 					$("aside>ul#join").data("obj", $(this).data("note"));
 					$("aside").css("right","-200px");
 					$("aside>ul").css("display","none");
 					$("aside>ul#join").css("display","block");
-					$("button#joingame").css("display","none");
-					$("button#entergame").css("display","none");
-					$("button#leavegame").css("display","none");
 					var value = undefined;
 					for(var i=0;i<board.length;i++) {
 						if(board[i].id == $(this).data("note").bid) {
@@ -568,7 +528,7 @@
 					});
 				});
 				$("article>ul>li.hostedblock").on("click", function() {
-					socket.emit("retrivesessionaliveUsers",{sid: $(this).data("note").id, filter: false });
+					socket.emit("requestliveplayerList",{"id": $(this).data("note").id, "host": $(this).data("note").hosteduser });
 					$("aside>ul#host>li>ul#playerlist").empty();
 					$("aside").css("right","-200px");
 					$("aside>ul").css("display","none");
@@ -595,47 +555,25 @@
 					$(this).find("i").removeClass();
 				});
 			});
-			socket.on("userOnline", function() {
-				location.herf = "game.htm";
-			});
 			socket.on("gamesessionjoined",function() {
-				$("button#entergame").css("display","inline-block");
-				$("button#leavegame").css("display","inline-block");
+				$("button#leavegame").css("display","block");
 				$("button#joingame").css("display","none");
+				socket.emit("requestliveplayerList",{"id": $("aside>ul#join").data("obj").id, "hosted": $("aside>ul#join").data("obj").hosteduser });
 			});
-			socket.on("requestsessionUsers", function(data) {
-				if(typeof($("aside>ul#join").data("obj")) == "object") {
-					if(data == $("aside>ul#join").data("obj").id) {
-						socket.emit("retrivesessionaliveUsers", {filter: false, sid: data});
-					}
-				}
-				if(typeof($("aside>ul#host").data("obj")) == "object") {
-					if(data == $("aside>ul#host").data("obj").id) {
-						socket.emit("retrivesessionaliveUsers", {filter: false, sid: data});
-					}
-				}
-			});
-			socket.on("updatealiveList", function(data) {
+			socket.on("getliveplayerList", function(data) {
 				$("aside>ul#join>li>ul#playerlist").empty();
 				$("aside>ul#host>li>ul#playerlist").empty();
-				Object.keys(data.players).forEach(function(key) {
-					var item = data.players[key];
+				for(var i=0;i<data.users.length;i++) {
 					var user = $("<li></li>");
-					user.text(item.uid);
-					if(item.uid == data.hosted) {
+					user.text(data.users[i].uid);
+					if(data.users[i].uid == data.hosted) {
 						user.addClass("hosteduser");
+					}
+					if(data.users[i].uid == currentUser) {
+						$("button#joingame").css("display", "none");
 					}
 					$("aside>ul#join>li>ul#playerlist").append(user);
 					$("aside>ul#host>li>ul#playerlist").append(user.clone());
-				});
-				if(Object.keys(data.players).indexOf(currentUser) > -1) {
-					$("button#entergame").css("display", "inline-block");
-					$("button#leavegame").css("display", "inline-block");
-					$("button#joingame").css("display", "none");
-				} else {
-					$("button#joingame").css("display", "inline-block");
-					$("button#entergame").css("display", "none");
-					$("button#leavegame").css("display", "none");
 				}
 			});
 			socket.on('getUser', function(data){

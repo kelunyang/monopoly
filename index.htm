@@ -4,8 +4,7 @@
 		<title>線上大富翁：登入遊戲</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/css/swiper.min.css">
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+		<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"/>
 		<link rel="stylesheet" href="pseudoWindow.css"/>
 		<style type="text/css">
 			body>footer {
@@ -35,7 +34,7 @@
 			article#logonZone {
 				position: absolute;
 				left:50%;
-				width: 500px;
+				width: 400px;
 				top: 100px;
 				margin-left: -200px;
 				text-align: center;
@@ -44,16 +43,6 @@
 				font-size: 20px;
 				font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
 				margin: 2px;
-			}
-			label {
-				font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
-				font-size: 18px;
-				margin:5px;
-			}
-			input[type=password], input[type=email] {
-				font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
-				font-size: 18px;
-				margin:5px;
 			}
 			button {
 				background:white;
@@ -120,9 +109,6 @@
 				font-size:12px;
 				cursor: default;
 			}
-			span.emtip {
-				color: maroon;
-			}
 			article#logonZone p {
 				color: maroon;
 				font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
@@ -130,38 +116,24 @@
 				cursor: default;
 				margin: 0px;
 			}
-			div#captcha {
-				margin-left: 100px;
-			}
 		</style>
 	</head>
 	<body>
 		<header>
-			<a href="#" title="登出遊戲" class="logout"><i class="fa fa-sign-out"></i>登出遊戲</li></a>
+			<a href="#" title="登出遊戲" class="logout" style="display:none"><i class="fa fa-sign-out"></i>登出遊戲</li></a>
 			<a href="admin.htm" target="_top" title="系統設定"><i class="fa fa-1x fa-cog"></i>系統設定</a>
 		</header>
 		<article id="logonZone">
-			<p>&nbsp;</p>
-			<!-- <div id="loginarea"><button id="loginbtn"><i class="fa fa-google fa-fw"></i>用Google帳號登入</button></div> -->
-			<form id="loginarea"><input type="hidden" id="type"/>
-				<label>Email：<input id="accountfield" type="email" required placeholder="請輸入帳號"/></label><br/>
-				<label>密碼：<input id="passfield" type="password" required placeholder="請輸入密碼"/></label><br/>
-				<div id="captcha" class="g-recaptcha" data-sitekey="6Lc1QygTAAAAABWcKBCe1x9endamJhWG2sZj4a6Z"></div><br/>
-				<button id="submitlogin"><i class="fa fa-key fa-fw"></i>登入遊戲</button><button id="submitadd"><i class="fa fa-plus-circle fa-fw"></i>新增帳號</button>
-			</form>
-			<div id="hubarea">
-				<button id="logoutbtn" class="logout"><i class="fa fa-sign-out"></i>登出遊戲</button>
+			<p>載入中...</p>
+			<span id="loginarea"><button id="loginbtn"><i class="fa fa-google fa-fw"></i>用Google帳號登入</button></span>
+			<span id="hubarea">
+				<button id="logoutbtn"><i class="fa fa-sign-out"></i>登出遊戲</button>
 				<button id="configbtn"><i class="fa fa-1x fa-cog"></i>系統設定</button>
 				<button id="enterbtn"><i class="fa fa-th"></i>進入遊戲</button>
-			</div>
-			<br/>
-			<!-- <a href="https://login.persona.org/" target="_blank" class="tip"><i class="fa fa-info-circle"></i>本遊戲使用Mozilla Persona服務管理登入，如您曾用過，可使用原本的帳號</a><br/> -->
-			<span class="tip emtip">
-				<i class="fa fa-edge"></i>
-				<i class="fa fa-firefox"></i>
-				<i class="fa fa-chrome"></i>
-				請用最新版瀏覽器遊戲，如Microsoft Edge、Firefox、Chrome，勿使用IE
 			</span>
+			<br/>
+			<a href="https://login.persona.org/" target="_blank" class="tip"><i class="fa fa-firefox fa-fw"></i>本遊戲使用Mozilla Persona服務管理登入</a><br/>
+			<span class="tip"><i class="fa fa-info-circle"></i>如果您曾使用過Mozilla Persona，也可使用您的帳號</a></span>
 		</article>
 		<footer>Kelunyang@2016 CC-BY-NC-SA</footer>
 		<form action="/auth/browserid" method="post" style="display:none;" id="loginform"><input id="assertion" type="text" name="assertion"/></form>
@@ -177,138 +149,22 @@
 					</ul>
 				</li>
 			</ul>
-			<ul id="popMessage" class="popWindow">
-				<li id="ptitle">這是訊息標題</li>
-				<li id="picon"><i class="fa fa-exclamation fa-4x"></i></li>
-				<li id="pcontent">這是訊息內容</li>
-				<li id="pbutton" class="buttonarea">
-					<ul>
-						<li class="button">確定</li>
-						<li class="button">是</li>
-						<li class="button">否</li>
-						<li id="custombuttons" class="buttonarea"><ul></ul></li>
-					</ul>
-				</li>
-			</ul>
 		</div>
 		<script src="/socket.io/socket.io.js"></script>
-		<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
-		<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/js/swiper.jquery.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>
-		<script src='https://www.google.com/recaptcha/api.js'></script>
-		<!-- <script src="https://login.persona.org/include.js"></script> -->
+		<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+		<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+		<script src="https://login.persona.org/include.js"></script>
 		<script src="ui.js"></script>
 		<script>
-			$("button#submitlogin").on("click", function() {
-				$("input#type").val("login");
-				//return false;
+			$("span#hubarea").css("display","none");
+			$("span#loginarea").css("display","inline");
+			var socket = io.connect();
+			socket.on('message', function(data){
+				console.log(data.message);
 			});
-			$("button#submitadd").on("click", function() {
-				$("input#type").val("add");
-				//return false;
+			socket.on('login', function(data){
+				console.log(data);
 			});
-			$(".logout").on("click", function() {
-				$.get("/logout", function(data) {
-					if(data.status) {
-						$("div#hubarea").effect("blind");
-						$("form#loginarea").show("blind");
-						$(".logout").hide();
-						$("article#logonZone p").text(data.msg);
-					} else {
-						$("article#logonZone p").text(data.msg);
-					}
-				});
-			});
-			$("form#loginarea").on("submit", function() {
-				$("article#logonZone p").text("資料檢查中...");
-				$.post("/login", { 
-						"account": $("input#accountfield").val(),
-						"pass": $("input#passfield").val(),
-						"type": $("input#type").val(),
-						"g-recaptcha-response": $("textarea#g-recaptcha-response").val()
-					}, function(data) {
-						$("form#loginarea")[0].reset();
-						grecaptcha.reset();
-						if(data.status) {
-							$("article#logonZone p").text(data.msg);
-							$("div#hubarea").show("blind");
-							$("form#loginarea").effect("blind");
-							$(".logout").show();
-						} else {
-							$("article#logonZone p").text("登入失敗！");
-							popWindows.messageWindow("登入失敗","登入失敗，錯誤代碼為："+data.msg,{
-								ok:{
-									enable: true,
-									func: function() {
-										$("form#loginarea")[0].reset();
-										grecaptcha.reset();
-										popWindows.endPseudo();
-									}
-								},
-								yes:{
-									enable: false,
-									func: function() {
-										popWindows.endPseudo();
-									}
-								},
-								no:{
-									enable: false,
-									func: function() {
-										popWindows.endPseudo();
-									}
-								},
-								custombuttons: new Array()
-							},"exclamation-triangle");
-						}
-					},
-				"json");
-				return false;
-			});
-			$("div#hubarea").hide();
-			$("form#loginarea").hide();
-			/*var socket = io.connect();
-			socket.on("getUser", function(data) {
-				if(!data) {
-					$("article#logonZone p").text("您尚未登入");
-				} else {
-					$("article#logonZone p").text(data.obj.email+"已登入");
-					$("div#hubarea").show("blind");
-					$("form#loginarea").effect("blind");
-				}
-			});
-			socket.on('loginsuccess', function(data){
-				
-				socket.emit('checkUser');
-			});
-			socket.on('loginfailed', function(data){
-
-			});
-			socket.on('accountfailed', function(data){
-				popWindows.messageWindow("建立帳號失敗","帳號建立失敗，錯誤代碼為："+data,{
-					ok:{
-						enable: true,
-						func: function() {
-							grecaptcha.reset(captcha);
-							socket.emit('checkUser');
-							popWindows.endPseudo();
-						}
-					},
-					yes:{
-						enable: false,
-						func: function() {
-							popWindows.endPseudo();
-						}
-					},
-					no:{
-						enable: false,
-						func: function() {
-							popWindows.endPseudo();
-						}
-					},
-					custombuttons: new Array()
-				},"exclamation-triangle");
-			});*/
 			/*$("button#newbutton").on("click",function(){
 				socket.emit('createuser', {
 					'name': $("input#newname").val(),
@@ -320,20 +176,20 @@
 					console.log(data.message);
 					socket.off('createdone');
 				});
-			});
+			});*/
 			$("button#loginbtn").on("click",function() {
 				navigator.id.request();
 			});
 			$("button#logoutbtn").on("click", function() {
 				navigator.id.logout();
-			});*/
+			});
 			$("button#configbtn").on("click", function() {
 				location.href = "admin.htm";
 			});
 			$("button#enterbtn").on("click", function() {
 				location.href = "board.htm";
 			});
-			/*navigator.id.watch({
+			navigator.id.watch({
 			  onlogin: function(assertion) {
 				$.ajax({
 					url: "/persona/verify",
@@ -345,13 +201,13 @@
 							$("article#logonZone p").text(data.email+"已登入");
 							$("a.logout").css("display","inline");
 							$(".logout").on("click",function() {
-								//navigator.id.logout();
+								navigator.id.logout();
 							});
-							$("div#hubarea").css("display","inline");
-							$("div#loginarea").css("display","none");
+							$("span#hubarea").css("display","inline");
+							$("span#loginarea").css("display","none");
 						} else {
-							$("div#hubarea").css("display","none");
-							$("div#loginarea").css("display","none");
+							$("span#hubarea").css("display","none");
+							$("span#loginarea").css("display","inline");
 							popWindows.messageWindow("登入失敗","你可能未授權Mozilla Persona服務使用你的Gmail，如果持續發生錯誤，請聯絡網頁管理員",{
 								ok:{
 									enable: true,
@@ -385,29 +241,16 @@
 						socket.emit('checkUser');
 						$("article#logonZone p").text("您已登出或是尚未登入");
 						$("a.logout").css("display","none");
-						$("div#hubarea").css("display","none");
-						$("div#loginarea").css("display","none");
+						$("span#hubarea").css("display","none");
+						$("span#loginarea").css("display","inline");
 					}
 				});
 			  }
-			});*/
+			});
 			$().ready(function() {
-				popWindows = new pseudoWindow($("div#pseudoWindow"));
 				popWindows.resetWindows();
-				popWindows.opacityValue = 0.7;				
-				$.get("/checkUser", function(data) {
-					$("article#logonZone p").text(data.msg);
-					if(data.status) {
-						$("div#hubarea").show("blind");
-						$("form#loginarea").effect("blind");
-						$(".logout").show();
-					} else {
-						$("div#hubarea").effect("blind");
-						$("form#loginarea").show("blind");
-						$(".logout").hide();
-					}
-				});
-				popWindows.welcomeWindow($("form#loginarea"));
+				popWindows.opacityValue = 0.7;
+				popWindows.welcomeWindow();
 			});
 		</script>
 	</body>
