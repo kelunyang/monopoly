@@ -4,8 +4,8 @@
 		<title>線上大富翁：加入遊戲</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/css/swiper.min.css">
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.4.0/css/swiper.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 		<link rel="stylesheet" href="pseudoWindow.css"/>
 		<style type="text/css">
 		body {
@@ -39,7 +39,7 @@
 			width:80%;
 			height: 100%;
 			min-height: 400px;
-			padding-left:10%;
+			padding-left:5%;
 			padding-right:10%;
 			padding-top:40px;
 			padding-bottom:3px;
@@ -55,13 +55,15 @@
 			font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
 			cursor: default;
 			box-shadow: 0px 0px 5px #AAA;
+			background-color: white;
 		}
 		article>ul {
 			margin: 0px;
 			padding: 0px;
 		}
 		article>ul>li {
-			display: inline-block;
+			display: block;
+			float: left;
 			width: 100px;
 			height: 130px;
 			border: 3px solid #EEE;
@@ -317,7 +319,11 @@
 			font-size: 13px;
 			font-family: Arial, serif;
 		}
-
+		/* tutorial patch*/
+		ul#popTutorial {
+			height: 370px !important;
+			top: 5px !important;
+		}
 		</style>
 	</head>
 	<body>
@@ -393,13 +399,28 @@
 					</ul>
 				</li>
 			</ul>
+			<ul id="popTutorial" class="popWindow">
+				<li id="tcontent">
+					<ul id="tutorialcontainer" class="swiper-container">
+						<li id="tutorialRoll" class="swiper-wrapper"></li>
+						<li id="tutorialpagination" class="swiper-pagination"></li>
+						<li id="tutorialup" class="tutorialController"><i class="fa-chevron-left fa fa-1x"></i></li>
+						<li id="tutorialdown" class="tutorialController"><i class="fa-chevron-right fa fa-1x"></i></li>
+					</ul>
+				</li>
+				<li id="tbutton" class="buttonarea">
+					<ul>
+						<li class="button">結束教學</li>
+					</ul>
+				</li>
+			</ul>
 		</div>
 		<script src="/socket.io/socket.io.js"></script>
 		<script src="/node_modules/socket.io-stream/socket.io-stream.js"></script>
 		<script src="https://login.persona.org/include.js"></script>
 		<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
 		<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/js/swiper.jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.4.0/js/swiper.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>
 		<script src="ui.js"></script>
 		<script>
@@ -663,12 +684,80 @@
 				}
 			});
 			$().ready(function() {
-				socket.emit('checkUser',{level:0});
-				socket.emit("requestsessionList");
 				popWindows = new pseudoWindow($("div#pseudoWindow"));
 				popWindows.resetWindows();
 				popWindows.opacityValue = 0.7;
-				popWindows.iconchooserWindow(socket);
+				var tutorialImg = ["3","4","5"];
+				tutorialImg.forEach(function(item) {
+					var timg = $("<img/>");
+					timg.attr("src","img/tutorial/"+item+".svg")
+					timg.attr("alt","&nbsp;");
+					timg.addClass("swiper-slide");
+					$("li#tutorialRoll").append(timg);
+				});
+				if(navigator.userAgent.indexOf("Trident") > 0) {
+					popWindows.messageWindow("請勿使用Internet Explorer！","Internet Explorer不支援最新的網頁規格，因此請勿使用他來玩本遊戲，請使用Microsoft Edge, Google Chrome, Firefox等新世代瀏覽器<br\><span style='color:maroon'>停止載入遊戲清單</span>",{
+						ok:{
+							enable: true,
+							func: function() {
+								popWindows.endPseudo();
+							}
+						},
+						yes:{
+							enable: false,
+							func: function() {
+								popWindows.endPseudo();
+							}
+						},
+						no:{
+							enable: false,
+							func: function() {
+								popWindows.endPseudo();
+							}
+						},
+						custombuttons: new Array()
+					},"internet-explorer",{
+						icon: "exclamation-triangle",
+						emphasis: true
+					});
+				} else {
+					socket.emit('checkUser',{level:0});
+				}
+				socket.on("getUser", function(data) {
+					if(data == false) {
+						popWindows.messageWindow("操作錯誤！","您尚未登入，或者是主機發生錯誤，程式中斷",{
+							ok:{
+								enable: true,
+								func: function() {
+									popWindows.endPseudo();
+								}
+							},
+							yes:{
+								enable: false,
+								func: function() {
+									popWindows.endPseudo();
+								}
+							},
+							no:{
+								enable: false,
+								func: function() {
+									popWindows.endPseudo();
+								}
+							},
+							custombuttons: new Array()
+						},"times");
+					} else {
+						if(data.obj.tutorial == 1) {
+							popWindows.tutorialWindow(function() {
+								socket.emit("requestsessionList");
+								popWindows.iconchooserWindow(socket);
+							});
+						} else {
+							socket.emit("requestsessionList");
+							popWindows.iconchooserWindow(socket);
+						}
+					}
+				});
 				var colors = ["336699","009999","FF3333","66CC66","3399FF","FF9999","996699","CCCC66","FF6666","9933CC"];
 				var tokens = ["question-circle","odnoklassniki","flash","rocket","bug","optin-monster","paw","leaf","forumbee","tripadvisor","fighter-jet"];
 				for(var i=0;i<colors.length;i++) {
@@ -695,12 +784,31 @@
 				$("ul.palette>li.colorBrick").on("click",function() {
 					selectColor($(this),true);
 				});
-				playerIcon = new Swiper('#iconscontainer', {
-					scrollbar: '#iconscrollbar',
-					nextButton: '#iconsdown',
-					prevButton: '#iconsup',
-					slidesPerView:4,
-					loop:true
+				socket.on("disconnect", function(){
+					popWindows.messageWindow("連線異常！","主機連線異常，可能是程式故障，請聯絡開發者（Kelunyang@outlook.com）",{
+						ok:{
+							enable: true,
+							func: function() {
+								popWindows.endPseudo();
+							}
+						},
+						yes:{
+							enable: false,
+							func: function() {
+								popWindows.endPseudo();
+							}
+						},
+						no:{
+							enable: false,
+							func: function() {
+								popWindows.endPseudo();
+							}
+						},
+						custombuttons: new Array()
+					},"plug",{
+						icon: "exclamation-triangle",
+						emphasis: true
+					});
 				});
 			});
 			function selectColor(colorBlock,create) {

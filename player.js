@@ -1,5 +1,7 @@
 //角色模組
 function player(name,icon,color,asset,board,initpost,local,htmlElement,destination,uid) {
+	this.halt = false;
+	this.frozen = 0;
 	this.local = local;
 	this.bricks = new Array();
 	this.asset = asset;

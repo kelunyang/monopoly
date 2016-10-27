@@ -440,8 +440,8 @@
 			<li id="emessage">你尚未登入，或者是你的權限無法存取本功能，如果錯誤訊息重複發生，請聯絡管理員</li>
 			<li id="ebutton" class="buttonarea">
 				<ul>
-					<li class="button" id="enter"><i class="fa fa-arrow-left"></i>關閉視窗</li>
-					<li class="embutton" id="enter"><i class="fa fa-home"></i>回到首頁</li>
+					<li class="button" id="enterback"><i class="fa fa-arrow-left"></i>關閉視窗</li>
+					<li class="embutton" id="enterhome"><i class="fa fa-home"></i>回到首頁</li>
 				</ul>
 			</li>
 		</ul>
@@ -549,8 +549,9 @@
 			console.log(data);
 		});
 		socket.emit('checkUser', {level: 1});	//登入檢查
+		socket.emit("checkPrivilege");
 		socket.on("getUser", function(data) {
-			if(data == null) {
+			if(data == false) {
 				popWindows.resetWindows();
 				popWindows.opacityValue = 0.7;
 				popWindows.errorWindow("你尚未登入，無法存取本功能，如果錯誤訊息重複發生，請聯絡管理員！",1);
@@ -559,6 +560,19 @@
 				popWindows.resetWindows();
 				popWindows.opacityValue = 0.7;
 				popWindows.errorWindow("你的權限不足，無法存取本功能，如果錯誤訊息重複發生，請聯絡管理員！",0);
+			}
+		});
+		socket.on("userPrivilege", function(data) {
+			if(data == false) {
+				popWindows.resetWindows();
+				popWindows.opacityValue = 0.7;
+				popWindows.errorWindow("你尚未登入，無法存取本功能，如果錯誤訊息重複發生，請聯絡管理員！",1);
+			} else {
+				if(data.check == false) {
+					popWindows.resetWindows();
+					popWindows.opacityValue = 0.7;
+					popWindows.errorWindow("你的權限不足，無法存取本功能，如果錯誤訊息重複發生，請聯絡管理員！",0);
+				}
 			}
 		});
 		socket.on('userdeldone', function(data){

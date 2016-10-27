@@ -44,7 +44,6 @@ pseudoWindow.prototype.endPseudo = function() {
 pseudoWindow.prototype.iconchooserWindow = function(socket) {
 	var oriobj = this;
 	var window = this.htmlElement.find("ul#popChooser");
-	this.resetWindows();
 	window.find("li#cbutton>ul>li").off();
 	window.find("li#cbutton>ul>li#logoutbtn").on("click",function() {
 		navigator.id.logout();
@@ -63,6 +62,13 @@ pseudoWindow.prototype.iconchooserWindow = function(socket) {
 	})
 	this.loadWindows();
 	window.css("display","block");
+	playerIcon = new Swiper('#iconscontainer', {
+		scrollbar: '#iconscrollbar',
+		nextButton: '#iconsdown',
+		prevButton: '#iconsup',
+		slidesPerView:4,
+		loop:true
+	});
 }
 pseudoWindow.prototype.chanceWindow = function(player, socket) {
 	var oriobj = this;
@@ -75,7 +81,7 @@ pseudoWindow.prototype.chanceWindow = function(player, socket) {
 	window.find("li#cicon>i").addClass("fa");
 	window.find("li#cicon>i").addClass("fa-5x");
 	switch(chance.type) {
-		case 0:
+		case 0:	//加扣點
 			if(chance.effect > 0) {
 				window.find("li#cicon>i").addClass("fa-usd");
 				resultword = chance.effect % 1 == 0 ? "獲得點數："+chance.effect : "點數增長："+chance.effect+"倍";
@@ -84,8 +90,10 @@ pseudoWindow.prototype.chanceWindow = function(player, socket) {
 				resultword = chance.effect % 1 == 0 ? "失去點數："+chance.effect : "點數縮水："+chance.effect+"倍";
 			}
 			descword = chance.desc;
+			var credit = chance.effect % 1 == 0 ? player.credit+chance.effect : player.credit + (player.credit*chance.effect);
+			player.creditCal(credit);
 		break;
-		case 1:
+		case 1:	//傳送門
 			this.placeArray = new Array();
 			this.placeMap = new Object();
 			for(var i=0;i<this.board.bricks.length;i++) {
@@ -108,6 +116,16 @@ pseudoWindow.prototype.chanceWindow = function(player, socket) {
 				player.position = this.placeMap[chance.effect];
 			}
 			this.board.remainmoves = 0;
+			player.halt = true;
+			player.manualMove(false);
+		break;
+		case 2:	//鎖定
+			window.find("li#cicon>i").addClass("fa-ban");
+			resultword = "被鎖定"+chance.effect+"回合";
+			descword = chance.desc;
+			player.frozen = chance.effect;
+			this.board.remainmoves = 0;
+			player.halt = true;
 			player.manualMove(false);
 		break;
 	}
@@ -115,12 +133,8 @@ pseudoWindow.prototype.chanceWindow = function(player, socket) {
 	window.find("li#cresult").text(resultword);
 	window.find("li#cbutton>ul>li").off();
 	window.find("li#cbutton>ul>li").on("click",function() {
-		var credit = chance.effect % 1 == 0 ? player.credit+chance.effect : chance.effect > 0 ? player.credit + (player.credit*chance.effect) : player.credit - (player.credit*chance.effect);
-		if(player.credit > 0) {
-			player.creditCal(credit);
-		}
 		socket.emit("updatescore", { score: player.asset });
-		window.css("display","none");
+		oriobj.closeWindow("popChance");
 	})
 	this.loadWindows();
 	window.css("display","block");
@@ -138,12 +152,50 @@ pseudoWindow.prototype.shortcutWindow = function(name,start,end,desc) {
 	this.loadWindows();
 	window.css("display","block");
 }
+pseudoWindow.prototype.stageWindow = function(name,desc,type,val,DB) {
+	var oriobj = this;
+	var window = this.htmlElement.find("ul#popStageupdate");
+	window.find("li#sutitle").text("進入下一個時代："+name);
+	var effect = "";
+	switch(type) {
+		case 0:
+			effect = "";
+		break;
+		case 1:
+			effect = "現金增加"+val;
+		break;
+		case 2:
+			effect = "現金減少"+val;
+		break;
+	}
+	window.find("li#suconnection").text(effect);
+	window.find("li#sudesc").text(desc);
+	window.find("li#subutton>ul>li").off();
+	window.find("li#subutton>ul>li").on("click",function() {
+		oriobj.board.loadRoads(DB);
+		oriobj.closeWindow("popStageupdate");
+	})
+	this.loadWindows();
+	window.css("display","block");
+}
 pseudoWindow.prototype.welcomeWindow = function() {
 	var oriobj = this;
 	var window = this.htmlElement.find("ul#popWelcome");
 	window.find("li#wbutton>ul>li").off();
 	window.find("li#wbutton>ul>li:nth-child(1)").on("click",function() {
-		oriobj.endPseudo();
+		if(localStorage.hasOwnProperty("tutorial")) {
+			if(JSON.parse(localStorage.tutorial)) {
+				oriobj.tutorialWindow(function() {
+					localStorage.tutorial = JSON.stringify(false);
+				});
+			}
+		} else {
+			localStorage.tutorial = JSON.stringify(true);
+			oriobj.tutorialWindow(function() {
+				localStorage.tutorial = JSON.stringify(false);
+			});
+		}	
+		oriobj.closeWindow("popWelcome");
 	});
 	this.loadWindows();
 	window.css("display","block");
@@ -158,6 +210,36 @@ pseudoWindow.prototype.switchWindow = function(message) {
 	});
 	this.loadWindows();
 	window.css("display","block");
+}
+pseudoWindow.prototype.tutorialWindow = function(commandlet) {
+	var oriobj = this;
+	var window = this.htmlElement.find("ul#popTutorial");
+	window.find("li#tbutton>ul>li").off();
+	window.find("li#tbutton>ul>li:nth-child(1)").on("click",function() {
+		if(commandlet != undefined) commandlet();
+		oriobj.closeWindow("popTutorial");
+	});
+	this.loadWindows();
+	window.css("display","block");
+	tutorialSwiper = new Swiper('#tutorialcontainer', {
+		pagination: '#tutorialpagination',
+		nextButton: '#tutorialdown',
+		prevButton: '#tutorialup',
+		paginationType: 'progress',
+        paginationClickable: true,
+        spaceBetween: 30,
+        centeredSlides: true,
+        autoplay: 2500,
+        autoplayDisableOnInteraction: false,
+		autoplayStopOnLast: true
+	});
+	$(".tutorialController").hide();
+	$("#tutorialcontainer").on("mouseenter", function() {
+		$(".tutorialController").show();
+	});
+	$("#tutorialcontainer").on("mouseleave", function() {
+		$(".tutorialController").hide();
+	});
 }
 pseudoWindow.prototype.settleWindow = function(message) {
 	var oriobj = this;
@@ -219,16 +301,32 @@ pseudoWindow.prototype.errorWindow = function(message,type) {
 	this.loadWindows();
 	window.css("display","block");
 }
-pseudoWindow.prototype.messageWindow = function(title,message,control,icon) {
+pseudoWindow.prototype.messageWindow = function(title,message,control,icon,stackicon) {
 	var oriobj = this;
 	var window = this.htmlElement.find("ul#popMessage");
 	window.find("li#ptitle").text(title);
 	window.find("li#pcontent").empty();
 	window.find("li#pcontent").append(message);
-	window.find("li#picon>i").removeClass();
+	window.find("li#picon").empty();
+	window.find("li#picon").append($("<i></i>"));
 	window.find("li#picon>i").addClass("fa");
 	window.find("li#picon>i").addClass("fa-5x");
 	window.find("li#picon>i").addClass("fa-"+icon);
+	if(stackicon != undefined) {
+		window.find("li#picon").addClass("fa-stack fa-2x");
+		window.find("li#picon>i").removeClass("fa-5x");
+		window.find("li#picon>i").addClass("fa-stack-2x");
+		var sicon = $("<i></i>");
+		sicon.addClass("fa");
+		sicon.addClass("fa-stack-1x");
+		sicon.css("left","20px");
+		sicon.css("top","20px");
+		if(stackicon.emphasis) sicon.css("color","red");
+		sicon.addClass("fa-"+stackicon.icon);
+		window.find("li#picon").append(sicon);
+	} else {
+		window.find("li#picon").removeClass("fa-stack fa-lg");
+	}
 	window.find("li#pbutton>ul>li").css("display","none");
 	window.find("li#pbutton>ul>li:nth-child(1)").text("確定");
 	window.find("li#pbutton>ul>li").off();
@@ -442,14 +540,15 @@ pseudoWindow.prototype.infoWindow = function(upgradeDB,stage,player,brick,mode) 
 			}); 
 		}
 		window.find("li#iInfo>h3").text("過路費："+brick.getRent()+"/現值："+brick.getCurrentValue());
-		this.loadWindows();
+		oriobj.loadWindows();
 		window.css("display","block");
 	} else {
 		window.find("li#iInfo>h2").text("所有者："+brick.owner.name);
 		icon.addClass("fa-"+brick.owner.icon);
 		if(viewmode) {
 			window.find("li#uSets").css("display","block");
-			Object.keys(upgradeDB).forEach(function(upgrade) {
+			Object.keys(upgradeDB).forEach(function(ukey) {
+				var upgrade = upgradeDB[ukey];
 				if(upgrade.type != 1) {
 					var item = $("<span></span>");
 					item.addClass("item");
@@ -520,12 +619,12 @@ pseudoWindow.prototype.infoWindow = function(upgradeDB,stage,player,brick,mode) 
 					item.addClass("swiper-slide");
 					console.log(item);
 					//window.find("li#uSets>ul#upgradeRoll").slick('slickAdd',item);
-					this.upgrademenu.appendSlide(item);
+					oriobj.upgrademenu.appendSlide(item);
 					//window.find("li#uSets>div#upgradeRoll").append(item);
 				}
 			});
 			window.find("li#iInfo>h3").text("過路費："+brick.getRent()+"/現值："+brick.getCurrentValue());
-			this.loadWindows();
+			oriobj.loadWindows();
 			window.css("display","block");
 			//window.find("li#uSets>ul#upgradeRoll").slick("slickNext");
 			/*for(var i=0;i<upgradeDB.length;i++) {	//這是一個workaround，不讓動畫上下跑一跑，繪製會發生width=0，但當動畫項目太少時會跑不起來，因此廢物件等到跑完再砍

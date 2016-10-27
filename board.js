@@ -1,6 +1,7 @@
 //棋盤模組
 function board(name,width,height,shortcuts,socket,stages,players,boardElement,titleElement,popElement,anmiblock,upgradeDB,incidentDB,nextElement,exitElement) {
 	var oriobj = this;
+	this.boardinfo = null;
 	this.diceElement = null;
 	this.sameUser = true;
 	this.remainmoves = 0;
@@ -34,8 +35,8 @@ function board(name,width,height,shortcuts,socket,stages,players,boardElement,ti
 	this.stage = 0;
 	this.stages = stages;
 	this.stageElement = $("<li><h2>"+this.stages[this.stage].name+"</h2></li>");
-	this.turnElement = $("<li>第<span id=\"stagetitle\">"+this.turn+"</span>回合，剩餘<span id=\"stageturns\">"+this.stages[this.stage].duration+"</span>回合後升級</li>");
-	this.titleElement.find("h1").text("大富翁："+this.name);
+	this.turnElement = $("<li>第<span id=\"stagetitle\">"+this.turn+"</span>回合，剩餘<span id=\"stageturns\">"+this.stages[this.stage].duration+"回合後升級</span></li>");
+	this.titleElement.find("h1").text(this.name);
 	this.titleElement.find("ul#gameinfo").append(this.stageElement);
 	this.titleElement.find("ul#gameinfo").append(this.turnElement);
 	this.boardElement.css("width",width*92+"px");
@@ -68,7 +69,7 @@ function board(name,width,height,shortcuts,socket,stages,players,boardElement,ti
 			if(oriobj.turn == shortcut.endturn) {
 				bricks = shortcut.bricks;
 				oriobj.hideShortcut(shortcut.name);
-				oriobj.turnLog = {
+				oriobj.turnLog.shortcut = {
 					name: shortcut.name,
 					enable: false
 				}
@@ -120,18 +121,20 @@ function board(name,width,height,shortcuts,socket,stages,players,boardElement,ti
 			currentsession: data.currentsession,
 			currentstage: data.currentstage,
 			currentturn: data.currentturn,
+			newstage: data.newstage
 		};
 		socket.emit("responseTurn", output);
 	});
 	this.socket.on("boardcastturn", function(data) {
+		if(data.newstage) {
+			oriobj.popElement.stageWindow(oriobj.stages[data.currentstage].name,oriobj.stages[data.currentstage].desc,oriobj.stages[data.currentstage].effecttype,oriobj.stages[data.currentstage].effectvalue,data.roadDB);
+		}
 		oriobj.turn = data.currentturn;
 		oriobj.stage = data.currentstage;
 		oriobj.stageElement.find("h2").text(oriobj.stages[oriobj.stage].name);
 		Object.keys(data.brickLog.bricks).forEach(function(brickserial) {
 			var brick = data.brickLog.bricks[brickserial];
-			if(brick.owner != null) {
-				oriobj.bricks[brick.index].changeOwner(oriobj.players[brick.owner]);
-			}
+			oriobj.bricks[brick.index].changeOwner(oriobj.players[brick.owner]);
 			if(brick.upgrades.length > 0) {
 				brick.upgrades.forEach(function(upgrade) {
 					if(oriobj.bricks[brick.index].upgrades.indexOf(upgrade) == -1) {
@@ -154,7 +157,8 @@ function board(name,width,height,shortcuts,socket,stages,players,boardElement,ti
 		socket.emit("updateturn", {
 			currentplayer:data.currentplayer,
 			currentstage:oriobj.stage,
-			currentturn:oriobj.turn
+			currentturn:oriobj.turn,
+			newstage:data.newstage
 		});
 	});
 	this.socket.on("gamesettled", function(data) {
@@ -201,12 +205,43 @@ function board(name,width,height,shortcuts,socket,stages,players,boardElement,ti
 			oriobj.diceElement.availablity(true);
 		}
 		oriobj.turnElement.find("span#stagetitle").text(oriobj.turn);
-		oriobj.turnElement.find("span#stageturns").text(oriobj.stages[oriobj.stage].duration - oriobj.turn);
+		if(oriobj.stage != oriobj.stages.length - 1) {
+			var remain = oriobj.stages[oriobj.stage].duration - oriobj.turn;
+			oriobj.turnElement.find("span#stageturns").text(remain+"回合後升級");
+		} else {
+			oriobj.turnElement.find("span#stageturns").text((oriobj.boardinfo.maxround - oriobj.turn)+"回合後結束");
+		}
 		data.other.forEach(function(item) {
 			oriobj.players[item.uid].credit = item.score;
 			oriobj.players[item.uid].position = oriobj.bricks[item.position];
+			oriobj.players[item.uid].frozen = item.frozen;
 		});
 		oriobj.scanPlayer(false);
+		if(oriobj.localplayer.frozen > 0) {
+			oriobj.popElement.messageWindow("遊戲鎖定","你還有"+oriobj.localplayer.frozen+"次才能擲骰子",{
+				ok:{
+					enable: true,
+					func: function() {
+						oriobj.localplayer.frozen--;
+						oriobj.diceElement.availablity(false);
+						oriobj.popElement.closeWindow("popMessage");
+					}
+				},
+				yes:{
+					enable: false,
+					func: function() {
+						oriobj.popElement.endPseudo();
+					}
+				},
+				no:{
+					enable: false,
+					func: function() {
+						oriobj.popElement.endPseudo();
+					}
+				},
+				custombuttons: new Array()
+			},"ban");
+		}
 		oriobj.popElement.switchWindow(data.current);
 	});
 }
@@ -250,8 +285,9 @@ board.prototype.moveCounter = function(move) {
 board.prototype.turnQueue = function() {
 	//wait server response
 	//this.addTurn();
+	var oriobj = this;
 	this.socket.emit('queryQuestion', {
-		'stage': this.stage
+		'stage': oriobj.stage
 	});
 }
 
@@ -269,7 +305,8 @@ board.prototype.addTurn = function() {
 			asset: item.asset,
 			credit: item.credit,
 			uid: item.uid,
-			position: item.position.index
+			position: item.position.index,
+			frozen: item.frozen
 		});
 	})
 	var oriobj = this;
@@ -287,128 +324,134 @@ board.prototype.pushEvent = function(message) {
 	this.messageElement.trigger("forwardHover");
 }
 board.prototype.detectMove = function(player) {
-	if(!this.interrupt) {
-		this.popElement.closeWindow("popMessage");	//必須先關閉提示視窗，不然叉路口會跳出來
-		this.remainmoves = this.diceThrowed ? this.diceElement.diceValue : this.remainmoves;
-		this.diceThrowed = false;
-		var currentLoc = player.position.index;
-		this.moveCounter(true);
-		while(this.remainmoves > 0) {
-			if(player.direction) {
-				if(player.position.next[0]) {
-					if(player.position.next.length > 1) {
-						var oriobj = this;
-						this.interrupt = true;
-						var custombuttons = new Array();
-						for(var i=0;i<player.position.next.length;i++) {
-							var button = $("<li></li>");
-							button.text("去"+player.position.next[i].name);
-							button.data("brick",player.position.next[i]);
-							button.on("click",function() {
-								oriobj.interrupt = false;
-								player.position = $(this).data("brick");
-								oriobj.remainmoves--;
-								oriobj.diceElement.diceValue--;
-								player.manualMove(false);
-							});
-							custombuttons.push(button);
+	if(!player.halt) {
+		if(!this.interrupt) {
+			this.popElement.closeWindow("popMessage");	//必須先關閉提示視窗，不然叉路口會跳出來
+			this.remainmoves = this.diceThrowed ? this.diceElement.diceValue : this.remainmoves;
+			this.diceThrowed = false;
+			var currentLoc = player.position.index;
+			this.moveCounter(true);
+			while(this.remainmoves > 0) {
+				if(player.direction) {
+					if(player.position.next[0]) {
+						if(player.position.next.length > 1) {
+							var oriobj = this;
+							this.interrupt = true;
+							var custombuttons = new Array();
+							for(var i=0;i<player.position.next.length;i++) {
+								var button = $("<li></li>");
+								button.text("去"+player.position.next[i].name);
+								button.data("brick",player.position.next[i]);
+								button.on("click",function() {
+									oriobj.interrupt = false;
+									player.position = $(this).data("brick");
+									oriobj.remainmoves--;
+									oriobj.diceElement.diceValue--;
+									player.manualMove(false);
+								});
+								custombuttons.push(button);
+							}
+							this.popElement.messageWindow("遇到岔路",player.position.name+"有"+player.position.next.length+"條岔路，選哪一條呢？",{
+								ok:{
+									enable: false,
+									func: function() {
+										oriobj.popElement.endPseudo();
+									}
+								},
+								yes:{
+									enable: false,
+									func: function() {
+										oriobj.popElement.endPseudo();
+									}
+								},
+								no:{
+									enable: false,
+									func: function() {
+										oriobj.popElement.endPseudo();
+									}
+								},
+								custombuttons: custombuttons
+							},"code-fork");
+							return false;
+						} else {
+							player.position = player.position.next[0];
 						}
-						this.popElement.messageWindow("遇到岔路",player.position.name+"有"+player.position.next.length+"條岔路，選哪一條呢？",{
-							ok:{
-								enable: false,
-								func: function() {
-									oriobj.popElement.endPseudo();
-								}
-							},
-							yes:{
-								enable: false,
-								func: function() {
-									oriobj.popElement.endPseudo();
-								}
-							},
-							no:{
-								enable: false,
-								func: function() {
-									oriobj.popElement.endPseudo();
-								}
-							},
-							custombuttons: custombuttons
-						},"code-fork");
-						return false;
 					} else {
-						player.position = player.position.next[0];
+						player.direction = !player.direction;
+						if(!this.detectMove(player)) {
+							return false;
+						}
 					}
 				} else {
-					player.direction = !player.direction;
-					if(!this.detectMove(player)) {
-						return false;
-					}
-				}
-			} else {
-				if(player.position.previous[0]) {
-					if(player.position.previous.length > 1) {
-						var oriobj = this;
-						this.interrupt = true;
-						var custombuttons = new Array();
-						for(var i=0;i<player.position.previous.length;i++) {
-							var button = $("<li></li>");
-							button.text("去"+player.position.previous[i].name);
-							button.data("brick",player.position.previous[i]);
-							button.on("click",function() {
-								oriobj.interrupt = false;
-								player.position = $(this).data("brick");
-								oriobj.remainmoves--;
-								oriobj.diceElement.diceValue--;
-								player.manualMove(false);
-							});
-							custombuttons.push(button);
+					if(player.position.previous[0]) {
+						if(player.position.previous.length > 1) {
+							var oriobj = this;
+							this.interrupt = true;
+							var custombuttons = new Array();
+							for(var i=0;i<player.position.previous.length;i++) {
+								var button = $("<li></li>");
+								button.text("去"+player.position.previous[i].name);
+								button.data("brick",player.position.previous[i]);
+								button.on("click",function() {
+									oriobj.interrupt = false;
+									player.position = $(this).data("brick");
+									oriobj.remainmoves--;
+									oriobj.diceElement.diceValue--;
+									player.manualMove(false);
+								});
+								custombuttons.push(button);
+							}
+							this.popElement.messageWindow("遇到岔路",player.position.name+"前方有"+player.position.previous.length+"條岔路，選哪一條呢？",{
+								ok:{
+									enable: false,
+									func: function() {
+										oriobj.popElement.endPseudo();
+									}
+								},
+								yes:{
+									enable: false,
+									func: function() {
+										oriobj.popElement.endPseudo();
+									}
+								},
+								no:{
+									enable: false,
+									func: function() {
+										oriobj.popElement.endPseudo();
+									}
+								},
+								custombuttons: custombuttons
+							},"code-fork");
+							return false;
+						} else {
+							player.position = player.position.previous[0];
 						}
-						this.popElement.messageWindow("遇到岔路",player.position.name+"前方有"+player.position.previous.length+"條岔路，選哪一條呢？",{
-							ok:{
-								enable: false,
-								func: function() {
-									oriobj.popElement.endPseudo();
-								}
-							},
-							yes:{
-								enable: false,
-								func: function() {
-									oriobj.popElement.endPseudo();
-								}
-							},
-							no:{
-								enable: false,
-								func: function() {
-									oriobj.popElement.endPseudo();
-								}
-							},
-							custombuttons: custombuttons
-						},"code-fork");
-						return false;
 					} else {
-						player.position = player.position.previous[0];
-					}
-				} else {
-					player.direction = !player.direction;
-					if(!this.detectMove(player)) {
-						return false;
+						player.direction = !player.direction;
+						if(!this.detectMove(player)) {
+							return false;
+						}
 					}
 				}
+				console.log("move:"+this.remainmoves+"/currentloc:"+player.position.index+"/locationname:"+player.position.name+"/Next:"+player.position.next.length+"/previous:"+player.position.previous.length);
+				this.diceElement.diceValue--;
+				this.remainmoves--;
 			}
-			console.log("move:"+this.remainmoves+"/currentloc:"+player.position.index+"/locationname:"+player.position.name+"/Next:"+player.position.next.length+"/previous:"+player.position.previous.length);
-			this.diceElement.diceValue--;
-			this.remainmoves--;
+			this.moveCounter(true);
 		}
-		this.moveCounter(true);
+		return true;
+	} else {
+		player.halt = false;
+		this.moveCounter(false);
+		return false;
 	}
-	return true;
 }
 board.prototype.initBricks = function() {	//初始化
 	this.upgradeDB["交通要道"] = {
 		name: "交通要道",
 		rent: 1.0,
 		price: 750,
-		icon:"code-fork ",
+		icon:"code-fork",
 		stage: 0,
 		desc: "騙學費",
 		type: 1
@@ -431,6 +474,24 @@ board.prototype.loadRoads = function(roadDB) {
 		this.bricks[roadDB[i].brick].setBrick(roadDB[i],1);
 		this.bricks[roadDB[i].brick].next.push(this.bricks[roadDB[i].next]);
 		this.bricks[roadDB[i].brick].previous.push(this.bricks[roadDB[i].previous]);
+		if(roadDB[i].previous > -1) {
+			if(this.bricks[roadDB[i].previous].next.indexOf(undefined) != -1) {
+				this.bricks[roadDB[i].previous].next.splice(this.bricks[roadDB[i].previous].next.indexOf(undefined),1);
+			}
+			if(this.bricks[roadDB[i].previous].next.indexOf(this.bricks[roadDB[i].brick]) == -1) {
+				this.bricks[roadDB[i].previous].next.push(this.bricks[roadDB[i].brick]);
+			}
+		}
+		if(roadDB[i].next > -1) {
+			if(this.bricks[roadDB[i].next].type == 1) {
+				if(this.bricks[roadDB[i].next].previous.indexOf(undefined) != -1) {
+					this.bricks[roadDB[i].next].previous.splice(this.bricks[roadDB[i].next].previous.indexOf(undefined),1);
+				}
+				if(this.bricks[roadDB[i].next].previous.indexOf(this.bricks[roadDB[i].brick]) == -1) {
+					this.bricks[roadDB[i].next].previous.push(this.bricks[roadDB[i].brick]);
+				}
+			}
+		}
 		this.bricks[roadDB[i].brick].active = true;
 		this.bricks[roadDB[i].brick].activeElement();
 	}

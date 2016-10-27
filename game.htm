@@ -4,8 +4,8 @@
 		<title>線上大富翁：北台灣開發</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 		<!-- CSS -->
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/css/swiper.min.css">
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.4.0/css/swiper.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 		<link rel="stylesheet" href="pseudoWindow.css"/>
 		<style type="text/css">
 			div#anmiblock {
@@ -452,6 +452,14 @@
 			ol#seleaderboard>li.leaderboarditem>span.leaderboarditemid {
 				padding-left: 10px;
 			}
+			/* TutorialPatch */
+			ul#tutorialcontainer {
+				height:650px;
+			}
+			ul#popTutorial {
+				height: 700px !important;
+				top: 5px !important;
+			}
 		</style>
 	</head>
 	<body>
@@ -480,7 +488,7 @@
 				</ul>
 				<ul id="playerzone">
 					<li></li>
-					<li id="playerlist"><h2>即時排名</h2>
+					<li id="playerlist"><h2>對手即時排名</h2>
 						<ul id="leaderboardcontainer" class="swiper-container">
 							<li id="leaderboard" class="swiper-wrapper"></li>
 							<li id="leaderscrollbar" class="swiper-scrollbar"></li>
@@ -578,7 +586,7 @@
 			<ul id="popShortcut" class="popWindow">
 				<li id="stitle">突發事件</li>
 				<li id="sconnection">得到一百塊</li>
-				<li id="sicon"><i class="fa fa-map-signs fa-4x"></i></li>
+				<li id="sicon"><i class="fa fa-code-fork fa-4x"></i></li>
 				<li id="sdesc">扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊</li>
 				<li id="sbutton" class="buttonarea">
 					<ul>
@@ -596,6 +604,17 @@
 					</ul>
 				</li>
 			</ul>
+			<ul id="popStageupdate" class="popWindow">
+				<li id="sutitle">突發事件</li>
+				<li id="suconnection">得到一百塊</li>
+				<li id="suicon"><i class="fa fa-angle-double-up fa-4x"></i></li>
+				<li id="sudesc">扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊</li>
+				<li id="subutton" class="buttonarea">
+					<ul>
+						<li class="button">確定</li>
+					</ul>
+				</li>
+			</ul>
 			<ul class="popWindow" id="popError">
 				<li id="etitle">操作停用</li>
 				<li id="elogo"><i class="fa fa-5x fa-exclamation-triangle"></i></li>
@@ -607,11 +626,26 @@
 					</ul>
 				</li>
 			</ul>
+			<ul id="popTutorial" class="popWindow">
+				<li id="tcontent">
+					<ul id="tutorialcontainer" class="swiper-container">
+						<li id="tutorialRoll" class="swiper-wrapper"></li>
+						<li id="tutorialpagination" class="swiper-pagination"></li>
+						<li id="tutorialup" class="tutorialController"><i class="fa-chevron-left fa fa-1x"></i></li>
+						<li id="tutorialdown" class="tutorialController"><i class="fa-chevron-right fa fa-1x"></i></li>
+					</ul>
+				</li>
+				<li id="tbutton" class="buttonarea">
+					<ul>
+						<li class="button">結束教學，下次不要出現</li>
+					</ul>
+				</li>
+			</ul>
 		</div>
 		<script src="/socket.io/socket.io.js"></script>
 		<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
 		<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/js/swiper.jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.4.0/js/swiper.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>
 		<script src="scrollbox.min.js"></script>
 		<script src="jquery.animateNumber.min.js"></script>
@@ -641,9 +675,153 @@
 			var msgqueue = new Array();
 			var inituser = true;
 			var onlinePlayer = new Object();
+			var boardinfo = null;
+			var commandqueue = new Array();
+			var loaded = false;
 			$().ready(function() {
+				popWindows = new pseudoWindow($("div#pseudoWindow"));
+				popWindows.opacityValue = 1;
+				var tutorialImg = ["6","7","8","9","10","11","12","13"];
+				tutorialImg.forEach(function(item) {
+					var timg = $("<img/>");
+					timg.attr("src","img/tutorial/"+item+".svg")
+					timg.attr("alt","&nbsp;");
+					timg.addClass("swiper-slide");
+					$("li#tutorialRoll").append(timg);
+				});
+				if(navigator.userAgent.indexOf("Trident") > 0) {
+					popWindows.messageWindow("請勿使用Internet Explorer！","Internet Explorer不支援最新的網頁規格，因此請勿使用他來玩本遊戲，請使用Microsoft Edge, Google Chrome, Firefox等新世代瀏覽器<br\><span style='color:maroon'>遊戲將停止載入</span>",{
+						ok:{
+							enable: true,
+							func: function() {
+								popWindows.endPseudo();
+							}
+						},
+						yes:{
+							enable: false,
+							func: function() {
+								popWindows.endPseudo();
+							}
+						},
+						no:{
+							enable: false,
+							func: function() {
+								popWindows.endPseudo();
+							}
+						},
+						custombuttons: new Array()
+					},"internet-explorer",{
+						icon: "exclamation-triangle",
+						emphasis: true
+					});
+				} else {
+					socket.emit('checkUser',{level:0});	//確認連線狀態
+				}
+				socket.on("getUser", function(data) {
+					if(data == false) {
+						popWindows.messageWindow("操作錯誤！","您尚未登入，或者是主機發生錯誤，程式中斷",{
+							ok:{
+								enable: true,
+								func: function() {
+									popWindows.endPseudo();
+								}
+							},
+							yes:{
+								enable: false,
+								func: function() {
+									popWindows.endPseudo();
+								}
+							},
+							no:{
+								enable: false,
+								func: function() {
+									popWindows.endPseudo();
+								}
+							},
+							custombuttons: new Array()
+						},"times");
+					} else {
+						if(data.obj.tutorial == 1) {
+							popWindows.tutorialWindow(function() {
+								socket.emit("setUser",{tutorial:0});
+								popWindows.messageWindow("載入遊戲資料","<p>正在載入遊戲地圖資料，請稍候...</p><ul id=\"loaditems\"></ul>",{
+									ok:{
+										enable: false,
+										func: function() {
+											popWindows.endPseudo();
+										}
+									},
+									yes:{
+										enable: false,
+										func: function() {
+											popWindows.endPseudo();
+										}
+									},
+									no:{
+										enable: false,
+										func: function() {
+											popWindows.endPseudo();
+										}
+									},
+									custombuttons: new Array()
+								},"cloud-download");
+								socket.emit("preparemapbackend");
+								console.log("gameboard sent");
+								checkData();
+							});
+						} else {
+							popWindows.messageWindow("載入遊戲資料","<p>正在載入遊戲地圖資料，請稍候...</p><ul id=\"loaditems\"></ul>",{
+								ok:{
+									enable: false,
+									func: function() {
+										popWindows.endPseudo();
+									}
+								},
+								yes:{
+									enable: false,
+									func: function() {
+										popWindows.endPseudo();
+									}
+								},
+								no:{
+									enable: false,
+									func: function() {
+										popWindows.endPseudo();
+									}
+								},
+								custombuttons: new Array()
+							},"cloud-download");
+							socket.emit("preparemapbackend");
+							console.log("gameboard sent");
+							checkData();
+						}
+					}
+				});
 				socket.on("disconnect", function(){
-					socket.emit("disconnect");
+					popWindows.messageWindow("連線異常！","主機連線異常，可能是程式故障，請聯絡開發者（Kelunyang@outlook.com）",{
+						ok:{
+							enable: true,
+							func: function() {
+								popWindows.endPseudo();
+							}
+						},
+						yes:{
+							enable: false,
+							func: function() {
+								popWindows.endPseudo();
+							}
+						},
+						no:{
+							enable: false,
+							func: function() {
+								popWindows.endPseudo();
+							}
+						},
+						custombuttons: new Array()
+					},"plug",{
+						icon: "exclamation-triangle",
+						emphasis: true
+					});
 				});
 				socket.on('socketon', function(data){
 					if(data.status) {
@@ -663,35 +841,10 @@
 						localuid = data.localplayer;
 						sessionid = data.id;
 						currentplayer = data.currentplayer;
+						boardinfo = data.info;
 						checkData();
 					}
 				});
-				popWindows = new pseudoWindow($("div#pseudoWindow"));
-				popWindows.opacityValue = 1;
-				popWindows.messageWindow("載入遊戲資料","<p>正在載入遊戲地圖資料，請稍候...</p><ul id=\"loaditems\"></ul>",{
-					ok:{
-						enable: false,
-						func: function() {
-							popWindows.endPseudo();
-						}
-					},
-					yes:{
-						enable: false,
-						func: function() {
-							popWindows.endPseudo();
-						}
-					},
-					no:{
-						enable: false,
-						func: function() {
-							popWindows.endPseudo();
-						}
-					},
-					custombuttons: new Array()
-				},"cloud-download");
-				socket.emit("preparemapbackend");
-				console.log("gameboard sent");
-				checkData();
 			});
 			function checkData() {
 				var gameObj = [{
@@ -700,6 +853,9 @@
 				},{
 					name:"伺服器準備完成",
 					data:dataprepared
+				},{
+					name:"棋盤資訊",
+					data:boardinfo
 				},{
 					name:"升級物件",
 					data:upgrades
@@ -734,6 +890,7 @@
 					}
 				}
 				if(k == gameObj.length) {
+					boardinfo.enable = true;
 					setLayout();
 				}
 			}
@@ -767,35 +924,61 @@
 					}
 				}
 			});*/
-			socket.on("getplayerList", function(data) {
-				leadermenu = new Swiper($('#leaderboardcontainer'), {
-					scrollbar: '#leaderscrollbar',
-					nextButton: '#leaderboarddown',
-					prevButton: '#leaderboardup',
-					direction: 'vertical',
-					slidesPerView: data.users.length - 3
-				});
-				$("button#msgbutton").attr("disabled", false);
-				$("input#msg").attr("disabled", false);
+			socket.on("getplayerList", function(data) {	//重新整理玩家訊息
+				if(leadermenu == null) {
+					leadermenu = new Swiper($('#leaderboardcontainer'), {
+						scrollbar: '#leaderscrollbar',
+						nextButton: '#leaderboarddown',
+						prevButton: '#leaderboardup',
+						direction: 'vertical',
+						slidesPerView: data.users.length - 3
+					});
+					$("button#msgbutton").attr("disabled", false);
+					$("input#msg").attr("disabled", false);
+				}
 				for(var i=0;i<data.users.length;i++) {
+					if(gameboard.players.hasOwnProperty(data.users[i].uid)) continue;
 					gameboard.players[data.users[i].uid] = new Object;
 					gameboard.players[data.users[i].uid].credit = data.users[i].score;
-					socket.emit("requestspecificUser", {user: data.users[i].uid});
+					socket.emit("requestspecificUser", {
+						user: data.users[i].uid
+					});
 				}
 			});
 			socket.on("userOnline", function(data) {
-				onlinePlayer[data.user] = true;
-				socket.emit("teamOnline");
-				socket.emit("retrivesessionaliveUsers", { sid: false });
+				var commandlet = function() {
+					onlinePlayer[data.user] = true;
+					socket.emit("teamOnline");
+					socket.emit("retrivesessionaliveUsers", { sid: false });
+				};
+				if(loaded) {
+					commandlet();
+				} else {
+					commandqueue.push(commandlet);
+				}
 			});
 			socket.on("userOffline", function(data) {
-				onlinePlayer[data.user] = false;
-				socket.emit("teamOnline");
-				socket.emit("retrivesessionaliveUsers", { sid: false });
+				var commandlet = function() {
+					onlinePlayer[data.user] = false;
+					socket.emit("teamOnline");
+					socket.emit("retrivesessionaliveUsers", { sid: false });
+				};
+				if(loaded) {
+					commandlet();
+				} else {
+					commandqueue.push(commandlet);
+				}
 			});
 			socket.on("userEcho", function(data) {
-				onlinePlayer[data.user] = true;
-				socket.emit("retrivesessionaliveUsers", { sid: false });
+				var commandlet = function() {
+					onlinePlayer[data.user] = true;
+					socket.emit("retrivesessionaliveUsers", { sid: false });
+				};
+				if(loaded) {
+					commandlet();
+				} else {
+					commandqueue.push(commandlet);
+				}
 			});
 			socket.on("updatealiveList", function(data) {
 				if(gameboard != null) {
@@ -812,20 +995,30 @@
 						if(gameboard.hasOwnProperty("localplayer")) {
 							if(!onlinePlayer.hasOwnProperty(tuser)) {
 								if(tuser != gameboard.localplayer.uid) {
-									gameboard.players[tuser].htmlElement.animate({opacity:0.2},1000);
+									if(gameboard.players.hasOwnProperty(tuser)) {	//如果用戶更加入遊戲，還沒有htmlElement
+										if(gameboard.players[tuser].hasOwnProperty("htmlElement")) {
+											gameboard.players[tuser].htmlElement.animate({opacity:0.2},1000);
+										}
+									}
 								}
 							} else {
 								var obj = data.players[tuser];
 								if(onlinePlayer[tuser]) {
-									if(obj.uid != gameboard.localplayer.uid) {
-										gameboard.players[obj.uid].htmlElement.animate({opacity:1},1000);
+									if(gameboard.players.hasOwnProperty(obj.uid)) {
+										if(gameboard.players[obj.uid].hasOwnProperty("htmlElement")) {
+											gameboard.players[obj.uid].htmlElement.animate({opacity:1},1000);
+										}
+										//tempplayer[data.users[i].email].obj.htmlElement.animate({opacity:0.2},1000);	//離線使用
+										gameboard.players[obj.uid].creditCal(obj.credit);
+										//tempplayer[data.user].obj.asset = data.asset;
+										//tempplayer[data.user].obj,assetCal();
 									}
-									//tempplayer[data.users[i].email].obj.htmlElement.animate({opacity:0.2},1000);	//離線使用
-									gameboard.players[obj.uid].creditCal(obj.credit);
-									//tempplayer[data.user].obj.asset = data.asset;
-									//tempplayer[data.user].obj,assetCal();
 								} else {
-									gameboard.players[obj.uid].htmlElement.animate({opacity:0.2},1000);
+									if(gameboard.players.hasOwnProperty(obj.uid)) {
+										if(gameboard.players[obj.uid].hasOwnProperty("htmlElement")) {
+											gameboard.players[obj.uid].htmlElement.animate({opacity:0.2},1000);
+										}
+									}
 								}
 							}
 						}
@@ -853,12 +1046,28 @@
 					var dices = new dice($("nav"),localplayer,gameboard);
 					gameboard.diceElement = dices;
 					popWindows.dice = dices;
+					var custombuttons = new Array();
+					var button = $("<li></li>");
+					button.text("遊戲說明");
+					button.css("width","90px");
+					button.on("click",function() {
+						button.text("開始遊戲！");
+						popWindows.htmlElement.find("li#ptitle").text(boardinfo.name);
+						popWindows.htmlElement.find("li#pcontent").empty();
+						popWindows.htmlElement.find("li#pcontent").append(boardinfo.desc);
+						if(!boardinfo.enable) {
+							popWindows.closeWindow("popMessage");
+							popWindows.switchWindow(currentplayer.id);
+							socket.emit("onlineBroadcast");	//遊戲載入完成
+						}
+						boardinfo.enable = false;
+					});
+					custombuttons.push(button);
 					popWindows.messageWindow("歡迎進入遊戲！","目前地圖等所有資料都是測試使用，請務必使用Microsoft Edge、Google Chrome、Mozilla Firefox或是平板電腦設備開啟",{
 						ok:{
-							enable: true,
+							enable: false,
 							func: function() {
 								popWindows.endPseudo();
-								popWindows.switchWindow(currentplayer.id);
 							}
 						},
 						yes:{
@@ -873,7 +1082,7 @@
 								popWindows.endPseudo();
 							}
 						},
-						custombuttons: new Array()
+						custombuttons: custombuttons
 					},"road");
 				} else {
 					var obj = new player(data.nickname,data.icon,"#"+data.color,data.asset,gameboard,gameboard.bricks[data.position],false,$("<ul></ul>"),slide, data.email);
@@ -891,12 +1100,19 @@
 				if(enableScan == Object.keys(players).length) {
 					gameboard.scanPlayer(true);
 				}
-				socket.emit("onlineBroadcast");	//遊戲載入完成
 			});
+			function executeQueue() {
+				commandqueue.forEach(function(item) {
+					item();
+				});
+			}
 			function setLayout() {
 				popWindows.opacityValue = 0.5;	//半透明
-				gameboard = new board("北台灣的開墾",11,6,shortcut,socket,stage,players,$("div#board"),$("header"),popWindows,$("div#anmiblock"),upgrades,incident,$("ul#nextstep"),$("ul#exitgame"));
+				document.title = boardinfo.name;
+				gameboard = new board(boardinfo.name,11,6,shortcut,socket,stage,players,$("div#board"),$("header"),popWindows,$("div#anmiblock"),upgrades,incident,$("ul#nextstep"),$("ul#exitgame"));
+				gameboard.boardinfo = boardinfo;
 				gameboard.initBricks();
+				popWindows.board = gameboard;
 				socket.emit("requestplayerList", {id: sessionid});
 				$("div#gameboard").css("width",(gameboard.width*92)+230+"px");
 				$("div#gameboard").css("marginLeft",((gameboard.width*92)+230)/2*(-1)+"px");
@@ -919,6 +1135,9 @@
 						$("input#msg").val("");
 					}
 				});
+				popWindows.stageWindow(stage[0].name,stage[0].desc,stage[0].effecttype,stage[0].effectvalue,new Array());
+				loaded = true;
+				executeQueue();
 				/*$("header").animate({opacity:100},700,function() {
 					gameboard.scanPlayer(true);
 					//gameboard.addTurn();

@@ -10,17 +10,18 @@
   <Author>楊可倫</Author>
   <LastAuthor>楊可倫</LastAuthor>
   <Created>2015-09-29T03:29:59Z</Created>
-  <LastSaved>2015-09-29T03:39:57Z</LastSaved>
+  <LastSaved>2016-10-24T01:37:46Z</LastSaved>
   <Version>16.00</Version>
  </DocumentProperties>
  <OfficeDocumentSettings xmlns="urn:schemas-microsoft-com:office:office">
   <AllowPNG/>
  </OfficeDocumentSettings>
  <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
-  <WindowHeight>9690</WindowHeight>
-  <WindowWidth>14385</WindowWidth>
+  <WindowHeight>7920</WindowHeight>
+  <WindowWidth>21570</WindowWidth>
   <WindowTopX>0</WindowTopX>
   <WindowTopY>0</WindowTopY>
+  <ActiveSheet>2</ActiveSheet>
   <ProtectStructure>False</ProtectStructure>
   <ProtectWindows>False</ProtectWindows>
  </ExcelWorkbook>
@@ -28,119 +29,164 @@
   <Style ss:ID="Default" ss:Name="Normal">
    <Alignment ss:Vertical="Bottom"/>
    <Borders/>
-   <Font ss:FontName="Calibri" x:CharSet="136" x:Family="Swiss" ss:Size="12"
-    ss:Color="#000000"/>
+   <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="12" ss:Color="#000000"/>
    <Interior/>
    <NumberFormat/>
    <Protection/>
   </Style>
+  <Style ss:ID="s62">
+   <Font ss:FontName="細明體" x:CharSet="136" x:Family="Modern" ss:Size="12"
+    ss:Color="#000000"/>
+  </Style>
  </Styles>
  <Worksheet ss:Name="工作表1">
-  <Table ss:ExpandedColumnCount="6" ss:ExpandedRowCount="13" x:FullColumns="1"
+  <Table ss:ExpandedColumnCount="6" ss:ExpandedRowCount="5" x:FullColumns="1"
    x:FullRows="1" ss:DefaultColumnWidth="54" ss:DefaultRowHeight="15.75">
    <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">萬華</Data></Cell>
-    <Cell><Data ss:Type="String">一座城鎮</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">八里</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">明末以降北台灣重要港口，清代淡水廳主要駐防於此，也是清初北台唯一獲准和福建對渡的口岸，在清初淤塞</Data></Cell>
     <Cell><Data ss:Type="Number">0</Data></Cell>
     <Cell><Data ss:Type="Number">1</Data></Cell>
     <Cell><Data ss:Type="Number">-1</Data></Cell>
     <Cell><Data ss:Type="Number">100</Data></Cell>
    </Row>
    <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">松山</Data></Cell>
-    <Cell><Data ss:Type="String">一座城鎮</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">淡水</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">八里對岸的口岸，明末就有西班牙人在此建設，清中葉時萬華、新莊相繼淤塞，水運樞紐轉至淡水</Data></Cell>
     <Cell><Data ss:Type="Number">1</Data></Cell>
     <Cell><Data ss:Type="Number">2</Data></Cell>
     <Cell><Data ss:Type="Number">0</Data></Cell>
     <Cell><Data ss:Type="Number">200</Data></Cell>
    </Row>
    <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">南港</Data></Cell>
-    <Cell><Data ss:Type="String">一座城鎮</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">松山</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">在明末西班牙人的紀錄中便已出現的盆地內貿易口岸，主要以原住民凱達格蘭族居住為主，盛清時陳賴章墾號開墾台北盆地，泉州人大量移入此地</Data></Cell>
     <Cell><Data ss:Type="Number">2</Data></Cell>
     <Cell><Data ss:Type="Number">3</Data></Cell>
     <Cell><Data ss:Type="Number">1</Data></Cell>
-    <Cell><Data ss:Type="Number">150</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
    </Row>
    <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">汐止</Data></Cell>
-    <Cell><Data ss:Type="String">一座城鎮</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">萬華</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">清初形成的泉州人聚落，處於大漢溪的河道彎曲處，方便商船停泊，舊名艋舺即為凱達格蘭語中船隻的意思，隨著新莊淤塞，漳州人也進入萬華，但不久後爆發頂下郊拚</Data></Cell>
     <Cell><Data ss:Type="Number">3</Data></Cell>
     <Cell><Data ss:Type="Number">4</Data></Cell>
     <Cell><Data ss:Type="Number">2</Data></Cell>
-    <Cell><Data ss:Type="Number">50</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
    </Row>
    <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">八堵</Data></Cell>
-    <Cell><Data ss:Type="String">一座城鎮</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">新莊</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">清初漳州人開墾的口岸，其重要地位讓淡水廳另設新莊縣丞管理，清中葉後口岸逐漸淤塞</Data></Cell>
     <Cell><Data ss:Type="Number">4</Data></Cell>
-    <Cell><Data ss:Type="Number">5</Data></Cell>
-    <Cell><Data ss:Type="Number">3</Data></Cell>
-    <Cell><Data ss:Type="Number">150</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">瑞芳</Data></Cell>
-    <Cell><Data ss:Type="String">一座城鎮</Data></Cell>
-    <Cell><Data ss:Type="Number">5</Data></Cell>
-    <Cell><Data ss:Type="Number">6</Data></Cell>
-    <Cell><Data ss:Type="Number">4</Data></Cell>
-    <Cell><Data ss:Type="Number">60</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">九份</Data></Cell>
-    <Cell><Data ss:Type="String">一座城鎮</Data></Cell>
-    <Cell><Data ss:Type="Number">6</Data></Cell>
-    <Cell><Data ss:Type="Number">7</Data></Cell>
-    <Cell><Data ss:Type="Number">5</Data></Cell>
-    <Cell><Data ss:Type="Number">150</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">雙溪</Data></Cell>
-    <Cell><Data ss:Type="String">一座城鎮</Data></Cell>
-    <Cell><Data ss:Type="Number">7</Data></Cell>
-    <Cell><Data ss:Type="Number">8</Data></Cell>
-    <Cell><Data ss:Type="Number">6</Data></Cell>
-    <Cell><Data ss:Type="Number">80</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">貢寮</Data></Cell>
-    <Cell><Data ss:Type="String">一座城鎮</Data></Cell>
-    <Cell><Data ss:Type="Number">8</Data></Cell>
-    <Cell><Data ss:Type="Number">9</Data></Cell>
-    <Cell><Data ss:Type="Number">7</Data></Cell>
-    <Cell><Data ss:Type="Number">90</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">福隆</Data></Cell>
-    <Cell><Data ss:Type="String">一座城鎮</Data></Cell>
-    <Cell><Data ss:Type="Number">9</Data></Cell>
-    <Cell><Data ss:Type="Number">10</Data></Cell>
-    <Cell><Data ss:Type="Number">8</Data></Cell>
-    <Cell><Data ss:Type="Number">70</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">大里</Data></Cell>
-    <Cell><Data ss:Type="String">一座城鎮</Data></Cell>
-    <Cell><Data ss:Type="Number">10</Data></Cell>
-    <Cell><Data ss:Type="Number">21</Data></Cell>
-    <Cell><Data ss:Type="Number">9</Data></Cell>
-    <Cell><Data ss:Type="Number">180</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">頭城</Data></Cell>
-    <Cell><Data ss:Type="String">一座城鎮</Data></Cell>
-    <Cell><Data ss:Type="Number">21</Data></Cell>
-    <Cell><Data ss:Type="Number">32</Data></Cell>
-    <Cell><Data ss:Type="Number">10</Data></Cell>
-    <Cell><Data ss:Type="Number">160</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">宜蘭</Data></Cell>
-    <Cell><Data ss:Type="String">一座城鎮</Data></Cell>
-    <Cell><Data ss:Type="Number">32</Data></Cell>
     <Cell><Data ss:Type="Number">-1</Data></Cell>
-    <Cell><Data ss:Type="Number">21</Data></Cell>
-    <Cell><Data ss:Type="Number">90</Data></Cell>
+    <Cell><Data ss:Type="Number">3</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+   </Row>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <PageSetup>
+    <Header x:Margin="0.3"/>
+    <Footer x:Margin="0.3"/>
+    <PageMargins x:Bottom="0.75" x:Left="0.7" x:Right="0.7" x:Top="0.75"/>
+   </PageSetup>
+   <Unsynced/>
+   <Print>
+    <ValidPrinterInfo/>
+    <PaperSizeIndex>9</PaperSizeIndex>
+    <HorizontalResolution>600</HorizontalResolution>
+    <VerticalResolution>600</VerticalResolution>
+   </Print>
+   <Panes>
+    <Pane>
+     <Number>3</Number>
+     <ActiveRow>22</ActiveRow>
+     <ActiveCol>2</ActiveCol>
+    </Pane>
+   </Panes>
+   <ProtectObjects>False</ProtectObjects>
+   <ProtectScenarios>False</ProtectScenarios>
+  </WorksheetOptions>
+ </Worksheet>
+ <Worksheet ss:Name="工作表2">
+  <Table ss:ExpandedColumnCount="6" ss:ExpandedRowCount="4" x:FullColumns="1"
+   x:FullRows="1" ss:DefaultColumnWidth="54" ss:DefaultRowHeight="15.75">
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:StyleID="s62"><Data ss:Type="String">三峽</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">清初漢人逐步向山區拓墾，形成三角湧聚落</Data></Cell>
+    <Cell><Data ss:Type="Number">5</Data></Cell>
+    <Cell><Data ss:Type="Number">6</Data></Cell>
+    <Cell><Data ss:Type="Number">4</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:StyleID="s62"><Data ss:Type="String">大溪</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">大漢溪水運的核心城鎮，新莊衰退後，板橋林家也遷徙來此，直到日治時期修築桃園大圳前，大溪都屬於和台北盆地商業緊密相連的城鎮</Data></Cell>
+    <Cell><Data ss:Type="Number">6</Data></Cell>
+    <Cell><Data ss:Type="Number">7</Data></Cell>
+    <Cell><Data ss:Type="Number">5</Data></Cell>
+    <Cell><Data ss:Type="Number">200</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:StyleID="s62"><Data ss:Type="String">三民</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">清末開山撫番中，主要針對三民的角板山一帶進行戰鬥，直到清末此處依然具有危險</Data></Cell>
+    <Cell><Data ss:Type="Number">7</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+    <Cell><Data ss:Type="Number">6</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:StyleID="s62"><Data ss:Type="String">宜蘭</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">清中葉即有大量漢人開墾的後山城鎮，隨著漢人移入，此區域快速漢化</Data></Cell>
+    <Cell><Data ss:Type="Number">31</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+    <Cell><Data ss:Type="Number">200</Data></Cell>
+   </Row>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <PageSetup>
+    <Header x:Margin="0.3"/>
+    <Footer x:Margin="0.3"/>
+    <PageMargins x:Bottom="0.75" x:Left="0.7" x:Right="0.7" x:Top="0.75"/>
+   </PageSetup>
+   <Unsynced/>
+   <Panes>
+    <Pane>
+     <Number>3</Number>
+     <ActiveRow>4</ActiveRow>
+     <ActiveCol>4</ActiveCol>
+    </Pane>
+   </Panes>
+   <ProtectObjects>False</ProtectObjects>
+   <ProtectScenarios>False</ProtectScenarios>
+  </WorksheetOptions>
+ </Worksheet>
+ <Worksheet ss:Name="工作表3">
+  <Table ss:ExpandedColumnCount="6" ss:ExpandedRowCount="3" x:FullColumns="1"
+   x:FullRows="1" ss:DefaultColumnWidth="54" ss:DefaultRowHeight="15.75">
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s62"><Data ss:Type="String">羅浮</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">清末隘勇線最邊緣的端點，漢番和戰不斷，日治後隨著樟腦國營，更大規模由此向內山開墾</Data></Cell>
+    <Cell><Data ss:Type="Number">8</Data></Cell>
+    <Cell><Data ss:Type="Number">9</Data></Cell>
+    <Cell><Data ss:Type="Number">7</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s62"><Data ss:Type="String">巴陵</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">五年理番事業中，日本打通通往雪山山脈核心的道路，並在山坡低緩處建立駐在所，甚至還打穿隧道方便軍警行動</Data></Cell>
+    <Cell><Data ss:Type="Number">9</Data></Cell>
+    <Cell><Data ss:Type="Number">20</Data></Cell>
+    <Cell><Data ss:Type="Number">8</Data></Cell>
+    <Cell><Data ss:Type="Number">200</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s62"><Data ss:Type="String">拉拉山</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">五年理番事業中，日本勢力直達雪山山脈核心區域，並在此建立多個警察駐在所和樟腦監督所，維持日本在此的經濟利益</Data></Cell>
+    <Cell><Data ss:Type="Number">20</Data></Cell>
+    <Cell><Data ss:Type="Number">31</Data></Cell>
+    <Cell><Data ss:Type="Number">9</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
    </Row>
   </Table>
   <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
@@ -154,38 +200,8 @@
    <Panes>
     <Pane>
      <Number>3</Number>
-     <ActiveRow>1</ActiveRow>
-     <ActiveCol>5</ActiveCol>
-    </Pane>
-   </Panes>
-   <ProtectObjects>False</ProtectObjects>
-   <ProtectScenarios>False</ProtectScenarios>
-  </WorksheetOptions>
- </Worksheet>
- <Worksheet ss:Name="工作表2">
-  <Table ss:ExpandedColumnCount="6" ss:ExpandedRowCount="1" x:FullColumns="1"
-   x:FullRows="1" ss:DefaultColumnWidth="54" ss:DefaultRowHeight="15.75">
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">羅東</Data></Cell>
-    <Cell><Data ss:Type="String">一座城鎮</Data></Cell>
-    <Cell><Data ss:Type="Number">43</Data></Cell>
-    <Cell><Data ss:Type="Number">-1</Data></Cell>
-    <Cell><Data ss:Type="Number">32</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-   </Row>
-  </Table>
-  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
-   <PageSetup>
-    <Header x:Margin="0.3"/>
-    <Footer x:Margin="0.3"/>
-    <PageMargins x:Bottom="0.75" x:Left="0.7" x:Right="0.7" x:Top="0.75"/>
-   </PageSetup>
-   <Unsynced/>
-   <Panes>
-    <Pane>
-     <Number>3</Number>
-     <ActiveCol>4</ActiveCol>
-     <RangeSelection>C5:C6</RangeSelection>
+     <ActiveRow>2</ActiveRow>
+     <ActiveCol>3</ActiveCol>
     </Pane>
    </Panes>
    <ProtectObjects>False</ProtectObjects>

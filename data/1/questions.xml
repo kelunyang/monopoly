@@ -17,11 +17,11 @@
   <AllowPNG/>
  </OfficeDocumentSettings>
  <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
-  <WindowHeight>9690</WindowHeight>
-  <WindowWidth>14385</WindowWidth>
+  <WindowHeight>7920</WindowHeight>
+  <WindowWidth>21570</WindowWidth>
   <WindowTopX>0</WindowTopX>
   <WindowTopY>0</WindowTopY>
-  <ActiveSheet>1</ActiveSheet>
+  <ActiveSheet>2</ActiveSheet>
   <ProtectStructure>False</ProtectStructure>
   <ProtectWindows>False</ProtectWindows>
  </ExcelWorkbook>
@@ -29,216 +29,105 @@
   <Style ss:ID="Default" ss:Name="Normal">
    <Alignment ss:Vertical="Bottom"/>
    <Borders/>
-   <Font ss:FontName="Calibri" x:CharSet="136" x:Family="Swiss" ss:Size="12"
-    ss:Color="#000000"/>
+   <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="12" ss:Color="#000000"/>
    <Interior/>
    <NumberFormat/>
    <Protection/>
   </Style>
+  <Style ss:ID="s62">
+   <Font ss:FontName="細明體" x:CharSet="136" x:Family="Modern" ss:Size="12"
+    ss:Color="#000000"/>
+  </Style>
  </Styles>
  <Worksheet ss:Name="工作表1">
-  <Table ss:ExpandedColumnCount="8" ss:ExpandedRowCount="20" x:FullColumns="1"
+  <Table ss:ExpandedColumnCount="8" ss:ExpandedRowCount="3" x:FullColumns="1"
    x:FullRows="1" ss:DefaultColumnWidth="54" ss:DefaultRowHeight="15.75">
    <Column ss:AutoFitWidth="0" ss:Width="129"/>
    <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題1</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">下列何者是清末之前遊走兩岸間進行農工商品交換的商幫的簡稱？</Data></Cell>
     <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由一</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
+    <Cell><Data ss:Type="Number">2</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">郊商為開港前遊走兩岸間的主要商業勢力</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">晉商</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">徽商</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">郊商</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">海商</Data></Cell>
    </Row>
    <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題2</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">清初對漢人管制移墾山區的政策簡稱為何？</Data></Cell>
     <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由二</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
+    <Cell><Data ss:Type="Number">3</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">渡台禁令是處理兩岸間人口移動的</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">渡台禁令</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">開山撫番</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">理番政策</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">劃界封山</Data></Cell>
    </Row>
    <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題3</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">清初全台的行政中心是下列何者？（今名）</Data></Cell>
     <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由三</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
+    <Cell><Data ss:Type="Number">1</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">台南府城為台灣府治所在地</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">台北</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">台南</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">高雄</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">台中</Data></Cell>
+   </Row>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <PageSetup>
+    <Header x:Margin="0.3"/>
+    <Footer x:Margin="0.3"/>
+    <PageMargins x:Bottom="0.75" x:Left="0.7" x:Right="0.7" x:Top="0.75"/>
+   </PageSetup>
+   <Unsynced/>
+   <ProtectObjects>False</ProtectObjects>
+   <ProtectScenarios>False</ProtectScenarios>
+  </WorksheetOptions>
+ </Worksheet>
+ <Worksheet ss:Name="工作表2">
+  <Table ss:ExpandedColumnCount="8" ss:ExpandedRowCount="4" x:FullColumns="1"
+   x:FullRows="1" ss:DefaultColumnWidth="54" ss:DefaultRowHeight="15.75">
+   <Column ss:Width="84"/>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:StyleID="s62"><Data ss:Type="String">下列何者是清末北台灣主要商品</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="Number">2</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">北台主要商品為樟腦和茶葉</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">甘蔗</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">稻米</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">樟腦</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">布疋</Data></Cell>
    </Row>
    <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題4</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">下列何者是清末山區開發政策的簡稱</Data></Cell>
     <Cell><Data ss:Type="Number">100</Data></Cell>
     <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由四</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">沈葆楨開始進行開山撫番</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">開山撫番</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">理番政策</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">劃界封山</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">原住民自決</Data></Cell>
    </Row>
    <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題5</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">下列何者是北台山區原住民族</Data></Cell>
     <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由五</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
+    <Cell><Data ss:Type="Number">3</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">泰雅族分布於台中以北的山區</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">阿美族</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">西拉雅族</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">魯凱族</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">泰雅族</Data></Cell>
    </Row>
    <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題6</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">下列哪個行政區建於清末（古代名）</Data></Cell>
     <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由一</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題7</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由二</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題8</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由三</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題9</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由四</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題10</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由五</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題11</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由一</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題12</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由二</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題13</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由三</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題14</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由四</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題15</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由五</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題16</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由一</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題17</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由二</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題18</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由三</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題19</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由四</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題20</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由五</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
+    <Cell><Data ss:Type="Number">1</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">噶瑪蘭建於清中葉</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">新竹州</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">台北府</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">諸羅縣</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">噶瑪蘭廳</Data></Cell>
    </Row>
   </Table>
   <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
@@ -251,216 +140,55 @@
    <Panes>
     <Pane>
      <Number>3</Number>
-     <RangeSelection>R1C1:R20C8</RangeSelection>
+     <RangeSelection>R1C1:R4C8</RangeSelection>
     </Pane>
    </Panes>
    <ProtectObjects>False</ProtectObjects>
    <ProtectScenarios>False</ProtectScenarios>
   </WorksheetOptions>
  </Worksheet>
- <Worksheet ss:Name="工作表2">
-  <Table ss:ExpandedColumnCount="8" ss:ExpandedRowCount="20" x:FullColumns="1"
+ <Worksheet ss:Name="工作表3">
+  <Table ss:ExpandedColumnCount="8" ss:ExpandedRowCount="4" x:FullColumns="1"
    x:FullRows="1" ss:DefaultColumnWidth="54" ss:DefaultRowHeight="15.75">
-   <Column ss:Width="84"/>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題11</Data></Cell>
+   <Row ss:Height="16.5">
+    <Cell ss:StyleID="s62"><Data ss:Type="String">下列哪一任日本總督發動五年理番政策</Data></Cell>
     <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由十一</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
+    <Cell><Data ss:Type="Number">1</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">佐久間佐馬太總督為五年理番政策制定者、執行者</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">兒玉源太郎</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">佐久間佐馬太</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">後藤新平</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">樺山資紀</Data></Cell>
    </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題12</Data></Cell>
+   <Row ss:Height="16.5">
+    <Cell ss:StyleID="s62"><Data ss:Type="String">下列哪一項物資在日本時期為國家專賣</Data></Cell>
     <Cell><Data ss:Type="Number">100</Data></Cell>
     <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由十二</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">日本將樟腦納入國營，引發山區叛亂</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">樟腦</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">甘蔗</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">稻米</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">布疋</Data></Cell>
    </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題13</Data></Cell>
+   <Row ss:Height="16.5">
+    <Cell ss:StyleID="s62"><Data ss:Type="String">下列哪項建設完成於日治時期</Data></Cell>
     <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由十三</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
+    <Cell><Data ss:Type="Number">2</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">縱貫鐵路為日治時期所建</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">基隆炮台</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">恆春縣城</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">縱貫鐵路</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">龍山寺</Data></Cell>
    </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題14</Data></Cell>
+   <Row ss:Height="16.5">
+    <Cell ss:StyleID="s62"><Data ss:Type="String">日治時期全台行政中心所在地（今名）</Data></Cell>
     <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由十一</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題15</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由十二</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題16</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由十三</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題17</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由十一</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題18</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由十二</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題19</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由十三</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題20</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由十一</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題21</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由十二</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題22</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由十三</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題23</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由十一</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題24</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由十二</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題25</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由十三</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題26</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由十一</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題27</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由十二</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題28</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由十三</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題29</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由十一</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">這是主要問題30</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="String">理由十二</Data></Cell>
-    <Cell><Data ss:Type="String">選項一</Data></Cell>
-    <Cell><Data ss:Type="String">選項二</Data></Cell>
-    <Cell><Data ss:Type="String">選項三</Data></Cell>
-    <Cell><Data ss:Type="String">選項四</Data></Cell>
+    <Cell><Data ss:Type="Number">3</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">台北為全台軍政中心</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">基隆</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">台中</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">台南</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">台北</Data></Cell>
    </Row>
   </Table>
   <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
@@ -469,13 +197,12 @@
     <Footer x:Margin="0.3"/>
     <PageMargins x:Bottom="0.75" x:Left="0.7" x:Right="0.7" x:Top="0.75"/>
    </PageSetup>
-   <Unsynced/>
    <Selected/>
    <Panes>
     <Pane>
      <Number>3</Number>
-     <ActiveRow>17</ActiveRow>
-     <ActiveCol>2</ActiveCol>
+     <ActiveRow>4</ActiveRow>
+     <ActiveCol>7</ActiveCol>
     </Pane>
    </Panes>
    <ProtectObjects>False</ProtectObjects>

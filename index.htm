@@ -4,8 +4,8 @@
 		<title>線上大富翁：登入遊戲</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/css/swiper.min.css">
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.4.0/css/swiper.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 		<link rel="stylesheet" href="pseudoWindow.css"/>
 		<style type="text/css">
 			body>footer {
@@ -123,6 +123,16 @@
 			span.emtip {
 				color: maroon;
 			}
+			span.tip a {
+				color: black;
+				text-decoration: none;
+			}
+			span.tip a:hover {
+				text-decoration: underline;
+			}
+			span.tip a:active {
+				text-decoration: none;
+			}
 			article#logonZone p {
 				color: maroon;
 				font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
@@ -133,11 +143,16 @@
 			div#captcha {
 				margin-left: 100px;
 			}
+			/* tutorial patch*/
+			ul#popTutorial {
+				height: 370px !important;
+				top: 5px !important;
+			}
 		</style>
 	</head>
 	<body>
 		<header>
-			<a href="#" title="登出遊戲" class="logout"><i class="fa fa-sign-out"></i>登出遊戲</li></a>
+			<a href="#" title="登出遊戲" class="logout"><i class="fa fa-sign-out"></i>登出遊戲</a>
 			<a href="admin.htm" target="_top" title="系統設定"><i class="fa fa-1x fa-cog"></i>系統設定</a>
 		</header>
 		<article id="logonZone">
@@ -161,6 +176,18 @@
 				<i class="fa fa-firefox"></i>
 				<i class="fa fa-chrome"></i>
 				請用最新版瀏覽器遊戲，如Microsoft Edge、Firefox、Chrome，勿使用IE
+			</span><br>
+			<span class="tip">
+				程式碼Git：
+				<a href="https://github.com/kelunyang/monopoly" target="_blank" title="github">
+				<i class="fa fa-github"></i>
+				GitHub
+				</a>
+				、
+				<a href="https://bitbucket.org/kelunyang/monopoly" target="_blank" title="bitbucket">
+				<i class="fa fa-bitbucket"></i>
+				BitBucket
+				</a>
 			</span>
 		</article>
 		<footer>Kelunyang@2016 CC-BY-NC-SA</footer>
@@ -190,16 +217,33 @@
 					</ul>
 				</li>
 			</ul>
+			<ul id="popTutorial" class="popWindow">
+				<li id="tcontent">
+					<ul id="tutorialcontainer" class="swiper-container">
+						<li id="tutorialRoll" class="swiper-wrapper"></li>
+						<li id="tutorialpagination" class="swiper-pagination"></li>
+						<li id="tutorialup" class="tutorialController"><i class="fa-chevron-left fa fa-1x"></i></li>
+						<li id="tutorialdown" class="tutorialController"><i class="fa-chevron-right fa fa-1x"></i></li>
+					</ul>
+				</li>
+				<li id="tbutton" class="buttonarea">
+					<ul>
+						<li class="button">結束教學，下次不要出現</li>
+					</ul>
+				</li>
+			</ul>
 		</div>
 		<script src="/socket.io/socket.io.js"></script>
+		<script src="/node_modules/socket.io-stream/socket.io-stream.js"></script>
 		<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
 		<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/js/swiper.jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.4.0/js/swiper.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>
 		<script src='https://www.google.com/recaptcha/api.js'></script>
 		<!-- <script src="https://login.persona.org/include.js"></script> -->
 		<script src="ui.js"></script>
 		<script>
+			socket = io.connect();
 			$("button#submitlogin").on("click", function() {
 				$("input#type").val("login");
 				//return false;
@@ -394,7 +438,7 @@
 			$().ready(function() {
 				popWindows = new pseudoWindow($("div#pseudoWindow"));
 				popWindows.resetWindows();
-				popWindows.opacityValue = 0.7;				
+				popWindows.opacityValue = 0.7;			
 				$.get("/checkUser", function(data) {
 					$("article#logonZone p").text(data.msg);
 					if(data.status) {
@@ -407,7 +451,67 @@
 						$(".logout").hide();
 					}
 				});
+				var tutorialImg = ["1","2"];
+				tutorialImg.forEach(function(item) {
+					var timg = $("<img/>");
+					timg.attr("src","img/tutorial/"+item+".svg")
+					timg.attr("alt","&nbsp;");
+					timg.addClass("swiper-slide");
+					$("li#tutorialRoll").append(timg);
+				});
 				popWindows.welcomeWindow($("form#loginarea"));
+				if(navigator.userAgent.indexOf("Trident") > 0) {
+					popWindows.messageWindow("請勿使用Internet Explorer！","Internet Explorer不支援最新的網頁規格，因此請勿使用他來玩本遊戲，請使用Microsoft Edge, Google Chrome, Firefox等新世代瀏覽器",{
+						ok:{
+							enable: true,
+							func: function() {
+								popWindows.endPseudo();
+							}
+						},
+						yes:{
+							enable: false,
+							func: function() {
+								popWindows.endPseudo();
+							}
+						},
+						no:{
+							enable: false,
+							func: function() {
+								popWindows.endPseudo();
+							}
+						},
+						custombuttons: new Array()
+					},"internet-explorer",{
+						icon: "exclamation-triangle",
+						emphasis: true
+					});
+				}
+				socket.on("disconnect", function(){
+					popWindows.messageWindow("連線異常！","主機連線異常，可能是程式故障，請聯絡開發者（Kelunyang@outlook.com）",{
+						ok:{
+							enable: true,
+							func: function() {
+								popWindows.endPseudo();
+							}
+						},
+						yes:{
+							enable: false,
+							func: function() {
+								popWindows.endPseudo();
+							}
+						},
+						no:{
+							enable: false,
+							func: function() {
+								popWindows.endPseudo();
+							}
+						},
+						custombuttons: new Array()
+					},"plug",{
+						icon: "exclamation-triangle",
+						emphasis: true
+					});
+				});
 			});
 		</script>
 	</body>
