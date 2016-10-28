@@ -134,7 +134,18 @@ function board(name,width,height,shortcuts,socket,stages,players,boardElement,ti
 		oriobj.stageElement.find("h2").text(oriobj.stages[oriobj.stage].name);
 		Object.keys(data.brickLog.bricks).forEach(function(brickserial) {
 			var brick = data.brickLog.bricks[brickserial];
-			oriobj.bricks[brick.index].changeOwner(oriobj.players[brick.owner]);
+			if(brick.owner == null) {
+				if(oriobj.bricks[brick.index].owner != null) {
+					oriobj.bricks[brick.index].owner.removeBrick(oriobj.bricks[brick.index]);
+				}
+			} else {
+				if(oriobj.bricks[brick.index].owner != brick.owner) {
+					if(oriobj.bricks[brick.index].owner != null) {
+						oriobj.bricks[brick.index].owner.removeBrick(oriobj.bricks[brick.index]);
+					}
+				}
+				oriobj.players[brick.owner].addBrick(oriobj.bricks[brick.index]);
+			}
 			if(brick.upgrades.length > 0) {
 				brick.upgrades.forEach(function(upgrade) {
 					if(oriobj.bricks[brick.index].upgrades.indexOf(upgrade) == -1) {
@@ -258,7 +269,7 @@ board.prototype.endGame = function() {
 		yes:{
 			enable: true,
 			func: function() {
-				oriobj.socket.emit("endgame");
+				oriobj.socket.emit("endgame", oriobj.localplayer.uid);
 				oriobj.popElement.endPseudo();
 			}
 		},

@@ -246,7 +246,7 @@ pseudoWindow.prototype.settleWindow = function(message) {
 	var window = this.htmlElement.find("ul#popSettle");
 	window.find("li#semessage").text(message.message);
 	var leaderboard = new Array();
-	Object.keys(message.leaderboard).forEach(function(key) {
+	Object.keys(message.leaderboard).forEach(function(key) {	//主機轉送下來的asset是錯的，必須檢查
 		leaderboard.push({
 			asset: message.leaderboard[key].asset,
 			credit: message.leaderboard[key].credit,

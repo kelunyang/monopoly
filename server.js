@@ -45,7 +45,7 @@ var app = express();
 var server = http.Server(app);
 app.use(express.static(dir));
 server.listen(80,function() {
-	console.log("http server complete");
+	serverlog("伺服器啟動");
 });
 allClient = new Array(); //玩家陣列
 var serv_io = io(server);
@@ -176,6 +176,7 @@ app.post("/login",function(req,res) {
 							msg: error.code
 						});
 					} else {
+						serverlog(req.body.account+"已建立");
 						connection.query("SELECT * FROM user WHERE email = ?", req.body.account, function(error, rows, fields){
 							if(error) {
 								connection.end();
@@ -223,6 +224,7 @@ app.post("/login",function(req,res) {
 						});
 					} else {
 						if(rows.length > 0) {
+							serverlog(req.body.account+"已登入");
 							var user = rows[0];
 							if(user.password == crypto.pbkdf2Sync(req.body.pass,user.salt,100000,512,"sha512").toString("hex")) {
 								res.json({
@@ -328,7 +330,6 @@ serv_io.of("/fileupload").on("connection", function(socket) {
 });*/
 serv_io.sockets.on('connection', function(socket) {
 	var sessioni = socket.handshake.session;
-	console.log("socket.io executed!");
 	socket.emit("socketon", { status: true});
     if(sessioni.hasOwnProperty("currentgame")) {	//Online Broadcast
 		socket.join("room"+sessioni.currentgame);
@@ -350,7 +351,7 @@ serv_io.sockets.on('connection', function(socket) {
 	socket.on("endgame", function(data) {
 		var game = sessioni.gameSession[sessioni.currentgame];
 		serv_io.to("room"+sessioni.currentgame).emit('gamesettled',{ 
-				message: "遊戲結束",
+				message: "第"+game.currentturn+"回合，"+data+"退出遊戲，遊戲結束",
 				leaderboard: game.players
 		});
 		socket.emit("playerout", sessioni.currentgame);
@@ -442,7 +443,7 @@ serv_io.sockets.on('connection', function(socket) {
 				});
 			} else {
 				serv_io.to("room"+sessioni.currentgame).emit('gamesettled',{ 
-					message: "遊戲結束",
+					message: "最終回合，第"+sessioni.gameSession[sessioni.currentgame].currentturn+"回合，遊戲結束",
 					leaderboard: sessioni.gameSession[sessioni.currentgame].players
 				});
 			}
@@ -592,9 +593,7 @@ serv_io.sockets.on('connection', function(socket) {
 				});
 				connection.end();
 				var log = 0;
-				console.log("reading map");
 				for(var i=0;i<boardname.length;i++) {
-					console.log("reading"+dir+"/data/"+bid+"/"+boardname[i]+".xml");
 					fs.readFile(dir+"/data/"+bid+"/"+boardname[i]+".xml",function(err, data) {
 						var xmldata = xml.parseString(data, function(err, result) {
 							switch(result.Workbook.DocumentProperties[0].Title[0]) {
@@ -612,7 +611,6 @@ serv_io.sockets.on('connection', function(socket) {
 											});
 										}
 									}
-									console.log("incident loaded");
 								break;
 								case "questions":
 									obj.questions = new Array();
@@ -635,7 +633,6 @@ serv_io.sockets.on('connection', function(socket) {
 										stagequestion.sort(function(a,b) {return 0.5-Math.random();});
 										obj.questions.push(stagequestion);
 									}
-									console.log("question loaded");
 								break;
 								case "roads":
 									obj.roads = new Array();
@@ -670,7 +667,6 @@ serv_io.sockets.on('connection', function(socket) {
 											};
 										}
 									}
-									console.log("shortcut loaded");
 								break;
 								case "stages":
 									obj.stages = new Array();
@@ -685,7 +681,6 @@ serv_io.sockets.on('connection', function(socket) {
 											});
 										}
 									}
-									console.log("stage loaded");
 								break;
 								case "upgrades":
 									obj.upgrades = new Object();
@@ -701,7 +696,6 @@ serv_io.sockets.on('connection', function(socket) {
 											};
 										}
 									}
-									console.log("upgrades loaded");
 								break;
 							}
 							socket.emit('boardprepared', {
@@ -1052,7 +1046,7 @@ serv_io.sockets.on('connection', function(socket) {
 			}
 		});
 	});*/
-	socket.on('queryQuestion', function(data) {
+	socket.on('queryQuestion', function(data) {	//問題按照回合重建
 		currentQuestion = sessioni.gameSession[sessioni.currentgame].questions[sessioni.gameSession[sessioni.currentgame].currentstage].shift();
 		sessioni.gameSession[sessioni.currentgame].currentQuestion = currentQuestion;
 		var tempanswer = (currentQuestion.answer / 1);
@@ -1085,8 +1079,6 @@ serv_io.sockets.on('connection', function(socket) {
 		}
 	});
 	socket.on("setUser",function(data) {
-		/*console.log(currentUser);
-		console.log(data);*/
 		var connection = mysql.createConnection({
 			host: 'localhost',
 			user: 'webapp',
@@ -1249,10 +1241,6 @@ serv_io.sockets.on('connection', function(socket) {
 					output[rows[i].uid].credit = rows[i].score;
 					output[rows[i].uid].asset = 0;
 					if(sessioni.gameSession.hasOwnProperty(sid)) {
-						console.log("nickname bug!");
-						console.log(players[rows[i].uid]);
-						console.log("players");
-						console.log(sessioni.gameSession[sid].players);
 						output[rows[i].uid].nickname = players[rows[i].uid].nickname;
 						output[rows[i].uid].icon = players[rows[i].uid].icon;
 						output[rows[i].uid].color = players[rows[i].uid].color;
@@ -1385,7 +1373,6 @@ function userlog(connection, user, action, comment, callback) {	//callback 要�
 	}
 	connection.query('INSERT INTO `userlog` SET ?', userdata, function(error){
 		if(error){
-			console.log('寫入用戶紀錄失敗！');
 			throw error;
 		}
 		callback();
@@ -1402,6 +1389,10 @@ function saltcreator() {
 		code2 = String.fromCharCode(Math.round(Math.random()*100));
 	}
 	return code1 + Math.round(Math.random()*10000000000) + code2;
+}
+
+function serverlog(message) {	//display message with date in console.log
+	console.log("["+moment().format("YYYY/MM/DD HH:mm:SS")+"]"+message);
 }
 
 /*var server = http.createServer(function(request, response) {
