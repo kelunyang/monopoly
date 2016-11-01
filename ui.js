@@ -6,15 +6,6 @@ function pseudoWindow(htmlElement) {
 	this.opacityValue = 0;
 	this.placeArray = null;
 	this.placeMap = null;
-	this.upgrademenu = new Swiper('#upgradecontainer', {
-		scrollbar: '#upgradescrollbar',
-		nextButton: '#upgradedown',
-		prevButton: '#upgradeup',
-		slidesPerView:4,
-		height:150,
-		width:480,
-		loop:true
-	});
 }
 pseudoWindow.prototype.setupgradeLayout = function(upgradeCount) {
 	for(var i=0;i<upgradeCount;i++) {
@@ -56,7 +47,6 @@ pseudoWindow.prototype.iconchooserWindow = function(socket) {
 			color: $("ul.palette li.selectedColor").data("color"),
 		});
 		socket.on('donesetUser', function(data){
-			console.log(data);
 			oriobj.endPseudo();
 		});
 	})
@@ -152,7 +142,7 @@ pseudoWindow.prototype.shortcutWindow = function(name,start,end,desc) {
 	this.loadWindows();
 	window.css("display","block");
 }
-pseudoWindow.prototype.stageWindow = function(name,desc,type,val,DB) {
+pseudoWindow.prototype.stageWindow = function(name,desc,type,val,DB,shortcut) {
 	var oriobj = this;
 	var window = this.htmlElement.find("ul#popStageupdate");
 	window.find("li#sutitle").text("進入下一個時代："+name);
@@ -173,6 +163,9 @@ pseudoWindow.prototype.stageWindow = function(name,desc,type,val,DB) {
 	window.find("li#subutton>ul>li").off();
 	window.find("li#subutton>ul>li").on("click",function() {
 		oriobj.board.loadRoads(DB);
+		if(shortcut != undefined) {
+			oriobj.board.showShortcut(shortcut);
+		}
 		oriobj.closeWindow("popStageupdate");
 	})
 	this.loadWindows();
@@ -301,8 +294,9 @@ pseudoWindow.prototype.errorWindow = function(message,type) {
 	this.loadWindows();
 	window.css("display","block");
 }
-pseudoWindow.prototype.messageWindow = function(title,message,control,icon,stackicon) {
+pseudoWindow.prototype.messageWindow = function(title,message,control,icon,type,stackicon) {
 	var oriobj = this;
+	var showeffect = type == undefined ? "fade" : type;
 	var window = this.htmlElement.find("ul#popMessage");
 	window.find("li#ptitle").text(title);
 	window.find("li#pcontent").empty();
@@ -355,7 +349,7 @@ pseudoWindow.prototype.messageWindow = function(title,message,control,icon,stack
 		window.find("li#pbutton>ul>li:nth-child(4)>ul").append(control.custombuttons[i]);
 	}
 	this.loadWindows();
-	window.show("shake")
+	window.show(showeffect)
 	if(control.custombuttons.length > 0) {
 		window.find("li#pbutton>ul>li:nth-child(4)").css("display","block");
 		var custombuttonwidth = 0;
@@ -556,15 +550,24 @@ pseudoWindow.prototype.infoWindow = function(upgradeDB,stage,player,brick,mode) 
 					ability.text("過路費加乘："+upgrade.rent);
 					item.data("upgradeItem",upgrade);
 					if(Object.keys(brick.upgrades).indexOf(upgrade.name) >= 0) {
-						item.addClass("unavaiableUpgrade");
-						ability.text("已購買");
-					} else if(upgrade.price > player.credit) {
-						item.addClass("unavaiableUpgrade");
-						ability.text("點數不足");
-					} else if(upgrade.stage <= stage) {
-						item.addClass("unavaiableUpgrade");
-						ability.text("尚未開啟");
-					} else {
+						if(!item.hasClass("unavaiableUpgrade")) {
+							item.addClass("unavaiableUpgrade");
+							ability.text("已購買");
+						}
+					}
+					if(upgrade.price > player.credit) {
+						if(!item.hasClass("unavaiableUpgrade")) {
+							item.addClass("unavaiableUpgrade");
+							ability.text("點數不足");
+						}
+					}
+					if(upgrade.stage > stage) {
+						if(!item.hasClass("unavaiableUpgrade")) {
+							item.addClass("unavaiableUpgrade");
+							ability.text("尚未開啟");
+						}
+					}
+					if(!item.hasClass("unavaiableUpgrade")) {
 						item.addClass("avaiableUpgrade");
 						item.on("click", function() {
 							var itemObj = $(this);
@@ -617,15 +620,34 @@ pseudoWindow.prototype.infoWindow = function(upgradeDB,stage,player,brick,mode) 
 					item.append(uicon);
 					item.append(ability);
 					item.addClass("swiper-slide");
-					console.log(item);
 					//window.find("li#uSets>ul#upgradeRoll").slick('slickAdd',item);
-					oriobj.upgrademenu.appendSlide(item);
-					//window.find("li#uSets>div#upgradeRoll").append(item);
+					//oriobj.upgrademenu.appendSlide(item);
+					window.find("li#uSets>ul#upgradecontainer>li#upgradeRoll").append(item);
 				}
+			});
+			var upgradeindicator = 0;
+			var i = 0;
+			window.find("li#uSets>ul#upgradecontainer>li#upgradeRoll").children().each(function(item) {
+				if(upgradeindicator == 0) {
+					if($(item).hasClass("avaiableUpgrade")) {
+						upgradeindicator = i;
+					}
+				}
+				i++;
 			});
 			window.find("li#iInfo>h3").text("過路費："+brick.getRent()+"/現值："+brick.getCurrentValue());
 			oriobj.loadWindows();
 			window.css("display","block");
+			var upgrademenu = new Swiper('#upgradecontainer', {
+				scrollbar: '#upgradescrollbar',
+				nextButton: '#upgradedown',
+				prevButton: '#upgradeup',
+				slidesPerView:4,
+				height:150,
+				width:480,
+				loop:true,
+				initialSlide:upgradeindicator
+			});
 			//window.find("li#uSets>ul#upgradeRoll").slick("slickNext");
 			/*for(var i=0;i<upgradeDB.length;i++) {	//這是一個workaround，不讓動畫上下跑一跑，繪製會發生width=0，但當動畫項目太少時會跑不起來，因此廢物件等到跑完再砍
 				if(upgradeDB[i].type == 1) continue;

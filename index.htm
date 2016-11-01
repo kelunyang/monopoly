@@ -235,8 +235,8 @@
 		</div>
 		<script src="/socket.io/socket.io.js"></script>
 		<script src="/node_modules/socket.io-stream/socket.io-stream.js"></script>
-		<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
-		<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.4.0/js/swiper.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>
 		<script src='https://www.google.com/recaptcha/api.js'></script>
@@ -303,7 +303,7 @@
 									}
 								},
 								custombuttons: new Array()
-							},"exclamation-triangle");
+							},"exclamation-triangle","shake");
 						}
 					},
 				"json");
@@ -481,15 +481,20 @@
 							}
 						},
 						custombuttons: new Array()
-					},"internet-explorer",{
+					},"internet-explorer","shake",{
 						icon: "exclamation-triangle",
 						emphasis: true
 					});
 				}
 				socket.on("disconnect", function(){
+					var disconnectbutton = $("<li></li>");
+					disconnectbutton.text("回首頁");
+					disconnectbutton.on("click",function() {
+						location.href="/";
+					});
 					popWindows.messageWindow("連線異常！","主機連線異常，可能是程式故障，請聯絡開發者（Kelunyang@outlook.com）",{
 						ok:{
-							enable: true,
+							enable: false,
 							func: function() {
 								popWindows.endPseudo();
 							}
@@ -506,8 +511,8 @@
 								popWindows.endPseudo();
 							}
 						},
-						custombuttons: new Array()
-					},"plug",{
+						custombuttons: [disconnectbutton]
+					},"plug","shake",{
 						icon: "exclamation-triangle",
 						emphasis: true
 					});

@@ -37,6 +37,7 @@ function board(name,width,height,shortcuts,socket,stages,players,boardElement,ti
 	this.stageElement = $("<li><h2>"+this.stages[this.stage].name+"</h2></li>");
 	this.turnElement = $("<li>第<span id=\"stagetitle\">"+this.turn+"</span>回合，剩餘<span id=\"stageturns\">"+this.stages[this.stage].duration+"回合後升級</span></li>");
 	this.titleElement.find("h1").text(this.name);
+	this.titleElement.find("ul#gameinfo").empty();
 	this.titleElement.find("ul#gameinfo").append(this.stageElement);
 	this.titleElement.find("ul#gameinfo").append(this.turnElement);
 	this.boardElement.css("width",width*92+"px");
@@ -52,29 +53,10 @@ function board(name,width,height,shortcuts,socket,stages,players,boardElement,ti
 	//this.sortingQuestion();
 	this.moveCounter(false);
 	this.socket.on('sendQuestion', function(data){
-		console.log(data.question);
+		//console.log(data.question);
 		oriobj.currentQuestion = data.question;
 		oriobj.scanPlayer(false);
 		oriobj.popElement.questionWindow(oriobj.currentQuestion.question,oriobj.currentQuestion.credit,oriobj.currentQuestion.answers,oriobj.localplayer,oriobj);
-		Object.keys(oriobj.shortcuts).forEach(function(key) {
-			var shortcut = oriobj.shortcuts[key];
-			if(oriobj.turn == shortcut.startturn) {
-				bricks = shortcut.bricks;
-				oriobj.showShortcut(shortcut.name);
-				oriobj.turnLog.shortcut = {
-					name: shortcut.name,
-					enable: true
-				}
-			}
-			if(oriobj.turn == shortcut.endturn) {
-				bricks = shortcut.bricks;
-				oriobj.hideShortcut(shortcut.name);
-				oriobj.turnLog.shortcut = {
-					name: shortcut.name,
-					enable: false
-				}
-			}
-		});
 		oriobj.popElement.dice = oriobj.diceElement;
 		oriobj.popElement.board = oriobj;
 		switch(oriobj.localplayer.position.type) {	//踩到機會命運的機率
@@ -126,9 +108,6 @@ function board(name,width,height,shortcuts,socket,stages,players,boardElement,ti
 		socket.emit("responseTurn", output);
 	});
 	this.socket.on("boardcastturn", function(data) {
-		if(data.newstage) {
-			oriobj.popElement.stageWindow(oriobj.stages[data.currentstage].name,oriobj.stages[data.currentstage].desc,oriobj.stages[data.currentstage].effecttype,oriobj.stages[data.currentstage].effectvalue,data.roadDB);
-		}
 		oriobj.turn = data.currentturn;
 		oriobj.stage = data.currentstage;
 		oriobj.stageElement.find("h2").text(oriobj.stages[oriobj.stage].name);
@@ -156,11 +135,19 @@ function board(name,width,height,shortcuts,socket,stages,players,boardElement,ti
 				});
 			}
 		});
+		var shortcut = undefined;
 		if(data.brickLog.shortcut.hasOwnProperty("enable")) {
 			if(data.brickLog.shortcut.enable) {
-				oriobj.showShortcut(data.brickLog.shortcut.name);
+				shortcut = data.brickLog.shortcut.name;
 			} else {
 				oriobj.hideShortcut(data.brickLog.shortcut.name);
+			}
+		}
+		if(data.newstage) {
+			oriobj.popElement.stageWindow(oriobj.stages[data.currentstage].name,oriobj.stages[data.currentstage].desc,oriobj.stages[data.currentstage].effecttype,oriobj.stages[data.currentstage].effectvalue,data.roadDB,shortcut);
+		} else {
+			if(shortcut != undefined) {
+				oriobj.showShortcut(data.brickLog.shortcut.name);
 			}
 		}
 		/*oriobj.turnElement.find("span#stagetitle").text(oriobj.turn);
@@ -358,6 +345,7 @@ board.prototype.detectMove = function(player) {
 									player.position = $(this).data("brick");
 									oriobj.remainmoves--;
 									oriobj.diceElement.diceValue--;
+									if(oriobj.diceElement.diceValue <= 0) this.diceElement.availablity(false);
 									player.manualMove(false);
 								});
 								custombuttons.push(button);
@@ -389,6 +377,10 @@ board.prototype.detectMove = function(player) {
 						}
 					} else {
 						player.direction = !player.direction;
+						this.remainmoves--;
+						this.diceElement.diceValue--;
+						if(this.diceElement.diceValue <= 0) this.diceElement.availablity(false);
+						player.manualMove(false);
 						if(!this.detectMove(player)) {
 							return false;
 						}
@@ -408,6 +400,7 @@ board.prototype.detectMove = function(player) {
 									player.position = $(this).data("brick");
 									oriobj.remainmoves--;
 									oriobj.diceElement.diceValue--;
+									if(oriobj.diceElement.diceValue <= 0) this.diceElement.availablity(false);
 									player.manualMove(false);
 								});
 								custombuttons.push(button);
@@ -439,12 +432,16 @@ board.prototype.detectMove = function(player) {
 						}
 					} else {
 						player.direction = !player.direction;
+						this.remainmoves--;
+						this.diceElement.diceValue--;
+						if(this.diceElement.diceValue <= 0) this.diceElement.availablity(false);
+						player.manualMove(false);
 						if(!this.detectMove(player)) {
 							return false;
 						}
 					}
 				}
-				console.log("move:"+this.remainmoves+"/currentloc:"+player.position.index+"/locationname:"+player.position.name+"/Next:"+player.position.next.length+"/previous:"+player.position.previous.length);
+				//console.log("move:"+this.remainmoves+"/currentloc:"+player.position.index+"/locationname:"+player.position.name+"/Next:"+player.position.next.length+"/previous:"+player.position.previous.length);
 				this.diceElement.diceValue--;
 				this.remainmoves--;
 			}
@@ -467,6 +464,7 @@ board.prototype.initBricks = function() {	//初始化
 		desc: "騙學費",
 		type: 1
 	};	//地圖事件
+	this.boardElement.empty();
 	for(var i=0;i<this.num;i++) {
 		var emptyBrick = new brick(this.upgradeDB,i);
 		emptyBrick.startWindow(this.popElement);
@@ -550,6 +548,17 @@ board.prototype.showShortcut = function(name) {
 		}
 		if(s==0 || s==shortcut.length-1) {
 			this.upgradeBrick(shortcut[s],this.upgradeDB["交通要道"]);
+			if(this.bricks[shortcut[s]].next.length > 1) {
+				if(this.bricks[shortcut[s]].next.indexOf(undefined) > -1) {
+					this.bricks[shortcut[s]].next.splice(this.bricks[shortcut[s]].next.indexOf(undefined),1);
+				}
+			}
+			if(this.bricks[shortcut[s]].previous.length > 1) {
+				if(this.bricks[shortcut[s]].previous.indexOf(undefined) > -1) {
+					this.bricks[shortcut[s]].previous.splice(this.bricks[shortcut[s]].previous.indexOf(undefined),1);
+				}
+			}
+			this.addturnLog(this.bricks[shortcut[s]]);
 			continue;
 		}
 		this.bricks[shortcut[s]].name = name+s;
@@ -576,6 +585,13 @@ board.prototype.hideShortcut = function(name) {
 		}
 		if(s==0 || s==shortcut.length-1) {
 			this.degradeBrick(shortcut[s],this.upgradeDB["交通要道"]);
+			if(this.bricks[shortcut[s]].next.length == 0) {
+				this.bricks[shortcut[s]].next.push(undefined);
+			}
+			if(this.bricks[shortcut[s]].previous.length == 0) {
+				this.bricks[shortcut[s]].previous.push(undefined);
+			}
+			this.addturnLog(this.bricks[shortcut[s]]);
 			continue;
 		}
 		this.bricks[shortcut[s]].name = "";
@@ -590,7 +606,7 @@ board.prototype.hideShortcut = function(name) {
 				}
 			}
 		}
-		console.log(shortcut[s]);
+		//console.log(shortcut[s]);
 	}
 	//this.boardElement.find("div.shortcut").animate({opacity:0},100);
 }

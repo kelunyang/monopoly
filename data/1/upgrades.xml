@@ -21,7 +21,7 @@
   <WindowWidth>21570</WindowWidth>
   <WindowTopX>0</WindowTopX>
   <WindowTopY>0</WindowTopY>
-  <ActiveSheet>2</ActiveSheet>
+  <ActiveSheet>1</ActiveSheet>
   <ProtectStructure>False</ProtectStructure>
   <ProtectWindows>False</ProtectWindows>
  </ExcelWorkbook>
@@ -86,7 +86,7 @@
     <Cell><Data ss:Type="String">學堂</Data></Cell>
     <Cell><Data ss:Type="Number">0.2</Data></Cell>
     <Cell><Data ss:Type="Number">200</Data></Cell>
-    <Cell><Data ss:Type="String">graducation-cap</Data></Cell>
+    <Cell><Data ss:Type="String">leanpub</Data></Cell>
     <Cell><Data ss:Type="String">清中葉後，教育逐漸興盛</Data></Cell>
    </Row>
    <Row ss:AutoFitHeight="0">
@@ -111,10 +111,11 @@
     <PageMargins x:Bottom="0.75" x:Left="0.7" x:Right="0.7" x:Top="0.75"/>
    </PageSetup>
    <Unsynced/>
+   <Selected/>
    <Panes>
     <Pane>
      <Number>3</Number>
-     <ActiveRow>2</ActiveRow>
+     <ActiveRow>1</ActiveRow>
      <ActiveCol>3</ActiveCol>
     </Pane>
    </Panes>
@@ -125,14 +126,14 @@
  <Worksheet ss:Name="工作表3">
   <Table ss:ExpandedColumnCount="5" ss:ExpandedRowCount="2" x:FullColumns="1"
    x:FullRows="1" ss:DefaultColumnWidth="54" ss:DefaultRowHeight="16.5">
-   <Row>
+   <Row ss:AutoFitHeight="0">
     <Cell><Data ss:Type="String">小學</Data></Cell>
     <Cell><Data ss:Type="Number">0.3</Data></Cell>
     <Cell><Data ss:Type="Number">300</Data></Cell>
     <Cell><Data ss:Type="String">graduation-cap</Data></Cell>
     <Cell><Data ss:Type="String">進行山區教育的學校</Data></Cell>
    </Row>
-   <Row>
+   <Row ss:AutoFitHeight="0">
     <Cell><Data ss:Type="String">駐在所</Data></Cell>
     <Cell><Data ss:Type="Number">0.8</Data></Cell>
     <Cell><Data ss:Type="Number">800</Data></Cell>
@@ -146,7 +147,7 @@
     <Footer x:Margin="0.3"/>
     <PageMargins x:Bottom="0.75" x:Left="0.7" x:Right="0.7" x:Top="0.75"/>
    </PageSetup>
-   <Selected/>
+   <Unsynced/>
    <Panes>
     <Pane>
      <Number>3</Number>
