@@ -234,9 +234,10 @@ pseudoWindow.prototype.tutorialWindow = function(commandlet) {
 		$(".tutorialController").hide();
 	});
 }
-pseudoWindow.prototype.settleWindow = function(message) {
+pseudoWindow.prototype.settleWindow = function(message,socket) {
 	var oriobj = this;
 	var window = this.htmlElement.find("ul#popSettle");
+	$("ul#popSettle>li#secontent>ol#seleaderboard").empty();
 	window.find("li#semessage").text(message.message);
 	var leaderboard = new Array();
 	Object.keys(message.leaderboard).forEach(function(key) {	//主機轉送下來的asset是錯的，必須檢查
@@ -271,6 +272,12 @@ pseudoWindow.prototype.settleWindow = function(message) {
 	});
 	window.find("li#sebutton>ul>li").off();
 	window.find("li#sebutton>ul>li:nth-child(1)").on("click",function() {
+		socket.emit("removesession",{
+			sid: false
+		});
+		oriobj.closeWindow("popSettle");
+	});
+	window.find("li#sebutton>ul>li:nth-child(2)").on("click",function() {
 		oriobj.closeWindow("popSettle");
 	});
 	this.loadWindows();

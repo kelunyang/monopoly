@@ -3,14 +3,16 @@ function dice(htmlElement, player, board) {
 	var oriobj = this;
 	this.available = true;
 	this.diceValue = -1;
+	this.diceSymbol = "fa-cube";
 	this.htmlElement = htmlElement;
-	this.htmlElement.find("i").addClass("fa-cube");
+	this.htmlElement.find("i").addClass(this.diceSymbol);
 	this.dicenum = new Array();
 	this.diceRange = 6;
 	this.anmiElement = $("<ul></ul>");
 	this.htmlElement.find("div").append(this.anmiElement);
 	this.board = board;
 	this.player = player;
+	this.nextElement = null;
 	for(var i=1;i<=this.diceRange;i++) {
 		this.dicenum.push(i);
 	}
@@ -18,7 +20,7 @@ function dice(htmlElement, player, board) {
 		oriobj.diceValue = data.currentFirstChild.data("value");
 		//oriobj.diceValue = 6;	//test purpose
 		$("aside nav div ul li.hidden").removeClass("hidden");
-		$("aside nav div ul").animate({opacity:1},500,function(){
+		$("aside nav div ul").animate({opacity:1},500,"easeInQuint",function(){
 			oriobj.player.manualMove(true);
 		})
 	}});	//很神奇的是，他一次只會有一個物件動起來，不過也符合動畫的原則了
@@ -41,9 +43,11 @@ dice.prototype.updateMax = function(value) {
 	this.htmlElement.find("i").removeClass("fa-cubes");
 	this.diceRange = value;
 	if(value <= 6) {
-		this.htmlElement.find("i").addClass("fa-cube");
+		this.diceSymbol = "fa-cube";
+		this.htmlElement.find("i").addClass(this.diceSymbol);
 	} else {
-		this.htmlElement.find("i").addClass("fa-cubes");
+		this.diceSymbol = "fa-cubes";
+		this.htmlElement.find("i").addClass(this.diceSymbol);
 	}
 	this.board.pushEvent("骰子數量增加！最高可用點數"+value);
 }
@@ -56,20 +60,30 @@ dice.prototype.availablity = function(control) {
 	var oriobj = this;
 	if(!control) {
 		oriobj.available = false;
-		oriobj.htmlElement.find("i").removeClass("fa-cube");
+		oriobj.htmlElement.find("i").removeClass(this.diceSymbol);
 		oriobj.htmlElement.find("i").addClass("fa-ban");
 		oriobj.htmlElement.css("cursor","not-allowed");
+		oriobj.nextElement.animate({backgroundColor: '#FFF'},{
+			duration:300,
+			easing:"easeInOutBack",
+			complete: function() {
+				oriobj.nextElement.animate({backgroundColor: '#C30'},{
+					duration:100,
+					easing:"easeInOutBack"
+				});
+			}
+		});
 	} else {
 		oriobj.available = true;
 		oriobj.htmlElement.find("i").removeClass("fa-ban");
-		oriobj.htmlElement.find("i").addClass("fa-cube");
+		oriobj.htmlElement.find("i").addClass(this.diceSymbol);
 		oriobj.htmlElement.css("cursor","default");
 	}
 }
 dice.prototype.throwDice = function() {
 	if(this.board.sameUser) {
 		if(this.available) {
-			this.available = false;
+			this.availablity(false);
 			this.dicenum = this.dicenum.sort(function(a,b) { return 0.5-Math.random();});
 			this.htmlElement.find("div").empty();
 			this.anmiElement.empty();

@@ -17,6 +17,7 @@ function brick(upgrade,index) {
 	this.active = false;
 	this.shortcut = false;
 	this.index = index;
+	this.desc = "無描述";
 	this.upgradeElement = $("<div></div>");
 	this.upgradeElement.addClass("upgrades");
 	this.htmlElement.append(this.upgradeElement);
@@ -115,6 +116,7 @@ brick.prototype.setBrick = function(data,type) {
 	this.price = data.price;
 	this.title.text(this.name);
 	this.type = type;
+	this.desc = data.desc;
 }
 brick.prototype.changeOwner = function(owner) {
 	var color = owner == null ? "#CCC" : owner.mainColor;

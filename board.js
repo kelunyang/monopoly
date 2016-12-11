@@ -52,6 +52,31 @@ function board(name,width,height,shortcuts,socket,stages,players,boardElement,ti
 	this.messageElement.scrollbox({delay: 0, speed: 100, infiniteLoop: false, onMouseOverPause: false ,autoPlay: true});
 	//this.sortingQuestion();
 	this.moveCounter(false);
+	this.socket.on("sessionRemoved",function(data) {
+		if(oriobj.boardinfo.sid == data.sid) {
+			oriobj.popElement.messageWindow("主辦者已關閉遊戲","本局遊戲已被移除",{
+				ok:{
+					enable: true,
+					func: function() {
+						location.href="/";
+					}
+				},
+				yes:{
+					enable: false,
+					func: function() {
+						oriobj.popElement.endPseudo();
+					}
+				},
+				no:{
+					enable: false,
+					func: function() {
+						oriobj.popElement.endPseudo();
+					}
+				},
+				custombuttons: new Array()
+			},"chain-broken");
+		}
+	});
 	this.socket.on('sendQuestion', function(data){
 		//console.log(data.question);
 		oriobj.currentQuestion = data.question;
@@ -141,6 +166,7 @@ function board(name,width,height,shortcuts,socket,stages,players,boardElement,ti
 				shortcut = data.brickLog.shortcut.name;
 			} else {
 				oriobj.hideShortcut(data.brickLog.shortcut.name);
+				oriobj.scanPlayer(false);
 			}
 		}
 		if(data.newstage) {
@@ -160,7 +186,7 @@ function board(name,width,height,shortcuts,socket,stages,players,boardElement,ti
 		});
 	});
 	this.socket.on("gamesettled", function(data) {
-		oriobj.popElement.settleWindow(data);
+		oriobj.popElement.settleWindow(data, oriobj.socket);
 	});
 	this.socket.on("playerout", function(data) {
 		oriobj.socket.emit("exitsession", {
@@ -172,11 +198,13 @@ function board(name,width,height,shortcuts,socket,stages,players,boardElement,ti
 		oriobj.popElement.errorWindow(data.msg,0);
 	});
 	this.socket.on("sessionleaved", function(data) {
+		$("ul#popSettle>li#sebutton>ul>li:nth-child(2)").hide();
+		oriobj.players.splice(oriobj.players.indexOf(data.uid),1);
 		oriobj.popElement.messageWindow("已退出遊戲","您已退出遊戲",{
 			ok:{
 				enable: true,
 				func: function() {
-					oriobj.popElement.closeWindow("popMessage");
+					location.href="/";
 				}
 			},
 			yes:{
@@ -345,7 +373,6 @@ board.prototype.detectMove = function(player) {
 									player.position = $(this).data("brick");
 									oriobj.remainmoves--;
 									oriobj.diceElement.diceValue--;
-									if(oriobj.diceElement.diceValue <= 0) this.diceElement.availablity(false);
 									player.manualMove(false);
 								});
 								custombuttons.push(button);
@@ -379,7 +406,6 @@ board.prototype.detectMove = function(player) {
 						player.direction = !player.direction;
 						this.remainmoves--;
 						this.diceElement.diceValue--;
-						if(this.diceElement.diceValue <= 0) this.diceElement.availablity(false);
 						player.manualMove(false);
 						if(!this.detectMove(player)) {
 							return false;
@@ -400,7 +426,6 @@ board.prototype.detectMove = function(player) {
 									player.position = $(this).data("brick");
 									oriobj.remainmoves--;
 									oriobj.diceElement.diceValue--;
-									if(oriobj.diceElement.diceValue <= 0) this.diceElement.availablity(false);
 									player.manualMove(false);
 								});
 								custombuttons.push(button);
@@ -434,7 +459,6 @@ board.prototype.detectMove = function(player) {
 						player.direction = !player.direction;
 						this.remainmoves--;
 						this.diceElement.diceValue--;
-						if(this.diceElement.diceValue <= 0) this.diceElement.availablity(false);
 						player.manualMove(false);
 						if(!this.detectMove(player)) {
 							return false;
@@ -597,15 +621,6 @@ board.prototype.hideShortcut = function(name) {
 		this.bricks[shortcut[s]].name = "";
 		this.bricks[shortcut[s]].shortcut = false;
 		this.bricks[shortcut[s]].normalElement();
-		if(this.bricks[shortcut[s]].players.length > 0) {	// send everyone home
-			for(var i=0;i<this.bricks[shortcut[s]].players.length;i++) {
-				if(shortcut.indexOf(shortcut[s]) <= Math.round(shortcut.length / 2)) {
-					this.bricks[shortcut[s]].players[i].position = this.bricks[shortcut[0]];
-				} else {
-					this.bricks[shortcut[s]].players[i].position = this.bricks[shortcut[this.bricks[shortcut[s]].players.length-1]];
-				}
-			}
-		}
 		//console.log(shortcut[s]);
 	}
 	//this.boardElement.find("div.shortcut").animate({opacity:0},100);

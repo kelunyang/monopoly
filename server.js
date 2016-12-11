@@ -191,6 +191,7 @@ app.post("/login",function(req,res) {
 									var user = rows[0];
 									res.json({
 										status: true,
+										level: rows[0].level,
 										msg: user.email+"("+user.nickname+")登入成功！"
 									});
 									req.session.currentuser = {
@@ -230,6 +231,7 @@ app.post("/login",function(req,res) {
 							if(user.password == crypto.pbkdf2Sync(req.body.pass,user.salt,100000,512,"sha512").toString("hex")) {
 								res.json({
 									status: true,
+									level: rows[0].level,
 									msg: user.email+"("+user.nickname+")登入成功！"
 								});
 								req.session.currentuser = {
@@ -289,6 +291,7 @@ app.get("/checkUser", function(req,res) {
 	if(req.session.hasOwnProperty("currentuser")) {
 		res.json({
 			status : true,
+			level: req.session.currentuser.level,
 			msg: req.session.currentuser.nickname+"("+req.session.currentuser.email+")已登入",
 		});
 	} else {
@@ -324,13 +327,20 @@ app.get("/listmapService", function(req,res) {
 	});
 });
 app.get("/readmapinfoService",function(req,res) {
-});
-serv_io.of("/fileupload").on("connection", function(socket) {
-	ss(socket).on("mapConfigs", function(stream, data) {
-		console.log(dir+"/data/"+data.boardid+"/"+data.type+".xml");
-		stream.pipe(fs.createWriteStream(dir+"/data/"+data.boardid+"/"+data.type+".xml"));	//fs.createWriteStream opintion default set to override
-	});
 });*/
+serv_io.of("/fileupload").on("connection", function(socket) {
+	var sessioni = socket.handshake.session;
+	var ipaddress = socket.request.headers['x-forwarded-for'] || socket.request.connection.remoteAddress;
+	ss(socket).on("mapConfigs", function(stream, data) {
+		try {
+			//if(!sessioni.hasOwnProperty("currentuser")) throw "currentuser未設定";
+			stream.pipe(fs.createWriteStream(dir+"/data/"+data.boardid+"/"+data.type+".xml"));	//fs.createWriteStream opintion default set to override
+		} catch(e) {
+			serverlog("在fileupload操作失敗 \n"+socket.request.headers['user-agent']+"\n"+e.message+"\n"+e.stack,ipaddress);
+			socket.disconnect();
+		}
+	});
+});
 serv_io.sockets.on('connection', function(socket) {
 	var ipaddress = socket.request.headers['x-forwarded-for'] || socket.request.connection.remoteAddress;
 	var sessioni = socket.handshake.session;
@@ -412,11 +422,21 @@ serv_io.sockets.on('connection', function(socket) {
 								enable: true
 							}
 						}
-						if(sessioni.gameSession[sessioni.currentgame].currentturn == shortcut.endturn) {
+						if(sessioni.gameSession[sessioni.currentgame].currentturn == shortcut.endturn) {	//關閉捷徑，把用戶送回最接近的起點或終點
 							data.brickLog.shortcut = {
 								name: shortcut.name,
 								enable: false
 							}
+							Object.keys(players).forEach(function(key) {
+								var item = players[key];
+								if(shortcut.bricks.indexOf(item.position.toString()) > 0) {	// 玩家在捷徑中
+									if(shortcut.bricks.indexOf(item.position.toString()) <= Math.round(shortcut.bricks.length / 2)) {
+										item.position = parseInt(shortcut.bricks[0],10);
+									} else {
+										item.position = parseInt(shortcut.bricks[shortcut.bricks.length - 1],10);
+									}
+								}
+							});
 						}
 					});
 					var querystring = new Array();
@@ -606,6 +626,10 @@ serv_io.sockets.on('connection', function(socket) {
 								connection.end();
 								throw error;
 							} else {
+								if(rows.length == 0) {
+									socket.emit('gameboardreadingError', {'error': true});
+									throw "已登出的用戶企圖存取遊戲";
+								}
 								for(var i=0;i<rows.length;i++) {
 									obj.players[rows[i].uid] = {
 										id:rows[i].uid,
@@ -629,6 +653,7 @@ serv_io.sockets.on('connection', function(socket) {
 										obj.boardinfo.name = rows[0].name;
 										obj.boardinfo.desc = rows[0].comment;
 										obj.boardinfo.maxround = obj.maxround;
+										obj.boardinfo.sid = sessioni.currentgame;
 										sessioni.save();
 										socket.emit('boardprepared', {
 											status: true,
@@ -651,147 +676,189 @@ serv_io.sockets.on('connection', function(socket) {
 					}
 				});
 			} else if(type == 2) {
-				var log = 0;
-				var boardname = ["incidents", "questions", "roads", "shortcuts", "stages", "upgrades"];
-				for(var i=0;i<boardname.length;i++) {
-					fs.readFile(dir+"/data/"+bid+"/"+boardname[i]+".xml",function(err, data) {
-						var xmldata = xml.parseString(data, function(err, result) {
-							switch(result.Workbook.DocumentProperties[0].Title[0]) {
-								case "incidents":
-									obj.incident = new Array();
-									for(var i=0;i<result.Workbook.Worksheet.length;i++) {
-										for(var c=0;c<result.Workbook.Worksheet[i].Table[0].Row.length;c++) {
-											obj.incident.push({
-												stage: i,
-												name:result.Workbook.Worksheet[i].Table[0].Row[c].Cell[0].Data[0]._,
-												desc:result.Workbook.Worksheet[i].Table[0].Row[c].Cell[1].Data[0]._,
-												type:parseInt(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[2].Data[0]._),
-												effect:parseFloat(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[3].Data[0]._),
-												brick:parseInt(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[4].Data[0]._,10)
-											});
-										}
-									}
-								break;
-								case "questions":	//問題一定要比回合多，所以把maxround拿來，全部問題deepclone一次，再打散
-									obj.questions = new Array();
-									for(var i=0;i<result.Workbook.Worksheet.length;i++) {
-										var stagequestion = new Array();
-										for(var c=0;c<result.Workbook.Worksheet[i].Table[0].Row.length;c++) {
-											var answers = new Array();
-											for(var a=4;a<result.Workbook.Worksheet[i].Table[0].Row[c].Cell.length;a++) {
-												answers.push(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[a].Data[0]._);
-											}
-											stagequestion.push({
-												stage: i,
-												question:result.Workbook.Worksheet[i].Table[0].Row[c].Cell[0].Data[0]._,
-												credit:parseInt(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[1].Data[0]._,10),
-												answer:parseInt(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[2].Data[0]._,10),
-												reason:result.Workbook.Worksheet[i].Table[0].Row[c].Cell[3].Data[0]._,
-												answers:answers
-											});
-										}
-										if(stagequestion.length < obj.maxround) {
-											var remain = obj.maxround - stagequestion.length;
-											for(var r=0;r<remain;r++) {
-												var answers = new Array();
-												for(var a=0;a<stagequestion[r % stagequestion.length].answers.length;a++) {
-													answers.push(stagequestion[r % stagequestion.length].answers[a]);
-												}
-												stagequestion.push({
+				fs.readFile(dir+"/data/"+bid+"/stages.xml",function(err,data) {
+					obj.stages = new Array();
+					var xmldata = xml.parseString(data, function(err, result) {
+						for(var i=0;i<result.Workbook.Worksheet.length;i++) {
+							for(var c=0;c<result.Workbook.Worksheet[i].Table[0].Row.length;c++) {
+								obj.stages.push({
+									name: result.Workbook.Worksheet[i].Table[0].Row[c].Cell[0].Data[0]._,
+									desc: result.Workbook.Worksheet[i].Table[0].Row[c].Cell[1].Data[0]._,
+									duration: parseInt(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[2].Data[0]._,10),
+									effecttype: parseInt(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[3].Data[0]._,10),
+									effectvalue: parseInt(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[4].Data[0]._,10)
+								});
+							}
+						}
+					});
+					sessioni.save();
+					socket.emit('boardprepared', {
+						status: true,
+						id: id,
+						upgrades: obj.upgrades,
+						shortcut: obj.shortcuts,
+						roads: obj.roads,
+						stage: obj.stages,
+						incident: obj.incident,
+						localplayer: sessioni.currentuser.email,
+						currentplayer: obj.currentplayer,
+						info: obj.boardinfo,
+						type: 2
+					});
+					var boardname = ["incidents", "questions", "roads", "shortcuts", "upgrades"];
+					for(var i=0;i<boardname.length;i++) {
+						fs.readFile(dir+"/data/"+bid+"/"+boardname[i]+".xml",function(err, data) {
+							var xmldata = xml.parseString(data, function(err, result) {
+								switch(result.Workbook.DocumentProperties[0].Title[0]) {
+									case "incidents":
+										obj.incident = new Array();
+										for(var i=0;i<result.Workbook.Worksheet.length;i++) {
+											for(var c=0;c<result.Workbook.Worksheet[i].Table[0].Row.length;c++) {
+												obj.incident.push({
 													stage: i,
-													question:stagequestion[r % stagequestion.length].question,
-													credit:stagequestion[r % stagequestion.length].credit,
-													answer:stagequestion[r % stagequestion.length].answer,
-													reason:stagequestion[r % stagequestion.length].reason,
-													answers:answers
+													name:result.Workbook.Worksheet[i].Table[0].Row[c].Cell[0].Data[0]._,
+													desc:result.Workbook.Worksheet[i].Table[0].Row[c].Cell[1].Data[0]._,
+													type:parseInt(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[2].Data[0]._),
+													effect:parseFloat(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[3].Data[0]._),
+													brick:parseInt(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[4].Data[0]._,10)
 												});
 											}
 										}
-										stagequestion.sort(function(a,b) {return 0.5-Math.random();});
-										obj.questions.push(stagequestion);
-									}
-								break;
-								case "roads":
-									obj.roads = new Array();
-									for(var i=0;i<result.Workbook.Worksheet.length;i++) {
-										for(var c=0;c<result.Workbook.Worksheet[i].Table[0].Row.length;c++) {
-											obj.roads.push({
-												name: result.Workbook.Worksheet[i].Table[0].Row[c].Cell[0].Data[0]._,
-												desc: result.Workbook.Worksheet[i].Table[0].Row[c].Cell[1].Data[0]._,
-												brick: parseInt(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[2].Data[0]._,10),
-												next: parseInt(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[3].Data[0]._,10),
-												previous: parseInt(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[4].Data[0]._,10),
-												price: parseInt(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[5].Data[0]._,10),
-												stage: i
-											});
-										}
-									}
-								break;
-								case "shortcuts":
-									obj.shortcuts = new Object();
-									for(var i=0;i<result.Workbook.Worksheet.length;i++) {
-										for(var c=0;c<result.Workbook.Worksheet[i].Table[0].Row.length;c++) {
-											var bricks = new Array();
-											for(var a=4;a<result.Workbook.Worksheet[i].Table[0].Row[c].Cell.length;a++) {
-												bricks.push(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[a].Data[0]._);
+									break;
+									case "questions":
+									//問題一定要比回合多，所以把maxround拿來，全部問題deepclone一次，再打散
+										var tempquestions = new Array();	//問題庫
+										obj.questions = new Array();
+										for(var i=0;i<result.Workbook.Worksheet.length;i++) {
+											var stagequestion = new Array();
+											for(var c=0;c<result.Workbook.Worksheet[i].Table[0].Row.length;c++) {
+												var answers = new Array();
+												for(var a=4;a<result.Workbook.Worksheet[i].Table[0].Row[c].Cell.length;a++) {
+													answers.push(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[a].Data[0]._);
+												}
+												var qobj = {
+													stage: i,
+													question:result.Workbook.Worksheet[i].Table[0].Row[c].Cell[0].Data[0]._,
+													credit:parseInt(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[1].Data[0]._,10),
+													answer:parseInt(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[2].Data[0]._,10),
+													reason:result.Workbook.Worksheet[i].Table[0].Row[c].Cell[3].Data[0]._,
+													answers:answers
+												};
+												stagequestion.push(qobj);
+												tempquestions.push(qobj);
 											}
-											obj.shortcuts[result.Workbook.Worksheet[i].Table[0].Row[c].Cell[0].Data[0]._] = {
-												name: result.Workbook.Worksheet[i].Table[0].Row[c].Cell[0].Data[0]._,
-												desc: result.Workbook.Worksheet[i].Table[0].Row[c].Cell[1].Data[0]._,
-												startturn: parseInt(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[2].Data[0]._,10),
-												endturn: parseInt(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[3].Data[0]._,10),
-												bricks: bricks
-											};
 										}
-									}
-								break;
-								case "stages":
-									obj.stages = new Array();
-									for(var i=0;i<result.Workbook.Worksheet.length;i++) {
-										for(var c=0;c<result.Workbook.Worksheet[i].Table[0].Row.length;c++) {
-											obj.stages.push({
-												name: result.Workbook.Worksheet[i].Table[0].Row[c].Cell[0].Data[0]._,
-												desc: result.Workbook.Worksheet[i].Table[0].Row[c].Cell[1].Data[0]._,
-												duration: parseInt(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[2].Data[0]._,10),
-												effecttype: parseInt(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[3].Data[0]._,10),
-												effectvalue: parseInt(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[4].Data[0]._,10)
-											});
+										for(var i=obj.questions.length;i<obj.stages.length;i++) {
+											scount = obj.questions.length-1;
+											var stagequestion = new Array();
+											for(var s=0;s<tempquestions.length;s++) {	//deepclone
+												var answers = new Array();
+												for(var a=0;a<tempquestions[s].answers.length;a++) {
+													answers.push(tempquestions[s].answers[a]);
+												}
+												stagequestion.push({
+													stage: scount,
+													question:tempquestions[s].question,
+													credit:tempquestions[s].credit,
+													answer:tempquestions[s].answer,
+													reason:tempquestions[s].reason,
+													answers:answers
+												});
+											}
+											obj.questions.push(stagequestion);
 										}
-									}
-								break;
-								case "upgrades":
-									obj.upgrades = new Object();
-									for(var i=0;i<result.Workbook.Worksheet.length;i++) {
-										for(var c=0;c<result.Workbook.Worksheet[i].Table[0].Row.length;c++) {
-											obj.upgrades[result.Workbook.Worksheet[i].Table[0].Row[c].Cell[0].Data[0]._] = {
-												name: result.Workbook.Worksheet[i].Table[0].Row[c].Cell[0].Data[0]._,
-												rent: parseFloat(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[1].Data[0]._),
-												price: parseInt(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[2].Data[0]._,10),
-												icon:result.Workbook.Worksheet[i].Table[0].Row[c].Cell[3].Data[0]._,
-												desc:result.Workbook.Worksheet[i].Table[0].Row[c].Cell[4].Data[0]._,
-												stage:i
-											};
+										for(var i=0;i<obj.questions.length;i++) {	//extend questions
+											var stagequestion = obj.questions[i];
+											if(stagequestion.length < obj.maxround) {
+												var remain = obj.maxround - stagequestion.length;
+												for(var r=0;r<remain;r++) {
+													var answers = new Array();
+													for(var a=0;a<stagequestion[r % stagequestion.length].answers.length;a++) {
+														answers.push(stagequestion[r % stagequestion.length].answers[a]);
+													}
+													stagequestion.push({
+														stage: i,
+														question:stagequestion[r % stagequestion.length].question,
+														credit:stagequestion[r % stagequestion.length].credit,
+														answer:stagequestion[r % stagequestion.length].answer,
+														reason:stagequestion[r % stagequestion.length].reason,
+														answers:answers
+													});
+												}
+											}
+											stagequestion.sort(function(a,b) {return 0.5-Math.random();});
 										}
-									}
-								break;
-							}
-							sessioni.save();
-							socket.emit('boardprepared', {
-								status: true,
-								id: id,
-								upgrades: obj.upgrades,
-								shortcut: obj.shortcuts,
-								roads: obj.roads,
-								stage: obj.stages,
-								incident: obj.incident,
-								localplayer: sessioni.currentuser.email,
-								currentplayer: obj.currentplayer,
-								info: obj.boardinfo,
-								type: 2
+									break;
+									case "roads":
+										obj.roads = new Array();
+										for(var i=0;i<result.Workbook.Worksheet.length;i++) {
+											for(var c=0;c<result.Workbook.Worksheet[i].Table[0].Row.length;c++) {
+												obj.roads.push({
+													name: result.Workbook.Worksheet[i].Table[0].Row[c].Cell[0].Data[0]._,
+													desc: result.Workbook.Worksheet[i].Table[0].Row[c].Cell[1].Data[0]._,
+													brick: parseInt(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[2].Data[0]._,10),
+													next: parseInt(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[3].Data[0]._,10),
+													previous: parseInt(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[4].Data[0]._,10),
+													price: parseInt(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[5].Data[0]._,10),
+													stage: i
+												});
+											}
+										}
+									break;
+									case "shortcuts":
+										obj.shortcuts = new Object();
+										for(var i=0;i<result.Workbook.Worksheet.length;i++) {
+											for(var c=0;c<result.Workbook.Worksheet[i].Table[0].Row.length;c++) {
+												var bricks = new Array();
+												if(result.Workbook.Worksheet[i].Table[0].Row[c].hasOwnProperty("Cell")) {
+													for(var a=4;a<result.Workbook.Worksheet[i].Table[0].Row[c].Cell.length;a++) {
+														bricks.push(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[a].Data[0]._);
+													}
+													obj.shortcuts[result.Workbook.Worksheet[i].Table[0].Row[c].Cell[0].Data[0]._] = {
+														name: result.Workbook.Worksheet[i].Table[0].Row[c].Cell[0].Data[0]._,
+														desc: result.Workbook.Worksheet[i].Table[0].Row[c].Cell[1].Data[0]._,
+														startturn: parseInt(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[2].Data[0]._,10),
+														endturn: parseInt(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[3].Data[0]._,10),
+														bricks: bricks
+													};
+												}
+											}
+										}
+									break;
+									case "upgrades":
+										obj.upgrades = new Object();
+										for(var i=0;i<result.Workbook.Worksheet.length;i++) {
+											for(var c=0;c<result.Workbook.Worksheet[i].Table[0].Row.length;c++) {
+												obj.upgrades[result.Workbook.Worksheet[i].Table[0].Row[c].Cell[0].Data[0]._] = {
+													name: result.Workbook.Worksheet[i].Table[0].Row[c].Cell[0].Data[0]._,
+													rent: parseFloat(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[1].Data[0]._),
+													price: parseInt(result.Workbook.Worksheet[i].Table[0].Row[c].Cell[2].Data[0]._,10),
+													icon:result.Workbook.Worksheet[i].Table[0].Row[c].Cell[3].Data[0]._,
+													desc:result.Workbook.Worksheet[i].Table[0].Row[c].Cell[4].Data[0]._,
+													stage:i
+												};
+											}
+										}
+									break;
+								}
+								sessioni.save();
+								socket.emit('boardprepared', {
+									status: true,
+									id: id,
+									upgrades: obj.upgrades,
+									shortcut: obj.shortcuts,
+									roads: obj.roads,
+									stage: obj.stages,
+									incident: obj.incident,
+									localplayer: sessioni.currentuser.email,
+									currentplayer: obj.currentplayer,
+									info: obj.boardinfo,
+									type: 2
+								});
 							});
 						});
-					});
-				}
+					}
+				});
 			}
 		} catch(e) {
 			if(!e.hasOwnProperty("stack")) e.stack = "";
@@ -913,33 +980,45 @@ serv_io.sockets.on('connection', function(socket) {
 	socket.on("removesession", function(data) {
 		try {
 			if(!sessioni.hasOwnProperty("currentuser")) throw "currentuser未設定";
-			var connection = mysql.createConnection({
-				host: mysqlServer,
-				user: mysqlUser,
-				password: mysqlPass,
-				database: mysqlDB_string
-			});
-			connection.connect();
-			connection.query("DELETE FROM sessionplayer WHERE sid = ?", data.sid, function(err, results) {
-				if(err) {
-					connection.end();
-					throw err;
-				} else {
-					connection.query("DELETE FROM gamesession WHERE id = ?", data.sid, function(err, results) {
-						if(err) {
-							connection.end();
-							throw err;
-						} else {
-							userlog(connection, sessioni.currentuser.email, 4, JSON.stringify(data), function() {
-								Object.keys(serv_io.sockets.connected).forEach(function(key) {
-									serv_io.sockets.connected[key].emit('sessionRemoved', data);
-								});
-								connection.end();
-							});
-						}
-					});
+			var sid = undefined;
+			if(data.sid == false) {
+				if(sessioni.gameSession[sessioni.currentgame].hosteduser == sessioni.currentuser.email) {
+					sid = sessioni.currentgame;
+					delete sessioni.currentgame;
 				}
-			});
+			} else {
+				sid = data.sid;
+			}
+			if(sid != undefined) {
+				var connection = mysql.createConnection({
+					host: mysqlServer,
+					user: mysqlUser,
+					password: mysqlPass,
+					database: mysqlDB_string
+				});
+				connection.connect();
+				connection.query("DELETE FROM sessionplayer WHERE sid = ?", sid, function(err, results) {
+					if(err) {
+						connection.end();
+						throw err;
+					} else {
+						connection.query("DELETE FROM gamesession WHERE id = ?", sid, function(err, results) {
+							if(err) {
+								connection.end();
+								throw err;
+							} else {
+								data.sid = sid;	//為了log寫回去
+								userlog(connection, sessioni.currentuser.email, 4, JSON.stringify(data), function() {
+									Object.keys(serv_io.sockets.connected).forEach(function(key) {
+										serv_io.sockets.connected[key].emit('sessionRemoved', data);
+									});
+									connection.end();
+								});
+							}
+						});
+					}
+				});
+			}
 		} catch(e) {
 			if(!e.hasOwnProperty("stack")) e.stack = "";
 			var message = e.hasOwnProperty("message") ? e.message : e;
@@ -964,7 +1043,7 @@ serv_io.sockets.on('connection', function(socket) {
 				} else {
 					userlog(connection, sessioni.currentuser.email, 4, JSON.stringify(data), function() {
 						socket.leave("room"+sessioni.currentgame);
-						delete sessioni.currentgame;
+						//delete sessioni.currentgame;
 						Object.keys(serv_io.sockets.connected).forEach(function(key) {
 							serv_io.sockets.connected[key].emit('socket.requestuestsessionUsers', data.sid);
 						});
@@ -982,7 +1061,7 @@ serv_io.sockets.on('connection', function(socket) {
 	});
 	socket.on("joinsession", function(data) {
 		try {
-			if(!sessioni.hasOwnProperty("currentgame")) throw "currentgame未設定";
+			if(!sessioni.hasOwnProperty("currentuser")) throw "currentuser未設定";
 			var connection = mysql.createConnection({
 				host: mysqlServer,
 				user: mysqlUser,
@@ -1570,18 +1649,73 @@ serv_io.sockets.on('connection', function(socket) {
 				database: 'monopoly'
 			});
 			connection.connect();
-			connection.query("SELECT * FROM gamesession",function(error, rows, fields){
+			connection.query("SELECT * FROM gamesession",function(error, srows, sfields){
 				if(error) {
 					connection.end();
 					throw error;
 				} else {
-					socket.emit("getsessionList", rows);
+					connection.query("SELECT * FROM gameboard",function(error, brows, bfields){
+						if(error) {
+							connection.end();
+							throw error;
+						} else {
+							connection.end();
+							socket.emit("getsessionList", {
+								sessions: srows,
+								boards: brows
+							});
+						}
+					});
 				}
 			});
 		} catch(e) {
 			if(!e.hasOwnProperty("stack")) e.stack = "";
 			var message = e.hasOwnProperty("message") ? e.message : e;
 			serverlog("在requestsessionList操作失敗 \n"+socket.request.headers['user-agent']+"\n"+message+"\n"+e.stack,ipaddress);
+			socket.disconnect();
+		}
+	});
+	socket.on('requestsessionDetail',function(data) {
+		try {
+			if(!sessioni.hasOwnProperty("currentuser")) throw "currentuser未設定";
+			var connection = mysql.createConnection({
+				host: 'localhost',
+				user: 'webapp',
+				password: '75*0F*d4b6',
+				database: 'monopoly'
+			});
+			connection.connect();
+			connection.query("SELECT * FROM gamesession WHERE id = ?",data.sid,function(error, srows, sfields){
+				if(error) {
+					connection.end();
+					throw error;
+				} else {
+					connection.query("SELECT * FROM sessionplayer WHERE sid = ?",data.sid,function(error, prows, bfields){
+						if(error) {
+							connection.end();
+							throw error;
+						} else {
+							connection.query("SELECT * FROM user",function(error, urows, fields){
+								if(error) {
+									connection.end();
+									throw error;
+								} else {
+									connection.end();
+									socket.emit("getsessionDetail", {
+										session: srows,
+										sessionplayers: prows,
+										players: urows
+									});
+								}
+							});
+						}
+					});
+				}
+			});
+		} catch(e) {
+			if(!e.hasOwnProperty("stack")) e.stack = "";
+			var message = e.hasOwnProperty("message") ? e.message : e;
+			serverlog("在requestsessionDetail操作失敗 \n"+socket.request.headers['user-agent']+"\n"+message+"\n"+e.stack,ipaddress);
 			socket.disconnect();
 		}
 	});
@@ -1604,6 +1738,7 @@ serv_io.sockets.on('connection', function(socket) {
 						rows[i].email = rows[i].uid;
 					}
 					serv_io.to("room"+sessioni.currentgame).emit('getplayerList',{users: rows, hosted: sessioni.gameSession[sessioni.currentgame].hosteduser});
+					connection.end();
 				}
 			});
 		} catch(e) {

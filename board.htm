@@ -7,6 +7,7 @@
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.4.0/css/swiper.min.css">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 		<link rel="stylesheet" href="pseudoWindow.css"/>
+		<link rel="stylesheet" href="sol.css"/>
 		<style type="text/css">
 		body {
 			background-color: #FFF;
@@ -360,7 +361,7 @@
 			<ul id="create">
 				<li><h2>建立遊戲</h2></li>
 				<li>選擇地圖：
-					<select id="maplist"></select>
+					<select id="maplist" name="maplist"></select>
 				</li>
 				<li>最高玩家數：<input id="maxplayer" type="number" max="8" min="4" placeholder="4" type="text"/></li>
 				<li>最高回合數：<input id="maxround" type="number" max="60" min="30" placeholder="30" type="text"/></li>
@@ -421,6 +422,7 @@
 		<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.4.0/js/swiper.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>
+		<script src="sol.js"></script>
 		<script src="ui.js"></script>
 		<script>
 			currentUser = null;
@@ -486,6 +488,7 @@
 						.text(data[i].name));
 					board.push({"id": data[i].id, "value": data[i].name})
 				}
+				$('select#maplist').searchableOptionList({maxHeight: "200px"});
 			});
 			socket.on("gamestarted", function(data) {
 				if(data.status) {
@@ -516,10 +519,10 @@
 				title.text("新增遊戲");
 				createblock.append(title);
 				$("article>ul").append(createblock);
-				for(var i=0;i<data.length;i++) {
+				for(var i=0;i<data.sessions.length;i++) {
 					var block = $("<li></li>");
 					var htitle = $("<h2></h2>");
-					if(data[i].hosteduser == currentUser) {
+					if(data.sessions[i].hosteduser == currentUser) {
 						block.addClass("hostedblock");
 						htitle.text("啟動遊戲");
 					} else {
@@ -529,7 +532,7 @@
 					var icon = $("<i></i>");
 					block.append(icon);
 					block.append($("<br/>"));
-					block.data("note", data[i]);
+					block.data("note", data.sessions[i]);
 					block.append(htitle);
 					$("article>ul").append(block);
 				}

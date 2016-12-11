@@ -537,7 +537,8 @@
 				</li>
 				<li id="sebutton" class="buttonarea">
 					<ul>
-						<li class="button">確定</li>
+						<li class="button">關閉遊戲</li>
+						<li class="button">繼續遊戲</li>
 					</ul>
 				</li>
 			</ul>
@@ -1060,6 +1061,7 @@
 					players[localplayer.uid] = localplayer;
 					gameboard.localplayer = localplayer;
 					var dices = new dice($("nav"),localplayer,gameboard);
+					dices.nextElement = $("ul#nextstep");
 					gameboard.diceElement = dices;
 					popWindows.dice = dices;
 					var custombuttons = new Array();

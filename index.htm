@@ -153,7 +153,7 @@
 	<body>
 		<header>
 			<a href="#" title="登出遊戲" class="logout"><i class="fa fa-sign-out"></i>登出遊戲</a>
-			<a href="admin.htm" target="_top" title="系統設定"><i class="fa fa-1x fa-cog"></i>系統設定</a>
+			<a href="admin.htm" target="_top" title="系統設定" class="adminblock"><i class="fa fa-1x fa-cog"></i>系統設定</a>
 		</header>
 		<article id="logonZone">
 			<p>&nbsp;</p>
@@ -166,7 +166,7 @@
 			</form>
 			<div id="hubarea">
 				<button id="logoutbtn" class="logout"><i class="fa fa-sign-out"></i>登出遊戲</button>
-				<button id="configbtn"><i class="fa fa-1x fa-cog"></i>系統設定</button>
+				<button id="configbtn" class="adminblock"><i class="fa fa-1x fa-cog"></i>系統設定</button>
 				<button id="enterbtn"><i class="fa fa-th"></i>進入遊戲</button>
 			</div>
 			<br/>
@@ -197,7 +197,7 @@
 			<ul class="popWindow" id="popWelcome">
 				<li><h1>線上大富翁</h1></li>
 				<li id="wlogo"><i class="fa fa-5x fa-bullhorn"></i></li>
-				<li>歡迎進入本遊戲，如果已經建立過帳號，請登入，否則請按新增玩家繼續</li>
+				<li>這是大富翁的測試網頁，請自行註冊帳號，便可開始遊戲</li>
 				<li id="wbutton" class="buttonarea">
 					<ul>
 						<li class="button" id="enter"><i class="fa fa-sign-in"></i>進入遊戲</li>
@@ -275,6 +275,9 @@
 						$("form#loginarea")[0].reset();
 						grecaptcha.reset();
 						if(data.status) {
+							if(data.level == 0) {
+								$(".adminblock").hide();
+							}
 							$("article#logonZone p").text(data.msg);
 							$("div#hubarea").show("blind");
 							$("form#loginarea").effect("blind");
@@ -442,6 +445,9 @@
 				$.get("/checkUser", function(data) {
 					$("article#logonZone p").text(data.msg);
 					if(data.status) {
+						if(data.level == 0) {
+							$(".adminblock").hide();
+						}
 						$("div#hubarea").show("blind");
 						$("form#loginarea").effect("blind");
 						$(".logout").show();

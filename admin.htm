@@ -252,17 +252,17 @@
 		font-size: 22px;
 		margin-left: 5px;
 	}
-    button.userdetailBtn {
+    button.userdetailBtn, button.sessiondetailBtn, button.mapdetailBtn {
 		background-color: white;
 		border: 1px solid white;
 		padding: 0px;
 		transition: all 0.2s;
 		transition-delay: 300ms;
     }
-    button.userdetailBtn:hover {
+    button.userdetailBtn:hover, button.sessiondetailBtn:hover, button.mapdetailBtn:hover {
 		color: #06C;
     }
-    button.userdetailBtn:active {
+    button.userdetailBtn:active, button.sessiondetailBtn:active, button.mapdetailBtn:active {
 		border: 1px solid white;
 		transition: none;
     }
@@ -286,12 +286,25 @@
 			<p class="loading message"><i class="fa fa-spinner fa-pulse"></i>載入中...</p>
 			<p class="error message"><i class="fa fa-exclamation-triangle"></i>載入失敗</p>
 			<p class="empty message"><i class="fa fa-exclamation"></i>無資料</p>
-			<ul id="boardmenucontainer" class="swiper-container">
+			<table cellspacing="0" width="100%" id="maplist" class="usertables">
+				<thead>
+					<tr>
+						<th>編號</th>
+						<th>地圖名稱</th>
+						<th>創建者</th>
+						<th>創建日期</th>
+						<th>&nbsp;</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+			<!-- <ul id="boardmenucontainer" class="swiper-container">
 				<li id="boardmenu" class="swiper-wrapper"></li>
 				<li class="swiper-scrollbar"></li>
 				<li id="boardup" class="positionController"><i class="fa-arrow-up fa fa-2x"></i></li>
 				<li id="boarddown" class="positionController"><i class="fa-arrow-down fa fa-2x"></i></li>
-			</ul>
+			</ul> -->
 		</div>
 		<div id="user" class="subcontrol">
 			<h2>檢視用戶資訊</h2>
@@ -329,9 +342,46 @@
 				</tbody>
 			</table>
 		</div>
+		<div id="sessions" class="subcontrol">
+			<h2>檢視棋局資訊</h2>
+			<p class="loading message"><i class="fa fa-spinner fa-pulse"></i>載入中...</p>
+			<p class="error message"><i class="fa fa-exclamation-triangle"></i>載入失敗</p>
+			<p class="empty message"><i class="fa fa-exclamation"></i>無資料</p>
+			<table cellspacing="0" width="100%" id="sessionlist" class="usertables">
+				<thead>
+					<tr>
+						<th>編號</th>
+						<th>創建日期</th>
+						<th>地圖</th>
+						<th>主辦</th>
+						<th>最高回合</th>
+						<th>&nbsp;</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+		<div id="sessionDetail" class="subcontrol">
+			<h2>檢視棋局資訊</h2>
+			<p class="loading message"><i class="fa fa-spinner fa-pulse"></i>載入中...</p>
+			<p class="error message"><i class="fa fa-exclamation-triangle"></i>載入失敗</p>
+			<p class="empty message"><i class="fa fa-exclamation"></i>無資料</p>
+			<table cellspacing="0" width="100%" id="sessiondetaillist" class="usertables">
+				<thead>
+					<tr>
+						<th>玩家名稱</th>
+						<th>玩家設定</th>
+						<th>積分</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
 		<div class="subcontrol" id="boardDetail">
 			<h2>設定棋盤</h2>
-			<p><i class="fa-exclamation-triangle fa fa-3x"></i><span>請按照下面檔名上傳指定檔案，本系統支援的棋盤資料格式檔案為Excel-XML（XML資料表2003）格式，或下載棋盤檔案下方的範例檔／之前上傳的版本，編輯後上傳，請勿在Excel檔案中放置任何圖片</span></p>
+			<p><i class="fa-exclamation-triangle fa fa-3x"></i><span>請按照下面檔名上傳指定檔案，本系統支援的棋盤資料格式檔案為Excel-XML（XML資料表2003）格式，或下載棋盤檔案下方的範例檔／之前上傳的版本，編輯後上傳，請勿在Excel檔案中放置任何圖片，上傳前建議用文字編輯器檢查XML檔案data標籤中間是否被置入無意義的font標籤，可能會導致無法載入地圖</span></p>
 			<p class="loading message"><i class="fa fa-spinner fa-pulse"></i><span>上傳中...</span></p>
 			<p class="error message"><i class="fa fa-exclamation-triangle"></i>上傳失敗</p>
 			<p class="success message"><i class="fa fa-check"></i>上傳完成</p>
@@ -476,6 +526,13 @@
 			behavior: function() {
 				socket.emit('requestboardList');
 			}
+		},{
+			name:"棋局設定",
+			icon:"database",
+			item:"sessions",
+			behavior: function() {
+				socket.emit('requestsessionList');
+			}
 		},
 		{
 			name:"用戶設定",
@@ -495,6 +552,23 @@
 		},
 	];
 	$().ready(function() {
+		var mapTable = $("table#maplist").DataTable({
+		  columnDefs: [
+			{
+			  render: function ( data, type, full, meta ) {
+			      return "<button class=\"mapdetailBtn fa fa-search viewmapBtn\" data-mapid=\"" + data + "\">&nbsp;</button><button class='mapdetailBtn removemapBtn fa fa-trash' data-mapid=\"" + data + "\">&nbsp</button>";
+			  },
+			  targets: -1
+			},
+			{
+			  render: function ( data, type, full, meta ) {
+				var date = moment.unix(data).format("YYYY-MM-DD HH:mm:ss");
+				return "<span style='text-align:center'>"+date+"</span>";
+			  },
+			  targets: 3
+			}
+			]
+		});
 		var userTable = $("table#userlist").DataTable({
 		  columnDefs: [
 			{
@@ -544,6 +618,81 @@
 			  targets: 1
 			}]
 		});
+		var sessionTable = $("table#sessionlist").DataTable({
+		  columnDefs: [
+			{
+			  render: function ( data, type, full, meta ) {
+			      return "<button class=\"sessiondetailBtn fa fa-search viewsessionBtn\" data-sessionid=\"" + data + "\">&nbsp;</button><button class='sessiondetailBtn removesessionBtn fa fa-trash' data-sessionid=\"" + data + "\">&nbsp</button>";
+			  },
+			  targets: -1
+			}]
+		});
+		var sessiondTable = $("table#sessiondetaillist").DataTable({
+		  order: [[ 2, "desc" ],[1, "desc"]],
+		  columnDefs: [
+			{
+				render: function( data, type, full, meta) {
+					var span = $("<span></span>");
+					var icon = $("<i></i>");
+					icon.addClass("fa");
+					icon.addClass("fa-"+data.icon);
+					icon.css("color","#"+data.color);
+					span.append(icon);
+					span.append(data.name);
+					return span[0].outerHTML;
+				},
+				targets: 0
+			},
+			{
+				render: function( data, type, full, meta) {
+					var title = "";
+					if(data.name == data.hosteduser) {
+						title += "主辦玩家";
+					}
+					if(data.name == data.currentuser) {
+						title += title == "" ? "目前玩家" : "(目前玩家)";
+					}
+					return title;
+				},
+				targets: 1
+			}]
+		});
+		$('table#maplist').on('draw.dt', function () {	//不加入這段每次翻頁時按鈕會無效
+			$("button.mapdetailBtn").off();
+			$("button.viewmapBtn").on("click",function() {
+				$("div.subcontrol").css("display","none");
+				$("p.message").css("display","none");
+				$("div#boardDetail").css("display","block");
+				socket.emit("querymap", $(this).data("mapid"));
+			});
+			$("button.removeboardBtn").on("click",function() {
+				socket.emit('removemap', {id: $(this).data("mapid")});
+			});
+		} );
+		$('table#userlist').on('draw.dt', function () {	//不加入這段每次翻頁時按鈕會無效
+			$("button.userdetailBtn").off();
+			$("button.viewuserBtn").on("click",function() {
+				$("div.subcontrol").css("display","none");
+				$("p.message").css("display","none");
+				$("div#userDetail").css("display","block");
+				socket.emit('requestuserDetail', {user: $(this).data("userid")});
+			});
+			$("button.removeuserBtn").on("click",function() {
+				socket.emit('removeuser', {user: $(this).data("userid")});
+			});
+		} );
+		$('table#sessionlist').on('draw.dt', function () {	//不加入這段每次翻頁時按鈕會無效
+			$("button.sessiondetailBtn").off();
+			$("button.viewsessionBtn").on("click",function() {
+				$("div.subcontrol").css("display","none");
+				$("p.message").css("display","none");
+				$("div#sessionDetail").css("display","block");
+				socket.emit('requestsessionDetail', {sid: $(this).data("sessionid")});
+			});
+			$("button.removesessionBtn").on("click",function() {
+				socket.emit('removesession', {sid: $(this).data("sessionid")});
+			});
+		} );
 		$(".subcontrol").css("display","block");
 		socket.on('login', function(data){
 			console.log(data);
@@ -576,6 +725,78 @@
 			}
 		});
 		socket.on('userdeldone', function(data){
+			$("div#icons>ul:nth-child(4)").trigger("click");
+		});
+		socket.on("getsessionList", function(data) {
+			$("div#sessions>p.loading").css("display","none");
+			if(data != null) {
+				var boardList = new Object();
+				for(var i=0;i<data.boards.length;i++) {
+					boardList[data.boards[i].id] = data.boards[i].name;
+				}
+				if(data.sessions.length > 0) {
+					$("table#sessionlist").css("display","block");
+					sessionTable.clear().draw();
+					for(var i=0;i<data.sessions.length;i++) {
+						var date = moment.unix(data.sessions[i].createdate).format("YYYY-MM-DD HH:mm:ss");
+						sessionTable.row.add([
+							data.sessions[i].id,
+							date,
+							boardList[data.sessions[i].bid],
+							data.sessions[i].hosteduser,
+							data.sessions[i].maxround,
+							data.sessions[i].id
+						]).draw(false);
+					}
+				} else {
+					$("table#sessionlist").css("display","none");
+					$("div#session>p.empty").css("display","block");
+				}
+			} else {
+				$("table#sessionlist").css("display","none");
+				$("div#session>p.error").css("display","block");
+			}
+		});
+		socket.on('getsessionDetail', function(data){
+			$("div#sessionDetail>p.loading").css("display","none");
+			if(data != null) {
+				var userList = new Object();
+				for(var i=0; i<data.players.length;i++) {
+					userList[data.players[i].email] = {
+						icon: data.players[i].icon,
+						color: data.players[i].color
+					}
+				}
+				if(data.sessionplayers.length > 0) {
+					$("table#sessiondetaillist").css("display","block");
+					sessiondTable.clear().draw();
+					for(var i=0;i<data.sessionplayers.length;i++) {
+						var user = {
+							icon: userList[data.sessionplayers[i].uid].icon,
+							name: data.sessionplayers[i].uid,
+							color: userList[data.sessionplayers[i].uid].color
+						};
+						var type = {
+							hosteduser: data.session[0].hosteduser,
+							currentuser: data.session[0].currentplayer,
+							name: data.sessionplayers[i].uid
+						};
+						sessiondTable.row.add([
+							user,
+							type,
+							data.sessionplayers[i].asset
+						]).draw(false);
+					}
+				} else {
+					$("table#sessiondetaillist").css("display","none");
+					$("div#sessionDetail>p.empty").css("display","block");
+				}
+			} else {
+				$("div#sessionDetail>p.loading").css("display","none");
+				$("div#sessionDetail>p.error").css("display","block");
+			}
+		});
+		socket.on("sessionRemoved", function(data) {
 			$("div#icons>ul:nth-child(3)").trigger("click");
 		});
 		socket.on('getuserList', function(data){
@@ -594,16 +815,6 @@
 							data[i].email
 						]).draw(false);
 					}
-					$("button.userdetailBtn").off();
-					$("button.viewuserBtn").on("click",function() {
-						$("div.subcontrol").css("display","none");
-						$("p.message").css("display","none");
-						$("div#userDetail").css("display","block");
-						socket.emit('requestuserDetail', {user: $(this).data("userid")});
-					});
-					$("button.removeuserBtn").on("click",function() {
-						socket.emit('removeuser', {user: $(this).data("userid")});
-					});
 				} else {
 					$("table#userlist").css("display","none");
 					$("div#user>p.empty").css("display","block");
@@ -639,30 +850,24 @@
 			$("div#board>p.loading").css("display","none");
 			$("input#mapeditMode").val("");
 			if(data != null) {
-				if(data.length >= 0) {
-					boardmenu.removeAllSlides();
+				if(data.length > 0) {
+					$("table#maplist").css("display","block");
+					mapTable.clear().draw();
 					for(var i=0;i<data.length;i++) {
-						var slide = $("<span></span>");
-						slide.addClass("swiper-slide");
-						slide.addClass("boarditem");
-						slide.text(data[i].name+"(編號："+data[i].id+")");
-						//slide.text(data[i].name);
-						slide.data("id",data[i].id);
-						slide.on("click",function() {
-							mapFiles = new Array();
-							$("div#boardDetail>h2").text("修改地圖");
-							$("div.subcontrol").css("display","none");
-							$("li#delmap").css("display","inline-block");
-							$("div#boardDetail").css("display","block");
-							socket.emit("querymap", $(this).data("id"));
-						});
-						boardmenu.appendSlide(slide);
-					};
-					$("div#board>ul#boardmenucontainer").css("display","block");
+						mapTable.row.add([
+							data[i].id,
+							data[i].name,
+							data[i].user,
+							data[i].createdate,
+							data[i].id
+						]).draw(false);
+					}
 				} else {
+					$("table#maplist").css("display","none");
 					$("div#board>p.empty").css("display","block");
 				}
 			} else {
+				$("table#maplist").css("display","none");
 				$("div#board>p.error").css("display","block");
 			}
 		});
@@ -816,7 +1021,8 @@
 										message = "共有"+rows.length+"個時代，第一個時代為："+$($(rows[0]).find("Cell>Data")[0]).text();
 									break;
 									case "shortcutsConfig":
-										message = "共有"+rows.length+"條捷徑，第一個捷徑為："+$($(rows[0]).find("Cell>Data")[0]).text();
+										var shortcutCheck = xml.find("Cell");
+										message = shortcutCheck.length == 0 ? "本地圖沒有設定捷徑" : "共有"+rows.length+"條捷徑，第一個捷徑為："+$($(rows[0]).find("Cell>Data")[0]).text();
 									break;
 									case "questionsConfig":
 										message = "共有"+worksheets.length+"個時代，共有"+rows.length+"個問題";
