@@ -36,26 +36,30 @@ function player(name,icon,color,asset,board,initpost,local,htmlElement,destinati
 		this.htmlElement.find("li#playercredit").css("visibility","hidden");
 	}
 	destination.append(this.htmlElement);
-	this.creditCal(0);
+	this.assetCal(0,0);
 	
 }
 player.prototype.refresh = function() {	//重整成績
 	this.htmlElement.find("span.playernum").text(this.asset);
 }
-player.prototype.assetCal = function() {
+player.prototype.assetCal = function(credit, asset) {
+	/*
+	this.board.socket.emit("caculateAsset");*/
 	var oldasset = this.asset;
-	var asset = 0;
-	for(var i=0;i<this.bricks.length;i++) {
-		asset += this.bricks[i].getCurrentValue();
-	}
-	this.asset = this.credit + asset;
-	this.htmlElement.find("li#playerasset>span.playernum").prop('number',oldasset).animateNumber({ number: this.asset });
+	var oldcredit = this.credit;
+	this.asset = asset;
+	this.credit = credit;
+	this.htmlElement.find("li#playerasset>span.playernum").prop('number', oldasset).animateNumber({number: this.asset });
+	this.htmlElement.find("li#playercredit>span.playernum").prop('number', oldcredit).animateNumber({number: this.credit });
 }
 player.prototype.creditCal = function(value) {
-	var oldcredit = this.credit;
-	this.credit = value;
-	this.htmlElement.find("li#playercredit>span.playernum").prop('number',oldcredit).animateNumber({ number: this.credit });
-	this.assetCal();
+	this.board.socket.emit("updatescore", {
+		score: value
+	});
+	/*this.board.socket.off("playerscoreUpdated");
+	this.board.socket.on("playerscoreUpdated", function() {
+		this.board.socket.emit("caculateAsset");
+	});*/
 }
 player.prototype.manualMove = function(manual) {
 	this.board.diceThrowed = manual;
@@ -70,24 +74,46 @@ player.prototype.manualMove = function(manual) {
 	this.board.scanPlayer(false);*/
 }
 player.prototype.addBrick = function(brick) {
-	if(this.bricks.indexOf(brick) == -1) {
-		if(this.credit - brick.getCurrentValue() >= 0) {
-			this.bricks.push(brick);
-			this.creditCal(this.credit - brick.getCurrentValue());
-			brick.changeOwner(this);
-			this.board.addturnLog(brick);
-			return true;
+	var oriobj = this;
+	this.board.socket.emit("addBrick", {
+		player: {
+			uid: oriobj.uid,
+			credit: oriobj.credit
+		}, 
+		brick: {
+			name: brick.name,
+			index: brick.index,
+			type: brick.type,
+			active: brick.active,
+			shortcut: brick.shortcut,
+			price: brick.price,
+			upgrades: brick.upgrades
 		}
-	}
-	return false;
+	});
 }
 player.prototype.removeBrick = function(brick) {
-	if(this.bricks.indexOf(brick) >= 0) {
+	var oriobj = this;
+	this.board.socket.emit("removeBrick", {
+		player: {
+			uid: oriobj.uid,
+			credit: oriobj.credit
+		}, 
+		brick: {
+			name: brick.name,
+			index: brick.index,
+			type: brick.type,
+			active: brick.active,
+			shortcut: brick.shortcut,
+			price: brick.price,
+			upgrades: brick.upgrades
+		}
+	});
+	/*if(this.bricks.indexOf(brick) >= 0) {
 		this.bricks.splice(this.bricks.indexOf(brick),1);
 		this.creditCal(this.credit + brick.getCurrentValue() * 0.8);
 		brick.changeOwner(null);
 		this.board.addturnLog(brick);
-	}
+	}*/
 }
 player.prototype.constructor = function() {
 	/*this.htmlElement = $("<div></div>");

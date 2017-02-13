@@ -144,9 +144,18 @@
 				margin-left: 100px;
 			}
 			/* tutorial patch*/
-			ul#popTutorial {
-				height: 370px !important;
-				top: 5px !important;
+			@media screen and (max-width: 1366px) {
+				ul#popTutorial {
+					height: 370px !important;
+					top: 5px !important;
+					transform: scale(0.8,0.8)
+				}
+			}
+			@media screen and (min-width: 1366px) {
+				ul#popTutorial {
+					height: 370px !important;
+					top: 5px !important;
+				}
 			}
 		</style>
 	</head>
@@ -197,7 +206,7 @@
 			<ul class="popWindow" id="popWelcome">
 				<li><h1>線上大富翁</h1></li>
 				<li id="wlogo"><i class="fa fa-5x fa-bullhorn"></i></li>
-				<li>這是大富翁的測試網頁，請自行註冊帳號，便可開始遊戲</li>
+				<li>請記得，老師沒有先幫你開帳號，務必自行新增帳號才能評分，評分時間延長到2017/01/16 00:00，遇到任何系統異常可以立刻Email通知老師(kelunyang@gmail.com)，另外，除非你跟同學已經約定一起上線玩，不然請不要跟隨別人的棋局，只要自己開一局新的遊戲就能測試各組的設計成果了</li>
 				<li id="wbutton" class="buttonarea">
 					<ul>
 						<li class="button" id="enter"><i class="fa fa-sign-in"></i>進入遊戲</li>

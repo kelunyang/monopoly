@@ -453,12 +453,22 @@
 				padding-left: 10px;
 			}
 			/* TutorialPatch */
-			ul#tutorialcontainer {
-				height:650px;
-			}
 			ul#popTutorial {
 				height: 700px !important;
 				top: 5px !important;
+			}
+			@media screen and (max-width: 1366px) {
+				ul#popTutorial {
+					height: 700px !important;
+					top: 5px !important;
+					transform: scale(0.8,0.8)
+				}
+			}
+			@media screen and (min-width: 1366px) {
+				ul#popTutorial {
+					height: 700px !important;
+					top: 5px !important;
+				}
 			}
 		</style>
 	</head>
@@ -616,16 +626,21 @@
 					</ul>
 				</li>
 			</ul>
-			<ul class="popWindow" id="popError">
-				<li id="etitle">操作停用</li>
-				<li id="elogo"><i class="fa fa-3x fa-exclamation-triangle"></i></li>
-				<li id="emessage">你尚未登入，或者是你的權限無法存取本功能，如果錯誤訊息重複發生，請聯絡管理員</li>
-				<li id="ebutton" class="buttonarea">
+			<ul id="popStageupdate" class="popWindow">
+				<li id="sutitle">突發事件</li>
+				<li id="suconnection">得到一百塊</li>
+				<li id="suicon"><i class="fa fa-angle-double-up fa-4x"></i></li>
+				<li id="sudesc">扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊扣五百塊</li>
+				<li id="subutton" class="buttonarea">
 					<ul>
-						<li class="button" id="enter">關閉視窗</li>
-						<li class="embutton" id="enter"><i class="fa fa-home"></i>回到首頁</li>
+						<li class="button">確定</li>
 					</ul>
 				</li>
+			</ul>
+			<ul class="popWindow" id="popLoading">
+				<li id="ltitle">載入中</li>
+				<li id="llogo"><i class="fa fa-3x fa-clock-o"></i></li>
+				<li id="lmessage">載入中載入中載入中載入中載入中</li>
 			</ul>
 			<ul id="popTutorial" class="popWindow">
 				<li id="tcontent">
@@ -1026,7 +1041,7 @@
 											gameboard.players[obj.uid].htmlElement.animate({opacity:1},1000);
 										}
 										//tempplayer[data.users[i].email].obj.htmlElement.animate({opacity:0.2},1000);	//離線使用
-										gameboard.players[obj.uid].creditCal(obj.credit);
+										//gameboard.players[obj.uid].creditCal(obj.credit);
 										//tempplayer[data.user].obj.asset = data.asset;
 										//tempplayer[data.user].obj,assetCal();
 									}
@@ -1153,7 +1168,6 @@
 						$("input#msg").val("");
 					}
 				});
-				popWindows.stageWindow(stage[0].name,stage[0].desc,stage[0].effecttype,stage[0].effectvalue,new Array());
 				loaded = true;
 				executeQueue();
 				/*$("header").animate({opacity:100},700,function() {

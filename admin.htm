@@ -665,7 +665,7 @@
 				$("div#boardDetail").css("display","block");
 				socket.emit("querymap", $(this).data("mapid"));
 			});
-			$("button.removeboardBtn").on("click",function() {
+			$("button.removemapBtn").on("click",function() {
 				socket.emit('removemap', {id: $(this).data("mapid")});
 			});
 		} );

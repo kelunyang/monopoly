@@ -162,7 +162,7 @@
 			text-align: center;
 			font-weight: normal;
 			position: relative;
-			top: 50px;
+			top: 10px;
 		}
 		aside>ul>li:last-child {
 			text-align: center;
@@ -321,9 +321,18 @@
 			font-family: Arial, serif;
 		}
 		/* tutorial patch*/
-		ul#popTutorial {
-			height: 370px !important;
-			top: 5px !important;
+		@media screen and (max-width: 1366px) {
+			ul#popTutorial {
+				height: 370px !important;
+				top: 5px !important;
+				transform: scale(0.8,0.8)
+			}
+		}
+		@media screen and (min-width: 1366px) {
+			ul#popTutorial {
+				height: 370px !important;
+				top: 5px !important;
+			}
 		}
 		</style>
 	</head>
@@ -488,7 +497,9 @@
 						.text(data[i].name));
 					board.push({"id": data[i].id, "value": data[i].name})
 				}
-				$('select#maplist').searchableOptionList({maxHeight: "200px"});
+				if(navigator.userAgent.indexOf("Mobile") == -1) {
+					$('select#maplist').searchableOptionList({maxHeight: "200px"});
+				}
 			});
 			socket.on("gamestarted", function(data) {
 				if(data.status) {

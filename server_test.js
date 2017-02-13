@@ -3,8 +3,8 @@
 管理員偷窺功能
 安裝程式
 */
-var globaldir = "C:\\Users\\Kelunyang\\AppData\\Roaming\\npm\\node_modules\\";
-var dir = "C:\\Users\\Kelunyang\\OneDrive\\Webapps\\monopoly";
+var globaldir = "C:\\Users\\kelun\\AppData\\Roaming\\npm\\node_modules\\";
+var dir = "D:\\onedrive\\Webapps\\monopoly\\";
 var http = require("http");
 var url = require('url');
 var fs = require('fs');
@@ -15,11 +15,11 @@ var io = require(globaldir+'socket.io');
 var ios = require(globaldir+'socket.io-express-session');
 var ss = require('socket.io-stream');
 var mysql = require(globaldir+'mysql');
-var MemoryStore = require(globaldir+'sessionstore');
 var express = require(globaldir+'express');
+var session = require("express-session");
+var MemoryStore = require(globaldir+'sessionstore');
 var moment = require(globaldir+'moment');
 var xml = require('xml2js');
-var session = require("express-session");
 var cookieParser = require("cookie-parser");
 var bodyParser = require('body-parser');
 var rimraf = require('rimraf');
@@ -145,7 +145,7 @@ app.post("/login",function(req,res) {
 	/*req.session.currentuser = false;	//初始化
 	req.session.save();
 	res.send("done");*/
-	recaptchainst.validateRequest(req).then(function(){
+	/*recaptchainst.validateRequest(req).then(function(){*/
 		var connection = mysql.createConnection({
 			host: mysqlServer,
 			user: mysqlUser,
@@ -263,13 +263,13 @@ app.post("/login",function(req,res) {
 				});
 			break;
 		}
-	  }).catch(function(errorCodes){
+	  /*}).catch(function(errorCodes){
     // invalid
 		res.json({
 			status: false,
 			msg: "驗證錯誤，訊息為："+recaptchainst.translateErrors(errorCodes)
 		});
-	});
+	});*/
 });
 app.get("/logout", function(req,res) {
 	if(req.session.hasOwnProperty("currentuser")) {

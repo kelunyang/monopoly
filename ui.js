@@ -32,6 +32,13 @@ pseudoWindow.prototype.endPseudo = function() {
 	this.resetWindows();
 	this.htmlElement.css("display","none");
 }
+pseudoWindow.prototype.loadingWindow = function(msg) {
+	var oriobj = this;
+	var window = this.htmlElement.find("ul#popLoading");
+	window.find("li#lmessage").text(msg);
+	this.loadWindows();
+	window.css("display","block");
+}
 pseudoWindow.prototype.iconchooserWindow = function(socket) {
 	var oriobj = this;
 	var window = this.htmlElement.find("ul#popChooser");
@@ -123,7 +130,6 @@ pseudoWindow.prototype.chanceWindow = function(player, socket) {
 	window.find("li#cresult").text(resultword);
 	window.find("li#cbutton>ul>li").off();
 	window.find("li#cbutton>ul>li").on("click",function() {
-		socket.emit("updatescore", { score: player.asset });
 		oriobj.closeWindow("popChance");
 	})
 	this.loadWindows();
@@ -142,7 +148,7 @@ pseudoWindow.prototype.shortcutWindow = function(name,start,end,desc) {
 	this.loadWindows();
 	window.css("display","block");
 }
-pseudoWindow.prototype.stageWindow = function(name,desc,type,val,DB,shortcut) {
+pseudoWindow.prototype.stageWindow = function(name,desc,type,val,player) {
 	var oriobj = this;
 	var window = this.htmlElement.find("ul#popStageupdate");
 	window.find("li#sutitle").text("進入下一個時代："+name);
@@ -158,14 +164,15 @@ pseudoWindow.prototype.stageWindow = function(name,desc,type,val,DB,shortcut) {
 			effect = "現金減少"+val;
 		break;
 	}
+	player.creditCal(player.credit + val);
 	window.find("li#suconnection").text(effect);
 	window.find("li#sudesc").text(desc);
 	window.find("li#subutton>ul>li").off();
 	window.find("li#subutton>ul>li").on("click",function() {
-		oriobj.board.loadRoads(DB);
+		/*oriobj.board.loadRoads(DB);
 		if(shortcut != undefined) {
 			oriobj.board.showShortcut(shortcut);
-		}
+		}*/
 		oriobj.closeWindow("popStageupdate");
 	})
 	this.loadWindows();
@@ -387,10 +394,7 @@ pseudoWindow.prototype.questionWindow = function(question,credit,answers,player,
 							customtext: "取得積分"+credit,
 							enable: true,
 							func: function() {
-								player.creditCal(player.credit+credit);
-								socket.emit("updatescore", {
-									score: player.asset
-								});
+								player.creditCal(player.credit + credit);
 								//oriobj.dice.reset();
 								oriobj.infoWindow(board.upgradeDB,board.stage,player,player.position,0);
 							}
@@ -415,10 +419,7 @@ pseudoWindow.prototype.questionWindow = function(question,credit,answers,player,
 							customtext: "好吧，下一題",
 							enable: true,
 							func: function() {
-								player.assetCal();
-								socket.emit("updatescore", {
-									score: player.asset
-								});
+								player.creditCal(player.credit - credit);
 								//oriobj.dice.reset();
 								oriobj.infoWindow(board.upgradeDB,board.stage,player,player.position,0);
 							}
@@ -502,34 +503,12 @@ pseudoWindow.prototype.infoWindow = function(upgradeDB,stage,player,brick,mode) 
 			if(brick.type == 1) {
 				window.find("li#buyBrick>ul>li#buyButton").css("display","block");
 				window.find("li#buyBrick>ul>li#buyButton").on("click",function() {
-					if(player.addBrick(brick)) {
+					player.addBrick(brick);
 						//oriobj.dice.available = true;
-						oriobj.endPseudo();
-					} else {
-						oriobj.messageWindow("無法購買","你手上點數不足，無法購買"+brick.name,{
-							ok:{
-								enable: true,
-								func: function() {
-									//oriobj.dice.reset();
-									//oriobj.dice.available = true;
-									oriobj.endPseudo();
-								}
-							},
-							yes:{
-								enable: false,
-								func: function() {
-									oriobj.endPseudo();
-								}
-							},
-							no:{
-								enable: false,
-								func: function() {
-									oriobj.endPseudo();
-								}
-							},
-							custombuttons: new Array()
-						},"exclamation-triangle");
-					}
+						/*
+						1. 底下的回應都要改成socket.on
+						2. server端要會算錢 this.creditCal(this.credit - brick.getCurrentValue());*/
+					oriobj.endPseudo();
 				}); 
 			}
 		} else {
@@ -591,8 +570,26 @@ pseudoWindow.prototype.infoWindow = function(upgradeDB,stage,player,brick,mode) 
 										$("div#upanblock").css("opacity",1);
 										$("div#upanblock").animate({top: brick.htmlElement.offset().top, left: brick.htmlElement.offset().left,opacity: 0.3},500,function() {
 											$("div#upanblock").css("visibility","hidden");
-											brick.addUpgrade(itemObj.data("upgradeItem"));
-											player.creditCal(player.credit - itemObj.data("upgradeItem").price);
+											//brick.addUpgrade(itemObj.data("upgradeItem"));
+											oriobj.board.socket.emit("upgradeBrick", {
+												player: {
+													uid: player.uid,
+													credit: player.credit
+												}, 
+												brick: {
+													name: brick.name,
+													index: brick.index,
+													type: brick.type,
+													active: brick.active,
+													shortcut: brick.shortcut,
+													price: brick.price,
+													upgrades: brick.upgrades
+												},
+												upgrade: {
+													name: itemObj.data("upgradeItem").name
+												}
+											});
+											//player.creditCal(player.credit - itemObj.data("upgradeItem").price);
 										});
 										//oriobj.dice.available = true;
 										oriobj.endPseudo();

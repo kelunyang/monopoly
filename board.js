@@ -1,6 +1,7 @@
 //棋盤模組
 function board(name,width,height,shortcuts,socket,stages,players,boardElement,titleElement,popElement,anmiblock,upgradeDB,incidentDB,nextElement,exitElement) {
 	var oriobj = this;
+	this.lastupdatedTurn = 0;
 	this.boardinfo = null;
 	this.diceElement = null;
 	this.sameUser = true;
@@ -32,10 +33,10 @@ function board(name,width,height,shortcuts,socket,stages,players,boardElement,ti
 		bricks : new Object(),
 		shortcut : new Object()
 	}
-	this.stage = 0;
+	this.stage = -1;
 	this.stages = stages;
-	this.stageElement = $("<li><h2>"+this.stages[this.stage].name+"</h2></li>");
-	this.turnElement = $("<li>第<span id=\"stagetitle\">"+this.turn+"</span>回合，剩餘<span id=\"stageturns\">"+this.stages[this.stage].duration+"回合後升級</span></li>");
+	this.stageElement = $("<li><h2>&nbsp;</h2></li>");
+	this.turnElement = $("<li>第<span id=\"stagetitle\">"+this.turn+"</span>回合，剩餘<span id=\"stageturns\">回合後升級</span></li>");
 	this.titleElement.find("h1").text(this.name);
 	this.titleElement.find("ul#gameinfo").empty();
 	this.titleElement.find("ul#gameinfo").append(this.stageElement);
@@ -52,6 +53,103 @@ function board(name,width,height,shortcuts,socket,stages,players,boardElement,ti
 	this.messageElement.scrollbox({delay: 0, speed: 100, infiniteLoop: false, onMouseOverPause: false ,autoPlay: true});
 	//this.sortingQuestion();
 	this.moveCounter(false);
+	this.socket.on("getBricklog", function(data) {
+		var oldstage = oriobj.stage;
+		oriobj.turn = data.info.currentturn;
+		oriobj.stage = data.info.currentstage;
+		oriobj.stageElement.find("h2").text(oriobj.stages[oriobj.stage].name);
+		oriobj.turnElement.find("span#stagetitle").text(oriobj.turn);
+		if(oldstage != oriobj.stage) {
+			oriobj.popElement.stageWindow(oriobj.stages[oriobj.stage].name,oriobj.stages[oriobj.stage].desc,oriobj.stages[oriobj.stage].effecttype,oriobj.stages[oriobj.stage].effectvalue,oriobj.localplayer);
+			oriobj.loadRoads(data.roadDB);
+		}
+		if(oriobj.stage != oriobj.stages.length - 1) {
+			var remain = oriobj.stages[oriobj.stage].duration - (oriobj.turn - oriobj.lastupdatedTurn);
+			oriobj.turnElement.find("span#stageturns").text(remain+"回合後升級");
+		} else {
+			oriobj.turnElement.find("span#stageturns").text((oriobj.boardinfo.maxround - oriobj.turn)+"回合後結束");
+		}
+		if(data.shortcut !== false) {
+			if(data.shortcut.status) {
+				oriobj.showShortcut(data.shortcut.name);
+			} else {
+				oriobj.hideShortcut(data.shortcut.name);
+			}
+		}
+		data.log.forEach(function(item) {
+			oriobj.bricks[item.rid].setBrick({
+				name: item.name,
+				price: item.price,
+				desc: item.desc
+			}, item.type);
+			if(item.active) {
+				oriobj.bricks[item.rid].activeElement();
+			}
+			if(item.shortcut) {
+				oriobj.bricks[item.rid].shortcutElement();
+			}
+			switch(item.type) {
+				case 0:
+					oriobj.bricks[item.rid].normalElement();
+				break;
+				case 1:
+					oriobj.bricks[item.rid].activeElement();
+				break;
+				case 2:
+					oriobj.bricks[item.rid].shortcutElement();
+				break;
+			}
+			var player = item.owner == null ? null : oriobj.players[item.owner];
+			oriobj.bricks[item.rid].changeOwner(player);
+			if(item.upgrades != "") {
+				var uDB = item.upgrades.split(",");
+				oriobj.bricks[item.rid].upgrades = new Array();
+				uDB.forEach(function(u) {
+					oriobj.bricks[item.rid].upgrades.push(oriobj.upgradeDB[u]);
+				});
+				oriobj.bricks[item.rid].renderUpgrade();
+			}
+		});
+		oriobj.popElement.closeWindow("popLoading");
+	});
+	this.socket.on("playerscoreUpdated", function() {
+		oriobj.retriveCredit();
+	});
+	this.socket.on("mapUpdated", function(data) {
+		oriobj.loadLog();
+	});
+	this.socket.on("pricelowError", function(data) {
+		oriobj.popElement.messageWindow("無法購買",data,{
+			ok:{
+				enable: true,
+				func: function() {
+					//oriobj.dice.reset();
+					//oriobj.dice.available = true;
+					oriobj.popElement.endPseudo();
+				}
+			},
+			yes:{
+				enable: false,
+				func: function() {
+					oriobj.popElement.endPseudo();
+				}
+			},
+			no:{
+				enable: false,
+				func: function() {
+					oriobj.popElement.endPseudo();
+				}
+			},
+			custombuttons: new Array()
+		},"exclamation-triangle");
+	});
+	this.socket.on("playerAssets", function(data) {
+		Object.keys(oriobj.players).forEach(function(key) {
+			var player = oriobj.players[key];
+			player.assetCal(data[key].credit, data[key].asset);
+		});
+		oriobj.popElement.closeWindow("popLoading");
+	});
 	this.socket.on("sessionRemoved",function(data) {
 		if(oriobj.boardinfo.sid == data.sid) {
 			oriobj.popElement.messageWindow("主辦者已關閉遊戲","本局遊戲已被移除",{
@@ -118,10 +216,10 @@ function board(name,width,height,shortcuts,socket,stages,players,boardElement,ti
 				
 				oriobj.players[k].position = data.players[i].position;
 			}
-		}*/
+		}
 		oriobj.turn = data.currentturn;
 		oriobj.stage = data.currentstage;
-		oriobj.stageElement.find("h2").text(oriobj.stages[oriobj.stage].name);
+		oriobj.stageElement.find("h2").text(oriobj.stages[oriobj.stage].name);*/
 		var bricks = null;
 		var output = {
 			playerid: oriobj.localplayer.uid,
@@ -133,10 +231,10 @@ function board(name,width,height,shortcuts,socket,stages,players,boardElement,ti
 		socket.emit("responseTurn", output);
 	});
 	this.socket.on("boardcastturn", function(data) {
-		oriobj.turn = data.currentturn;
+		/*oriobj.turn = data.currentturn;
 		oriobj.stage = data.currentstage;
-		oriobj.stageElement.find("h2").text(oriobj.stages[oriobj.stage].name);
-		Object.keys(data.brickLog.bricks).forEach(function(brickserial) {
+		oriobj.stageElement.find("h2").text(oriobj.stages[oriobj.stage].name);*/
+		/*Object.keys(data.brickLog.bricks).forEach(function(brickserial) {
 			var brick = data.brickLog.bricks[brickserial];
 			if(brick.owner == null) {
 				if(oriobj.bricks[brick.index].owner != null) {
@@ -168,14 +266,15 @@ function board(name,width,height,shortcuts,socket,stages,players,boardElement,ti
 				oriobj.hideShortcut(data.brickLog.shortcut.name);
 				oriobj.scanPlayer(false);
 			}
-		}
-		if(data.newstage) {
-			oriobj.popElement.stageWindow(oriobj.stages[data.currentstage].name,oriobj.stages[data.currentstage].desc,oriobj.stages[data.currentstage].effecttype,oriobj.stages[data.currentstage].effectvalue,data.roadDB,shortcut);
+		}*/
+
+		/*oriobj.turnElement.find("span#stagetitle").text(oriobj.turn);
+		if(oriobj.stage != oriobj.stages.length - 1) {
+			var remain = oriobj.stages[oriobj.stage].duration - (oriobj.turn - oriobj.lastupdatedTurn);
+			oriobj.turnElement.find("span#stageturns").text(remain+"回合後升級");
 		} else {
-			if(shortcut != undefined) {
-				oriobj.showShortcut(data.brickLog.shortcut.name);
-			}
-		}
+			oriobj.turnElement.find("span#stageturns").text((oriobj.boardinfo.maxround - oriobj.turn)+"回合後結束");
+		}*/
 		/*oriobj.turnElement.find("span#stagetitle").text(oriobj.turn);
 		oriobj.turnElement.find("span#stageturns").text(oriobj.stages[oriobj.stage].duration - oriobj.turn);*/
 		socket.emit("updateturn", {
@@ -230,15 +329,7 @@ function board(name,width,height,shortcuts,socket,stages,players,boardElement,ti
 			oriobj.sameUser = true;
 			oriobj.diceElement.availablity(true);
 		}
-		oriobj.turnElement.find("span#stagetitle").text(oriobj.turn);
-		if(oriobj.stage != oriobj.stages.length - 1) {
-			var remain = oriobj.stages[oriobj.stage].duration - oriobj.turn;
-			oriobj.turnElement.find("span#stageturns").text(remain+"回合後升級");
-		} else {
-			oriobj.turnElement.find("span#stageturns").text((oriobj.boardinfo.maxround - oriobj.turn)+"回合後結束");
-		}
 		data.other.forEach(function(item) {
-			oriobj.players[item.uid].credit = item.score;
 			oriobj.players[item.uid].position = oriobj.bricks[item.position];
 			oriobj.players[item.uid].frozen = item.frozen;
 		});
@@ -479,15 +570,6 @@ board.prototype.detectMove = function(player) {
 	}
 }
 board.prototype.initBricks = function() {	//初始化
-	this.upgradeDB["交通要道"] = {
-		name: "交通要道",
-		rent: 1.0,
-		price: 750,
-		icon:"code-fork",
-		stage: 0,
-		desc: "騙學費",
-		type: 1
-	};	//地圖事件
 	this.boardElement.empty();
 	for(var i=0;i<this.num;i++) {
 		var emptyBrick = new brick(this.upgradeDB,i);
@@ -501,32 +583,39 @@ board.prototype.initBricks = function() {	//初始化
 		}
 	}
 }
+board.prototype.loadLog = function() {
+	var oriobj = this;
+	this.popElement.loadingWindow("棋盤內容");
+	this.socket.emit("requestBricklog");
+}
 board.prototype.loadRoads = function(roadDB) {
 	for(var i=0;i<roadDB.length;i++) {
-		if(roadDB[i].stage != this.stage) continue;
-		this.bricks[roadDB[i].brick].setBrick(roadDB[i],1);
-		this.bricks[roadDB[i].brick].next.push(this.bricks[roadDB[i].next]);
-		this.bricks[roadDB[i].brick].previous.push(this.bricks[roadDB[i].previous]);
-		if(roadDB[i].previous > -1) {
-			if(this.bricks[roadDB[i].previous].next.indexOf(undefined) != -1) {
-				this.bricks[roadDB[i].previous].next.splice(this.bricks[roadDB[i].previous].next.indexOf(undefined),1);
-			}
-			if(this.bricks[roadDB[i].previous].next.indexOf(this.bricks[roadDB[i].brick]) == -1) {
-				this.bricks[roadDB[i].previous].next.push(this.bricks[roadDB[i].brick]);
-			}
-		}
-		if(roadDB[i].next > -1) {
-			if(this.bricks[roadDB[i].next].type == 1) {
-				if(this.bricks[roadDB[i].next].previous.indexOf(undefined) != -1) {
-					this.bricks[roadDB[i].next].previous.splice(this.bricks[roadDB[i].next].previous.indexOf(undefined),1);
+		if(roadDB[i].stage > this.stage) continue;
+		if(!this.bricks[roadDB[i].brick].active) {
+			this.bricks[roadDB[i].brick].setBrick(roadDB[i],1);
+			this.bricks[roadDB[i].brick].next.push(this.bricks[roadDB[i].next]);
+			this.bricks[roadDB[i].brick].previous.push(this.bricks[roadDB[i].previous]);
+			if(roadDB[i].previous > -1) {
+				if(this.bricks[roadDB[i].previous].next.indexOf(undefined) != -1) {
+					this.bricks[roadDB[i].previous].next.splice(this.bricks[roadDB[i].previous].next.indexOf(undefined),1);
 				}
-				if(this.bricks[roadDB[i].next].previous.indexOf(this.bricks[roadDB[i].brick]) == -1) {
-					this.bricks[roadDB[i].next].previous.push(this.bricks[roadDB[i].brick]);
+				if(this.bricks[roadDB[i].previous].next.indexOf(this.bricks[roadDB[i].brick]) == -1) {
+					this.bricks[roadDB[i].previous].next.push(this.bricks[roadDB[i].brick]);
 				}
 			}
+			if(roadDB[i].next > -1) {
+				if(this.bricks[roadDB[i].next].type == 1) {
+					if(this.bricks[roadDB[i].next].previous.indexOf(undefined) != -1) {
+						this.bricks[roadDB[i].next].previous.splice(this.bricks[roadDB[i].next].previous.indexOf(undefined),1);
+					}
+					if(this.bricks[roadDB[i].next].previous.indexOf(this.bricks[roadDB[i].brick]) == -1) {
+						this.bricks[roadDB[i].next].previous.push(this.bricks[roadDB[i].brick]);
+					}
+				}
+			}
+			this.bricks[roadDB[i].brick].active = true;
+			this.bricks[roadDB[i].brick].activeElement();
 		}
-		this.bricks[roadDB[i].brick].active = true;
-		this.bricks[roadDB[i].brick].activeElement();
 	}
 	var oriobj = this;
 	/*this.boardElement.find("div.brick").animate({opacity:0},300, function() {
@@ -537,93 +626,102 @@ board.prototype.activeBricks = function() {
 	//this.boardElement.find("div.active").animate({opacity:1},300);
 }
 board.prototype.showShortcut = function(name) {
-	var shortcut = this.shortcuts[name].bricks;
-	var desc = this.shortcuts[name].desc;
-	this.pushEvent("啟動"+name+"，連接"+this.bricks[shortcut[0]].name+"和"+this.bricks[shortcut[shortcut.length-1]].name);
-	this.popElement.shortcutWindow(name,this.bricks[shortcut[0]].name,this.bricks[shortcut[shortcut.length-1]].name,desc);
-	for(var s=0;s<shortcut.length;s++) {
-		if(this.bricks[shortcut[s+1]] === undefined) {
-			if(this.bricks[shortcut[s]].next.indexOf(this.bricks[shortcut[s-1]]) == -1) {
-				this.bricks[shortcut[s]].next.push(this.bricks[shortcut[s-1]]);
-			}
-		} else {
-			if(this.bricks[shortcut[s]].next.indexOf(this.bricks[shortcut[s+1]]) == -1) {
-				this.bricks[shortcut[s]].next.push(this.bricks[shortcut[s+1]]);
-			}
-			if(this.bricks[shortcut[s-1]] !== undefined) {
+	if(!this.shortcuts[name].hasOwnProperty("enable") || !this.shortcuts[name].enable) {
+		var shortcut = this.shortcuts[name].bricks;
+		this.shortcuts[name].enable = true;
+		var desc = this.shortcuts[name].desc;
+		this.pushEvent("啟動"+name+"，連接"+this.bricks[shortcut[0]].name+"和"+this.bricks[shortcut[shortcut.length-1]].name);
+		this.popElement.shortcutWindow(name,this.bricks[shortcut[0]].name,this.bricks[shortcut[shortcut.length-1]].name,desc);
+		for(var s=0;s<shortcut.length;s++) {
+			if(this.bricks[shortcut[s+1]] === undefined) {
 				if(this.bricks[shortcut[s]].next.indexOf(this.bricks[shortcut[s-1]]) == -1) {
 					this.bricks[shortcut[s]].next.push(this.bricks[shortcut[s-1]]);
 				}
+			} else {
+				if(this.bricks[shortcut[s]].next.indexOf(this.bricks[shortcut[s+1]]) == -1) {
+					this.bricks[shortcut[s]].next.push(this.bricks[shortcut[s+1]]);
+				}
+				if(this.bricks[shortcut[s-1]] !== undefined) {
+					if(this.bricks[shortcut[s]].next.indexOf(this.bricks[shortcut[s-1]]) == -1) {
+						this.bricks[shortcut[s]].next.push(this.bricks[shortcut[s-1]]);
+					}
+				}
 			}
-		}
-		if(this.bricks[shortcut[s-1]] === undefined) {
-			if(this.bricks[shortcut[s]].previous.indexOf(this.bricks[shortcut[s+1]]) == -1) {
-				this.bricks[shortcut[s]].previous.push(this.bricks[shortcut[s+1]]);
-			}
-		} else {
-			if(this.bricks[shortcut[s]].previous.indexOf(this.bricks[shortcut[s-1]]) == -1) {
-				this.bricks[shortcut[s]].previous.push(this.bricks[shortcut[s-1]]);
-			}
-			if(this.bricks[shortcut[s+1]] !== undefined) {
+			if(this.bricks[shortcut[s-1]] === undefined) {
 				if(this.bricks[shortcut[s]].previous.indexOf(this.bricks[shortcut[s+1]]) == -1) {
 					this.bricks[shortcut[s]].previous.push(this.bricks[shortcut[s+1]]);
 				}
-			}
-		}
-		if(s==0 || s==shortcut.length-1) {
-			this.upgradeBrick(shortcut[s],this.upgradeDB["交通要道"]);
-			if(this.bricks[shortcut[s]].next.length > 1) {
-				if(this.bricks[shortcut[s]].next.indexOf(undefined) > -1) {
-					this.bricks[shortcut[s]].next.splice(this.bricks[shortcut[s]].next.indexOf(undefined),1);
+			} else {
+				if(this.bricks[shortcut[s]].previous.indexOf(this.bricks[shortcut[s-1]]) == -1) {
+					this.bricks[shortcut[s]].previous.push(this.bricks[shortcut[s-1]]);
+				}
+				if(this.bricks[shortcut[s+1]] !== undefined) {
+					if(this.bricks[shortcut[s]].previous.indexOf(this.bricks[shortcut[s+1]]) == -1) {
+						this.bricks[shortcut[s]].previous.push(this.bricks[shortcut[s+1]]);
+					}
 				}
 			}
-			if(this.bricks[shortcut[s]].previous.length > 1) {
-				if(this.bricks[shortcut[s]].previous.indexOf(undefined) > -1) {
-					this.bricks[shortcut[s]].previous.splice(this.bricks[shortcut[s]].previous.indexOf(undefined),1);
+			if(s==0 || s==shortcut.length-1) {
+				this.upgradeBrick(shortcut[s],this.upgradeDB["交通要道"]);
+				if(this.bricks[shortcut[s]].next.length > 1) {
+					if(this.bricks[shortcut[s]].next.indexOf(undefined) > -1) {
+						this.bricks[shortcut[s]].next.splice(this.bricks[shortcut[s]].next.indexOf(undefined),1);
+					}
 				}
+				if(this.bricks[shortcut[s]].previous.length > 1) {
+					if(this.bricks[shortcut[s]].previous.indexOf(undefined) > -1) {
+						this.bricks[shortcut[s]].previous.splice(this.bricks[shortcut[s]].previous.indexOf(undefined),1);
+					}
+				}
+				this.addturnLog(this.bricks[shortcut[s]]);
+				continue;
 			}
-			this.addturnLog(this.bricks[shortcut[s]]);
-			continue;
+			this.bricks[shortcut[s]].name = name+s;
+			this.bricks[shortcut[s]].shortcut = true;
+			this.bricks[shortcut[s]].shortcutElement();
 		}
-		this.bricks[shortcut[s]].name = name+s;
-		this.bricks[shortcut[s]].shortcut = true;
-		this.bricks[shortcut[s]].shortcutElement();
+		//this.boardElement.find("div.shortcut").animate({opacity:1},100);
 	}
-	//this.boardElement.find("div.shortcut").animate({opacity:1},100);
 }
-board.prototype.hideShortcut = function(name) {
-	var shortcut = this.shortcuts[name].bricks;
-	this.pushEvent("關閉"+name+"，連接"+this.bricks[shortcut[0]].name+"和"+this.bricks[shortcut[shortcut.length-1]].name+"，所有在上面的玩家回到捷徑起點");
-	for(var s=0;s<shortcut.length;s++) {
-		if(this.bricks[shortcut[s+1]] === undefined) {
-			this.bricks[shortcut[s]].next.splice(this.bricks[shortcut[s]].next.indexOf(this.bricks[shortcut[s-1]]),1);
-		} else {
-			this.bricks[shortcut[s]].next.splice(this.bricks[shortcut[s]].next.indexOf(this.bricks[shortcut[s+1]]),1);
-			if(this.bricks[shortcut[s-1]] !== undefined) this.bricks[shortcut[s]].next.splice(this.bricks[shortcut[s]].next.indexOf(this.bricks[shortcut[s-1]]),1);
-		}
-		if(this.bricks[shortcut[s-1]] === undefined) {
-			this.bricks[shortcut[s]].previous.splice(this.bricks[shortcut[s]].previous.indexOf(this.bricks[shortcut[s+1]]),1);
-		} else {
-			this.bricks[shortcut[s]].previous.splice(this.bricks[shortcut[s]].previous.indexOf(this.bricks[shortcut[s-1]]),1);
-			if(this.bricks[shortcut[s+1]] !== undefined) this.bricks[shortcut[s]].previous.splice(this.bricks[shortcut[s]].previous.indexOf(this.bricks[shortcut[s+1]]),1);
-		}
-		if(s==0 || s==shortcut.length-1) {
-			this.degradeBrick(shortcut[s],this.upgradeDB["交通要道"]);
-			if(this.bricks[shortcut[s]].next.length == 0) {
-				this.bricks[shortcut[s]].next.push(undefined);
+board.prototype.hideShortcut = function(name) {	//疑似會移除前後格，要檢查
+	if(this.shortcuts[name].enable) {
+		this.shortcuts[name].enable = false;
+		var shortcut = this.shortcuts[name].bricks;
+		this.pushEvent("關閉"+name+"，連接"+this.bricks[shortcut[0]].name+"和"+this.bricks[shortcut[shortcut.length-1]].name+"，所有在上面的玩家回到捷徑起點");
+		for(var s=0;s<shortcut.length;s++) {
+			if(this.bricks[shortcut[s+1]] === undefined) {
+				this.bricks[shortcut[s]].next.splice(this.bricks[shortcut[s]].next.indexOf(this.bricks[shortcut[s-1]]),1);
+			} else {
+				this.bricks[shortcut[s]].next.splice(this.bricks[shortcut[s]].next.indexOf(this.bricks[shortcut[s+1]]),1);
+				if(this.bricks[shortcut[s-1]] !== undefined) this.bricks[shortcut[s]].next.splice(this.bricks[shortcut[s]].next.indexOf(this.bricks[shortcut[s-1]]),1);
 			}
-			if(this.bricks[shortcut[s]].previous.length == 0) {
-				this.bricks[shortcut[s]].previous.push(undefined);
+			if(this.bricks[shortcut[s-1]] === undefined) {
+				this.bricks[shortcut[s]].previous.splice(this.bricks[shortcut[s]].previous.indexOf(this.bricks[shortcut[s+1]]),1);
+			} else {
+				this.bricks[shortcut[s]].previous.splice(this.bricks[shortcut[s]].previous.indexOf(this.bricks[shortcut[s-1]]),1);
+				if(this.bricks[shortcut[s+1]] !== undefined) this.bricks[shortcut[s]].previous.splice(this.bricks[shortcut[s]].previous.indexOf(this.bricks[shortcut[s+1]]),1);
 			}
-			this.addturnLog(this.bricks[shortcut[s]]);
-			continue;
+			if(s==0 || s==shortcut.length-1) {
+				this.degradeBrick(shortcut[s],this.upgradeDB["交通要道"]);
+				if(this.bricks[shortcut[s]].next.length == 0) {
+					this.bricks[shortcut[s]].next.push(undefined);
+				}
+				if(this.bricks[shortcut[s]].previous.length == 0) {
+					this.bricks[shortcut[s]].previous.push(undefined);
+				}
+				this.addturnLog(this.bricks[shortcut[s]]);
+				continue;
+			}
+			this.bricks[shortcut[s]].name = "";
+			this.bricks[shortcut[s]].shortcut = false;
+			this.bricks[shortcut[s]].normalElement();
+			//console.log(shortcut[s]);
 		}
-		this.bricks[shortcut[s]].name = "";
-		this.bricks[shortcut[s]].shortcut = false;
-		this.bricks[shortcut[s]].normalElement();
-		//console.log(shortcut[s]);
+		//this.boardElement.find("div.shortcut").animate({opacity:0},100);
 	}
-	//this.boardElement.find("div.shortcut").animate({opacity:0},100);
+}
+board.prototype.retriveCredit = function() {
+	this.socket.emit("caculateAsset");
 }
 board.prototype.scanPlayer = function(first) {
 	var oriobj = this;
@@ -632,6 +730,8 @@ board.prototype.scanPlayer = function(first) {
 	for(var i=0;i<this.bricks.length;i++) {
 		this.bricks[i].players.length = 0;	//empty array;
 	}
+	this.retriveCredit();
+	this.loadLog();
 	Object.keys(this.players).forEach(function(key) {
 		var player = this.players[key];
 		if(player.local) {
@@ -667,7 +767,6 @@ board.prototype.scanPlayer = function(first) {
 				anmiblock.css("left",(player.tokenElement.offset().left));
 			}
 		}
-		player.creditCal(player.credit);
 		if(player.position.tokenElement.children().length > 0) {
 			player.position.playermenu.update(true);
 		}
