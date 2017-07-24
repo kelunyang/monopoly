@@ -1,7 +1,8 @@
 /*
-管理員權限中有一個清除全部session的功能
-管理員偷窺功能
-安裝程式
+在自己的回合結束之後
+要回傳上一個人選了什麼答案
+以及當下排名，給popController用
+如此一來及時排名就可以拿掉了
 */
 var globaldir = "C:\\Users\\kelun\\AppData\\Roaming\\npm\\node_modules\\";
 var dir = "D:\\onedrive\\Webapps\\monopoly\\";

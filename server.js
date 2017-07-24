@@ -631,7 +631,7 @@ serv_io.sockets.on('connection', function(socket) {
 										asset: new Array(),
 										credit: 0,
 										score: rows[i].score,
-										position: 0
+										position: 132
 									};
 									if(rows[i].uid == currentplayer) {
 										obj.currentplayer = obj.players[rows[i].uid];
@@ -1643,7 +1643,7 @@ serv_io.sockets.on('connection', function(socket) {
 			currentQuestion.reason = tempreason;
 			sessioni.save();
 		} catch(e) {
-			serverlog("在queryQuestion操作失敗 \n"+socket.request.headers['user-agent']+"\n"+e.message+"\n"+e.stack,ipaddress);
+			serverlog("在queryQuestion操作失敗 \n"+socket.request.headers['user-agent']+"\n"+e.message+"\n"+e.stack,ipaddress+"\n currentQuestion是："+currentQuestion);
 			socket.disconnect();
 		}
 	});
@@ -2133,6 +2133,12 @@ function saltcreator() {
 
 function serverlog(message,ipaddress) {	//display message with date in console.log
 	var ipaddress = ipaddress == undefined ? "" : "["+ipaddress+"]";
+	var data = "["+moment().format("YYYY/MM/DD HH:mm:SS")+"]"+ipaddress+message+"\n";
+	fs.appendFile("C:\\Users\\Kelunyang\\Documents\\sitelog.txt",data,function(error){ //把資料寫入檔案
+		if(error){ //如果有錯誤，把訊息顯示並離開程式
+			console.log('檔案寫入錯誤');
+		}
+	});
 	console.log("["+moment().format("YYYY/MM/DD HH:mm:SS")+"]"+ipaddress+message);
 }
 

@@ -19,8 +19,8 @@ function dice(htmlElement, player, board) {
 	this.htmlElement.find("div").scrollbox({linear: true,delay: 0, speed: 10, infiniteLoop: false,onMouseOverPause: false, autoPlay: false, afterForward: function (data) {    
 		oriobj.diceValue = data.currentFirstChild.data("value");
 		//oriobj.diceValue = 6;	//test purpose
-		$("aside nav div ul li.hidden").removeClass("hidden");
-		$("aside nav div ul").animate({opacity:1},500,"easeInQuint",function(){
+		oriobj.htmlElement.find("div ul li.hidden").removeClass("hidden");
+		oriobj.htmlElement.find("div ul").animate({opacity:1},500,"easeInQuint",function(){
 			oriobj.player.manualMove(true);
 		})
 	}});	//很神奇的是，他一次只會有一個物件動起來，不過也符合動畫的原則了

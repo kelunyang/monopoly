@@ -427,6 +427,14 @@ div#pseudoWindow ul#popSettle>li#setitle {
 	font-size: 20px;
 	font-family: "Yu Gothic", SimHei;
 }
+div#pseudoWindow ul#popController>li#diTitle {
+	text-align: center;
+	font-size: 20px;
+	font-family: "Yu Gothic", SimHei;
+}
+div#pseudoWindow ul#popController>li#diControllers {
+	padding-left: 13%;
+}
 div#pseudoWindow ul#popSettle>li#semessage {
 	color: maroon;
 	font-size: 14px;

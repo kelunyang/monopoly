@@ -16,8 +16,8 @@
   <AllowPNG/>
  </OfficeDocumentSettings>
  <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
-  <WindowHeight>7920</WindowHeight>
-  <WindowWidth>21570</WindowWidth>
+  <WindowHeight>8415</WindowHeight>
+  <WindowWidth>20490</WindowWidth>
   <WindowTopX>0</WindowTopX>
   <WindowTopY>0</WindowTopY>
   <ProtectStructure>False</ProtectStructure>
@@ -32,30 +32,11 @@
    <NumberFormat/>
    <Protection/>
   </Style>
-  <Style ss:ID="s62">
-   <Font ss:FontName="細明體" x:CharSet="136" x:Family="Modern" ss:Size="12"
-    ss:Color="#000000"/>
-  </Style>
  </Styles>
  <Worksheet ss:Name="工作表1">
-  <Table ss:ExpandedColumnCount="14" ss:ExpandedRowCount="1" x:FullColumns="1"
+  <Table ss:ExpandedColumnCount="1" ss:ExpandedRowCount="1" x:FullColumns="1"
    x:FullRows="1" ss:DefaultColumnWidth="54" ss:DefaultRowHeight="15.75">
-   <Row ss:AutoFitHeight="0">
-    <Cell ss:StyleID="s62"><Data ss:Type="String">北宜古道</Data></Cell>
-    <Cell ss:StyleID="s62"><Data ss:Type="String">清代從草嶺古道以降，有多條通往宜蘭的山區道路，北宜古道為其中較晚修建完成的道路，也是今日北宜公路的前身</Data></Cell>
-    <Cell><Data ss:Type="Number">2</Data></Cell>
-    <Cell><Data ss:Type="Number">4</Data></Cell>
-    <Cell><Data ss:Type="Number">2</Data></Cell>
-    <Cell><Data ss:Type="Number">13</Data></Cell>
-    <Cell><Data ss:Type="Number">24</Data></Cell>
-    <Cell><Data ss:Type="Number">25</Data></Cell>
-    <Cell><Data ss:Type="Number">26</Data></Cell>
-    <Cell><Data ss:Type="Number">27</Data></Cell>
-    <Cell><Data ss:Type="Number">28</Data></Cell>
-    <Cell><Data ss:Type="Number">29</Data></Cell>
-    <Cell><Data ss:Type="Number">30</Data></Cell>
-    <Cell><Data ss:Type="Number">31</Data></Cell>
-   </Row>
+   <Row ss:AutoFitHeight="0"/>
   </Table>
   <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
    <PageSetup>
@@ -74,8 +55,8 @@
    <Panes>
     <Pane>
      <Number>3</Number>
-     <ActiveRow>1</ActiveRow>
-     <ActiveCol>4</ActiveCol>
+     <ActiveRow>5</ActiveRow>
+     <ActiveCol>2</ActiveCol>
     </Pane>
    </Panes>
    <ProtectObjects>False</ProtectObjects>

@@ -31,6 +31,11 @@ pseudoWindow.prototype.resetWindows = function() {
 pseudoWindow.prototype.endPseudo = function() {
 	this.resetWindows();
 	this.htmlElement.css("display","none");
+	if(this.board != null) {
+		if(this.board.localplayer.uid == this.board.currentplayer) {
+			this.controllerWindow();
+		}
+	}
 }
 pseudoWindow.prototype.loadingWindow = function(msg) {
 	var oriobj = this;
@@ -196,6 +201,16 @@ pseudoWindow.prototype.welcomeWindow = function() {
 			});
 		}	
 		oriobj.closeWindow("popWelcome");
+	});
+	this.loadWindows();
+	window.css("display","block");
+}
+pseudoWindow.prototype.controllerWindow = function() {
+	var oriobj = this;
+	var window = this.htmlElement.find("ul#popController");
+	window.find("ul#closecontrollers").off();
+	window.find("ul#closecontrollers").on("click", function() {
+		oriobj.endPseudo();
 	});
 	this.loadWindows();
 	window.css("display","block");
@@ -459,10 +474,24 @@ pseudoWindow.prototype.infoWindow = function(upgradeDB,stage,player,brick,mode) 
 	icon.addClass("fa-5x");
 	window.find("li#iownericon").append(icon);
 	window.find("li#iInfo>h1").text(brick.name);
-	window.find("li#iInfo>p").text(brick.desc);
+	window.find("li#iInfo>p#iDesc").text(brick.desc);
 	window.find("li#uSets").css("display","none");
 	window.find("li#eSets").css("display","none");
 	var viewmode = false;
+	window.find("li#iInfo>p#iPlayer").empty();
+	if(brick.players.length > 0) {
+		window.find("li#iInfo>p#iPlayer").text("現有玩家：");
+		brick.players.forEach(function(p) {
+			var token = $("<i></i>");
+			token.attr("title",p.name);
+			token.addClass("fa");
+			token.addClass("fa-"+p.icon);
+			token.css("color","#"+p.mainColor);
+			window.find("li#iInfo>p#iPlayer").append(token);
+		});
+	} else {
+		window.find("li#iInfo>p#iPlayer").text("目前無玩家在此");
+	}
 	if(mode == 0) {
 		if(brick.owner == player) {
 			viewmode = true;

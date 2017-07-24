@@ -10,18 +10,17 @@
   <Author>楊可倫</Author>
   <LastAuthor>楊可倫</LastAuthor>
   <Created>2015-09-29T03:26:04Z</Created>
-  <LastSaved>2015-09-29T03:27:33Z</LastSaved>
+  <LastSaved>2017-06-24T08:29:01Z</LastSaved>
   <Version>16.00</Version>
  </DocumentProperties>
  <OfficeDocumentSettings xmlns="urn:schemas-microsoft-com:office:office">
   <AllowPNG/>
  </OfficeDocumentSettings>
  <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
-  <WindowHeight>7920</WindowHeight>
-  <WindowWidth>21570</WindowWidth>
+  <WindowHeight>13245</WindowHeight>
+  <WindowWidth>28800</WindowWidth>
   <WindowTopX>0</WindowTopX>
   <WindowTopY>0</WindowTopY>
-  <ActiveSheet>2</ActiveSheet>
   <ProtectStructure>False</ProtectStructure>
   <ProtectWindows>False</ProtectWindows>
  </ExcelWorkbook>
@@ -40,34 +39,272 @@
   </Style>
  </Styles>
  <Worksheet ss:Name="工作表2">
-  <Table ss:ExpandedColumnCount="5" ss:ExpandedRowCount="4" x:FullColumns="1"
+  <Table ss:ExpandedColumnCount="5" ss:ExpandedRowCount="38" x:FullColumns="1"
    x:FullRows="1" ss:DefaultColumnWidth="54" ss:DefaultRowHeight="15.75">
    <Row ss:AutoFitHeight="0">
-    <Cell ss:StyleID="s62"><Data ss:Type="String">原住民綁架</Data></Cell>
-    <Cell ss:StyleID="s62"><Data ss:Type="String">進入山區開墾，遭到原住民綁架</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">遇到颱風</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">船翻覆，損失貨物</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">-1000</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:StyleID="s62"><Data ss:Type="String">遇到倭寇</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">被搶劫，血本無歸</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">-1000</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:StyleID="s62"><Data ss:Type="String">算錯季風</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">搭乘錯誤季風，延誤行程</Data></Cell>
+    <Cell><Data ss:Type="Number">2</Data></Cell>
+    <Cell><Data ss:Type="Number">2</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">黑吃黑</Data></Cell>
+    <Cell><Data ss:Type="String">遇上其他商人，搶他們的貨物</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">1500</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">搭上季風</Data></Cell>
+    <Cell><Data ss:Type="String">順風而行，減少物資消耗</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">800</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">完成貿易</Data></Cell>
+    <Cell><Data ss:Type="String">順利到到達目的地，完成貿易</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">1000</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">成功走私</Data></Cell>
+    <Cell><Data ss:Type="String">成功走私，販賣大量違禁品</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">1500</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">到達不明島嶼</Data></Cell>
+    <Cell><Data ss:Type="String">低價獲得當地特產</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">1500</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">疾病</Data></Cell>
+    <Cell><Data ss:Type="String">船上出現不明疾病，死亡大量水手</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">-2000</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">競爭</Data></Cell>
+    <Cell><Data ss:Type="String">出現貿易的競爭對手，削價競爭</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">-800</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">捕獲珍奇異寶</Data></Cell>
+    <Cell><Data ss:Type="String">獲取到馬來西亞的稀有種花-萊佛士花 &#160;</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">1000</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">標下新船</Data></Cell>
+    <Cell><Data ss:Type="String">汰換舊船，新船新氣象</Data></Cell>
+    <Cell><Data ss:Type="Number">1</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">晉見皇帝</Data></Cell>
+    <Cell><Data ss:Type="String">晉見南印度皇帝黎聖宗</Data></Cell>
+    <Cell><Data ss:Type="Number">1</Data></Cell>
+    <Cell><Data ss:Type="Number">332</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">遇見海盜</Data></Cell>
+    <Cell><Data ss:Type="String">海上盜賊覬覦船上財寶</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">-500</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">遇到颱風</Data></Cell>
+    <Cell><Data ss:Type="String">海上颱風侵襲</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">-5000</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">瘟疫在海上肆虐</Data></Cell>
+    <Cell><Data ss:Type="String">船員在陸地時感染，至海上發病</Data></Cell>
+    <Cell><Data ss:Type="Number">2</Data></Cell>
+    <Cell><Data ss:Type="Number">2</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">貨物掉進河裡</Data></Cell>
+    <Cell><Data ss:Type="String">運輸過程中難免有意外嘛</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">-500</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">征服一個百夷部落</Data></Cell>
+    <Cell><Data ss:Type="String">獲得他們的錢財</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">1000</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">幫助朝聖者</Data></Cell>
+    <Cell><Data ss:Type="String">幫助朝聖者，所以意外前往阿拉伯半島</Data></Cell>
+    <Cell><Data ss:Type="Number">1</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">馬隊死亡</Data></Cell>
+    <Cell><Data ss:Type="String">因為走太多路所以壓力過大</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">-1000</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">受重傷</Data></Cell>
+    <Cell><Data ss:Type="String">到阿拉伯半島和宗教人士起衝突，到醫院養傷</Data></Cell>
     <Cell><Data ss:Type="Number">2</Data></Cell>
     <Cell><Data ss:Type="Number">1</Data></Cell>
     <Cell><Data ss:Type="Number">-1</Data></Cell>
    </Row>
    <Row ss:AutoFitHeight="0">
-    <Cell ss:StyleID="s62"><Data ss:Type="String">分類械鬥</Data></Cell>
-    <Cell ss:StyleID="s62"><Data ss:Type="String">遇到操不同口音的其他開墾者，發生集體鬥毆</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="Number">-200</Data></Cell>
-    <Cell><Data ss:Type="Number">-1</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell ss:StyleID="s62"><Data ss:Type="String">船難</Data></Cell>
-    <Cell ss:StyleID="s62"><Data ss:Type="String">大漢溪水暴漲，船隻翻覆，沖回海岸線</Data></Cell>
+    <Cell><Data ss:Type="String">與同伴失散</Data></Cell>
+    <Cell><Data ss:Type="String">地形崎嶇，聯絡不易，要找回同伴</Data></Cell>
+    <Cell><Data ss:Type="Number">2</Data></Cell>
     <Cell><Data ss:Type="Number">1</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
     <Cell><Data ss:Type="Number">-1</Data></Cell>
    </Row>
    <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">發現肥沃土地</Data></Cell>
-    <Cell><Data ss:Type="String">發現河岸沖積地，獲得500點</Data></Cell>
+    <Cell><Data ss:Type="String">挖到玉礦</Data></Cell>
+    <Cell><Data ss:Type="String">緬甸山區有大量玉石礦產</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">2000</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">搶劫得利</Data></Cell>
+    <Cell><Data ss:Type="String">在戰爭中闖入民宅行搶</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">800</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">被誤認為永曆皇帝的隨從</Data></Cell>
+    <Cell><Data ss:Type="String">永曆皇帝逃到緬甸被吳三桂抓回京城</Data></Cell>
+    <Cell><Data ss:Type="Number">2</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">發生旱災</Data></Cell>
+    <Cell><Data ss:Type="String">越南河內有旱災</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">-100</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">在敦煌石窟對佛像不敬</Data></Cell>
+    <Cell><Data ss:Type="String">偷摸佛像屁屁被高僧抓去修德</Data></Cell>
+    <Cell><Data ss:Type="Number">2</Data></Cell>
+    <Cell><Data ss:Type="Number">3</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">誤食有毒仙人掌</Data></Cell>
+    <Cell><Data ss:Type="String">過度飢餓以致飢不擇食</Data></Cell>
+    <Cell><Data ss:Type="Number">2</Data></Cell>
+    <Cell><Data ss:Type="Number">1</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">踩進流沙地</Data></Cell>
+    <Cell><Data ss:Type="String">在旅行途中誤踩流沙</Data></Cell>
+    <Cell><Data ss:Type="Number">1</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">在巴格達挖出神燈</Data></Cell>
+    <Cell><Data ss:Type="String">故事天方夜譚中的神燈精靈</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">1000</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">在和闐遭遇異邦攻擊</Data></Cell>
+    <Cell><Data ss:Type="String">和闐位於絲路難道軍政中心，時常遭遇戰爭</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">-2000</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">在天水市用餐誤將馬糞當成馬鈴薯食用</Data></Cell>
+    <Cell><Data ss:Type="String">天水市盛產馬鈴薯以及馬匹</Data></Cell>
+    <Cell><Data ss:Type="Number">2</Data></Cell>
+    <Cell><Data ss:Type="Number">1</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">在樓蘭與大量外國商人貿易賺取大量外幣</Data></Cell>
+    <Cell><Data ss:Type="String">樓蘭充斥著外國商人並且流通各種貨幣</Data></Cell>
     <Cell><Data ss:Type="Number">0</Data></Cell>
     <Cell><Data ss:Type="Number">500</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">被毒蠍攻擊</Data></Cell>
+    <Cell><Data ss:Type="String">沙漠中各種毒蠍</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">-500</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">發現綠洲</Data></Cell>
+    <Cell><Data ss:Type="String">沙漠中水源缺乏發現綠洲取水</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">1000</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">遭強盜襲擊</Data></Cell>
+    <Cell><Data ss:Type="String">沙漠中很多盜賊專挑商人下手</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">-1000</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">被綁架</Data></Cell>
+    <Cell><Data ss:Type="String">在敦煌被綁票</Data></Cell>
+    <Cell><Data ss:Type="Number">1</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">被劫走</Data></Cell>
+    <Cell><Data ss:Type="String">在喀什被劫走</Data></Cell>
+    <Cell><Data ss:Type="Number">1</Data></Cell>
+    <Cell><Data ss:Type="Number">-1</Data></Cell>
     <Cell><Data ss:Type="Number">-1</Data></Cell>
    </Row>
   </Table>
@@ -84,111 +321,12 @@
     <HorizontalResolution>600</HorizontalResolution>
     <VerticalResolution>600</VerticalResolution>
    </Print>
-   <Panes>
-    <Pane>
-     <Number>3</Number>
-     <ActiveRow>2</ActiveRow>
-     <ActiveCol>1</ActiveCol>
-    </Pane>
-   </Panes>
-   <ProtectObjects>False</ProtectObjects>
-   <ProtectScenarios>False</ProtectScenarios>
-  </WorksheetOptions>
- </Worksheet>
- <Worksheet ss:Name="工作表1">
-  <Table ss:ExpandedColumnCount="5" ss:ExpandedRowCount="5" x:FullColumns="1"
-   x:FullRows="1" ss:DefaultColumnWidth="54" ss:DefaultRowHeight="15.75">
-   <Column ss:Index="2" ss:Width="289.5"/>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">遇到山洪</Data></Cell>
-    <Cell><Data ss:Type="String">山洪爆發，失去一半財富</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="Number">-0.5</Data></Cell>
-    <Cell><Data ss:Type="Number">-1</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">深入部落</Data></Cell>
-    <Cell ss:StyleID="s62"><Data ss:Type="String">仇人相見，分外眼紅，被原住民追殺，先去避避風頭</Data></Cell>
-    <Cell><Data ss:Type="Number">2</Data></Cell>
-    <Cell><Data ss:Type="Number">1</Data></Cell>
-    <Cell><Data ss:Type="Number">-1</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">港口淤積</Data></Cell>
-    <Cell><Data ss:Type="String">港口發生自然淤積，支付維護費用</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="Number">-400</Data></Cell>
-    <Cell><Data ss:Type="Number">4</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">發現肥沃土地</Data></Cell>
-    <Cell><Data ss:Type="String">發現河岸沖積地，獲得500點</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="Number">500</Data></Cell>
-    <Cell><Data ss:Type="Number">-1</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell ss:StyleID="s62"><Data ss:Type="String">黑道綁架</Data></Cell>
-    <Cell ss:StyleID="s62"><Data ss:Type="String">不知為何一早起床發現已經身處宜蘭</Data></Cell>
-    <Cell><Data ss:Type="Number">1</Data></Cell>
-    <Cell><Data ss:Type="Number">31</Data></Cell>
-    <Cell><Data ss:Type="Number">-1</Data></Cell>
-   </Row>
-  </Table>
-  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
-   <PageSetup>
-    <Header x:Margin="0.3"/>
-    <Footer x:Margin="0.3"/>
-    <PageMargins x:Bottom="0.75" x:Left="0.7" x:Right="0.7" x:Top="0.75"/>
-   </PageSetup>
-   <Unsynced/>
-   <Print>
-    <ValidPrinterInfo/>
-    <PaperSizeIndex>9</PaperSizeIndex>
-    <HorizontalResolution>600</HorizontalResolution>
-    <VerticalResolution>0</VerticalResolution>
-   </Print>
-   <Panes>
-    <Pane>
-     <Number>3</Number>
-     <ActiveRow>3</ActiveRow>
-     <ActiveCol>3</ActiveCol>
-    </Pane>
-   </Panes>
-   <ProtectObjects>False</ProtectObjects>
-   <ProtectScenarios>False</ProtectScenarios>
-  </WorksheetOptions>
- </Worksheet>
- <Worksheet ss:Name="工作表4">
-  <Table ss:ExpandedColumnCount="5" ss:ExpandedRowCount="2" x:FullColumns="1"
-   x:FullRows="1" ss:DefaultColumnWidth="54" ss:DefaultRowHeight="15.75">
-   <Row ss:AutoFitHeight="0" ss:Height="16.5">
-    <Cell ss:StyleID="s62"><Data ss:Type="String">警察勒索</Data></Cell>
-    <Cell ss:StyleID="s62"><Data ss:Type="String">日警禁止進入山區，支付賄賂</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="Number">-100</Data></Cell>
-    <Cell><Data ss:Type="Number">-1</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0" ss:Height="16.5">
-    <Cell ss:StyleID="s62"><Data ss:Type="String">走私軍火</Data></Cell>
-    <Cell ss:StyleID="s62"><Data ss:Type="String">走私軍火到山區販賣，獲取暴利</Data></Cell>
-    <Cell><Data ss:Type="Number">0</Data></Cell>
-    <Cell><Data ss:Type="Number">2000</Data></Cell>
-    <Cell><Data ss:Type="Number">-1</Data></Cell>
-   </Row>
-  </Table>
-  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
-   <PageSetup>
-    <Header x:Margin="0.3"/>
-    <Footer x:Margin="0.3"/>
-    <PageMargins x:Bottom="0.75" x:Left="0.7" x:Right="0.7" x:Top="0.75"/>
-   </PageSetup>
-   <Unsynced/>
    <Selected/>
+   <TopRowVisible>22</TopRowVisible>
    <Panes>
     <Pane>
      <Number>3</Number>
-     <ActiveRow>4</ActiveRow>
+     <ActiveRow>31</ActiveRow>
      <ActiveCol>3</ActiveCol>
     </Pane>
    </Panes>

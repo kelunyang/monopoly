@@ -1,5 +1,6 @@
 //角色模組
 function player(name,icon,color,asset,board,initpost,local,htmlElement,destination,uid) {
+	var oriobj = this;
 	this.halt = false;
 	this.frozen = 0;
 	this.local = local;
@@ -25,11 +26,21 @@ function player(name,icon,color,asset,board,initpost,local,htmlElement,destinati
 	this.htmlElement.append($("<li id=\"playericon\"></li>"));
 	this.htmlElement.append($("<li id=\"playername\" class=\"detaiil\"></li>"));
 	this.htmlElement.append($("<li id=\"playercredit\" class=\"detaiil\">積分：<span class=\"playernum\"></span></li>"));
-	this.htmlElement.append($("<li id=\"playerasset\" class=\"detaiil\">總財產：<span class=\"playernum\"></span></li>"));
+	this.htmlElement.append($("<li id=\"playerasset\" class=\"detaiil\"><span class=\"playerposition\"></span>$<span class=\"playernum\"></span></li>"));
 	this.htmlElement.addClass("player");
 	this.htmlElement.css("backgroundColor",this.mainColor);
 	this.htmlElement.css("borderColor",this.mainColor);
 	this.htmlElement.find("li#playericon").append(this.iconElement);
+	this.htmlElement.on("click", function() {
+		var oriColor = oriobj.position.htmlElement.css("backgroundColor");
+		oriobj.position.htmlElement.animate({
+			"backgroundColor": oriobj.mainColor
+		},500, function() {
+			oriobj.position.htmlElement.delay(1000).animate({
+				"backgroundColor": oriColor
+			},700);
+		});
+	});
 	var displayname = this.local ? this.name+"(本機)" : this.name;
 	this.htmlElement.find("li#playername").text(displayname);
 	if(!this.local) {
@@ -62,6 +73,7 @@ player.prototype.creditCal = function(value) {
 	});*/
 }
 player.prototype.manualMove = function(manual) {
+	var oriobj = this;
 	this.board.diceThrowed = manual;
 	if(this.board.detectMove(this)) {
 		this.board.turnQueue();

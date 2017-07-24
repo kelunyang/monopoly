@@ -18,6 +18,9 @@ function brick(upgrade,index) {
 	this.shortcut = false;
 	this.index = index;
 	this.desc = "無描述";
+	this.upgradeTip = $("<div></div>");
+	this.upgradeTip.addClass("upgradeTip");
+	this.htmlElement.append(this.upgradeTip);
 	this.upgradeElement = $("<div></div>");
 	this.upgradeElement.addClass("upgrades");
 	this.htmlElement.append(this.upgradeElement);
@@ -105,7 +108,8 @@ brick.prototype.getRent = function() {
 }
 brick.prototype.startWindow = function(window) {
 	var oriobj = this;
-	this.upgradeElement.on("click",function() {
+	//this.upgradeElement.on("click",function() {
+	this.htmlElement.on("click",function() {
 		if(oriobj.htmlElement.hasClass("active")) {
 			window.infoWindow(oriobj.upgradeDB,0,oriobj.owner,oriobj,1);
 		}
@@ -140,11 +144,16 @@ brick.prototype.removeUpgrade = function(obj) {
 	}
 }
 brick.prototype.renderUpgrade = function() {
-	this.upgradeElement.empty();
+	this.upgradeTip.empty();
+	var upgrade = $("<i></i>");
+	upgrade.addClass("fa");
+	upgrade.addClass("fa-ellipsis-h");
+	this.upgradeTip.append(upgrade);
+	/* this.upgradeElement.empty();
 	for(var i=0;i<this.upgrades.length;i++) {
 		var upgrade = $("<i></i>");
 		upgrade.addClass("fa");
 		upgrade.addClass("fa-"+this.upgrades[i].icon);
 		this.upgradeElement.append(upgrade);
-	}
+	} */
 }

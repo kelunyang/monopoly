@@ -1,6 +1,7 @@
 //棋盤模組
-function board(name,width,height,shortcuts,socket,stages,players,boardElement,titleElement,popElement,anmiblock,upgradeDB,incidentDB,nextElement,exitElement) {
+function board(name,width,height,shortcuts,socket,stages,players,boardElement,titleElement,popElement,anmiblock,upgradeDB,incidentDB,nextElement,exitElement,showdiceElement,moreElement,controllerArea) {
 	var oriobj = this;
+	this.currentplayer = null;
 	this.lastupdatedTurn = 0;
 	this.boardinfo = null;
 	this.diceElement = null;
@@ -17,11 +18,15 @@ function board(name,width,height,shortcuts,socket,stages,players,boardElement,ti
 	this.width = width;
 	this.height = height;
 	this.num = width * height;
+	this.showdiceElement = showdiceElement;
 	this.boardElement = boardElement;
 	this.titleElement = titleElement;
 	this.nextElement = nextElement;
 	this.exitElement = exitElement;
 	this.popElement = popElement;
+	this.moreElement = moreElement;
+	this.controllerArea = controllerArea;
+	this.controllerAreacontroller = false;
 	this.bricks = new Array();
 	this.events = new Array();
 	this.shortcuts = shortcuts;
@@ -41,13 +46,27 @@ function board(name,width,height,shortcuts,socket,stages,players,boardElement,ti
 	this.titleElement.find("ul#gameinfo").empty();
 	this.titleElement.find("ul#gameinfo").append(this.stageElement);
 	this.titleElement.find("ul#gameinfo").append(this.turnElement);
-	this.boardElement.css("width",width*92+"px");
-	this.boardElement.css("height",height*92+"px");
+	this.boardElement.css("width",(width*52)+"px");
+	this.boardElement.css("height",(height*52)+"px");
 	this.nextElement.on("click", function() {
 		oriobj.addTurn();
+		oriobj.currentplayer = null;
+		oriobj.popElement.closeWindow("popController");
 	});
 	this.exitElement.on("click" ,function() {
 		oriobj.endGame();
+	});
+	this.showdiceElement.on("click", function() {
+		oriobj.popElement.controllerWindow();
+	});
+	this.moreElement.on("click", function() {
+		if(oriobj.controllerAreacontroller) {
+			oriobj.controllerArea.hide();
+			oriobj.controllerAreacontroller = false;
+		} else {
+			oriobj.controllerArea.show();
+			oriobj.controllerAreacontroller = true;
+		}
 	});
 	this.messageElement = this.titleElement.find("div#bulletin");
 	this.messageElement.scrollbox({delay: 0, speed: 100, infiniteLoop: false, onMouseOverPause: false ,autoPlay: true});
@@ -76,6 +95,15 @@ function board(name,width,height,shortcuts,socket,stages,players,boardElement,ti
 				oriobj.hideShortcut(data.shortcut.name);
 			}
 		}
+		/*var i =0;
+		oriobj.bricks.forEach(function(item) {
+			item.setBrick({
+				name: i++,
+				price: i,
+				desc: i
+			}, 0);
+			item.activeElement();
+		});*/
 		data.log.forEach(function(item) {
 			oriobj.bricks[item.rid].setBrick({
 				name: item.name,
@@ -333,33 +361,38 @@ function board(name,width,height,shortcuts,socket,stages,players,boardElement,ti
 			oriobj.players[item.uid].position = oriobj.bricks[item.position];
 			oriobj.players[item.uid].frozen = item.frozen;
 		});
-		oriobj.scanPlayer(false);
-		if(oriobj.localplayer.frozen > 0) {
-			oriobj.popElement.messageWindow("遊戲鎖定","你還有"+oriobj.localplayer.frozen+"次才能擲骰子",{
-				ok:{
-					enable: true,
-					func: function() {
-						oriobj.localplayer.frozen--;
-						oriobj.diceElement.availablity(false);
-						oriobj.popElement.closeWindow("popMessage");
-					}
-				},
-				yes:{
-					enable: false,
-					func: function() {
-						oriobj.popElement.endPseudo();
-					}
-				},
-				no:{
-					enable: false,
-					func: function() {
-						oriobj.popElement.endPseudo();
-					}
-				},
-				custombuttons: new Array()
-			},"ban");
-		}
-		oriobj.popElement.switchWindow(data.current);
+		oriobj.scanPlayer(false, function() {
+			if(oriobj.localplayer.frozen > 0) {
+				oriobj.popElement.messageWindow("遊戲鎖定","你還有"+oriobj.localplayer.frozen+"次才能擲骰子",{
+					ok:{
+						enable: true,
+						func: function() {
+							oriobj.localplayer.frozen--;
+							oriobj.diceElement.availablity(false);
+							oriobj.popElement.closeWindow("popMessage");
+						}
+					},
+					yes:{
+						enable: false,
+						func: function() {
+							oriobj.popElement.endPseudo();
+						}
+					},
+					no:{
+						enable: false,
+						func: function() {
+							oriobj.popElement.endPseudo();
+						}
+					},
+					custombuttons: new Array()
+				},"ban");
+			}
+			oriobj.popElement.switchWindow(data.current);
+			if(oriobj.localplayer.uid == data.current) {
+				oriobj.currentplayer = data.current;
+				oriobj.popElement.controllerWindow();
+			}
+		});
 	});
 }
 //結束遊戲
@@ -441,6 +474,8 @@ board.prototype.pushEvent = function(message) {
 	this.messageElement.trigger("forwardHover");
 }
 board.prototype.detectMove = function(player) {
+	var oriobj = this;
+	this.popElement.resetWindows();
 	if(!player.halt) {
 		if(!this.interrupt) {
 			this.popElement.closeWindow("popMessage");	//必須先關閉提示視窗，不然叉路口會跳出來
@@ -723,7 +758,7 @@ board.prototype.hideShortcut = function(name) {	//疑似會移除前後格，要
 board.prototype.retriveCredit = function() {
 	this.socket.emit("caculateAsset");
 }
-board.prototype.scanPlayer = function(first) {
+board.prototype.scanPlayer = function(first, callback) {
 	var oriobj = this;
 	var oritop = 0;
 	var orileft = 0;
@@ -732,8 +767,10 @@ board.prototype.scanPlayer = function(first) {
 	}
 	this.retriveCredit();
 	this.loadLog();
+	var playercount = 0;
 	Object.keys(this.players).forEach(function(key) {
 		var player = this.players[key];
+		player.htmlElement.find("li#playerasset>span.playerposition").text(player.position.name);
 		if(player.local) {
 			oritop = player.tokenElement.offset().top;
 			orileft = player.tokenElement.offset().left;
@@ -749,13 +786,25 @@ board.prototype.scanPlayer = function(first) {
 		player.position.tokenElement.append(player.tokenElement);
 		player.tokenElement.data("lastPos",player.position);
 		player.position.tokenElement.parent().css("display","block");
+		var oriColor = "#CCC";
+		player.position.htmlElement.animate({
+			"backgroundColor": player.mainColor
+		},500, function() {
+			player.position.htmlElement.delay(3000).animate({
+				"backgroundColor": oriColor
+			},700);
+			playercount++;
+			if(playercount == Object.keys(oriobj.players).length) {
+				if(typeof(callback) != "undefined") callback();
+			}
+		});
 		var anmiblock = $(this.anmiblock);
 		if(player.local) {
 			if(!first) {
 				var localplayer = player;
 				var usercontainer = player.position.tokenElement;
-				var newtop= player.tokenElement.offset().top;
-				var newleft= player.tokenElement.offset().left;
+				var newtop= player.position.htmlElement.offset().top;
+				var newleft= player.position.htmlElement.offset().left;
 				anmiblock.append(player.tokenElement);
 				anmiblock.css("visibility","visible");
 				anmiblock.animate({left:newleft,top:newtop,visibility:"hidden"},1000,"easeInQuint",function() {
@@ -763,8 +812,8 @@ board.prototype.scanPlayer = function(first) {
 					anmiblock.css("visibility","hidden");
 				});
 			} else {
-				anmiblock.css("top",(player.tokenElement.offset().top));
-				anmiblock.css("left",(player.tokenElement.offset().left));
+				anmiblock.css("top",(player.position.htmlElement.offset().top));
+				anmiblock.css("left",(player.position.htmlElement.offset().left));
 			}
 		}
 		if(player.position.tokenElement.children().length > 0) {

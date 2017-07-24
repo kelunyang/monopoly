@@ -17,11 +17,10 @@
   <AllowPNG/>
  </OfficeDocumentSettings>
  <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
-  <WindowHeight>7920</WindowHeight>
-  <WindowWidth>21570</WindowWidth>
+  <WindowHeight>13245</WindowHeight>
+  <WindowWidth>28800</WindowWidth>
   <WindowTopX>0</WindowTopX>
   <WindowTopY>0</WindowTopY>
-  <ActiveSheet>1</ActiveSheet>
   <ProtectStructure>False</ProtectStructure>
   <ProtectWindows>False</ProtectWindows>
  </ExcelWorkbook>
@@ -36,72 +35,113 @@
    <Protection/>
   </Style>
  </Styles>
- <Worksheet ss:Name="工作表1">
-  <Table ss:ExpandedColumnCount="5" ss:ExpandedRowCount="3" x:FullColumns="1"
-   x:FullRows="1" ss:DefaultColumnWidth="54" ss:DefaultRowHeight="16.5">
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">租館</Data></Cell>
-    <Cell><Data ss:Type="Number">0.1</Data></Cell>
-    <Cell><Data ss:Type="Number">300</Data></Cell>
-    <Cell><Data ss:Type="String">truck</Data></Cell>
-    <Cell><Data ss:Type="String">武裝倉庫</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">商行</Data></Cell>
-    <Cell><Data ss:Type="Number">0.3</Data></Cell>
-    <Cell><Data ss:Type="Number">200</Data></Cell>
-    <Cell><Data ss:Type="String">bank</Data></Cell>
-    <Cell><Data ss:Type="String">貿易據點</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">廟宇</Data></Cell>
-    <Cell><Data ss:Type="Number">0.2</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
-    <Cell><Data ss:Type="String">trophy</Data></Cell>
-    <Cell><Data ss:Type="String">媽祖廟</Data></Cell>
-   </Row>
-  </Table>
-  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
-   <PageSetup>
-    <Header x:Margin="0.3"/>
-    <Footer x:Margin="0.3"/>
-    <PageMargins x:Bottom="0.75" x:Left="0.7" x:Right="0.7" x:Top="0.75"/>
-   </PageSetup>
-   <Unsynced/>
-   <Panes>
-    <Pane>
-     <Number>3</Number>
-     <ActiveRow>6</ActiveRow>
-     <ActiveCol>2</ActiveCol>
-    </Pane>
-   </Panes>
-   <ProtectObjects>False</ProtectObjects>
-   <ProtectScenarios>False</ProtectScenarios>
-  </WorksheetOptions>
- </Worksheet>
  <Worksheet ss:Name="工作表2">
-  <Table ss:ExpandedColumnCount="5" ss:ExpandedRowCount="3" x:FullColumns="1"
+  <Table ss:ExpandedColumnCount="5" ss:ExpandedRowCount="15" x:FullColumns="1"
    x:FullRows="1" ss:DefaultColumnWidth="54" ss:DefaultRowHeight="16.5">
    <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">學堂</Data></Cell>
+    <Cell><Data ss:Type="String">貿易特許證</Data></Cell>
+    <Cell><Data ss:Type="Number">0.5</Data></Cell>
+    <Cell><Data ss:Type="Number">3000</Data></Cell>
+    <Cell><Data ss:Type="String">building</Data></Cell>
+    <Cell><Data ss:Type="String">加收0.5過路費</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">新式商館</Data></Cell>
+    <Cell><Data ss:Type="Number">1000</Data></Cell>
+    <Cell><Data ss:Type="Number">1200</Data></Cell>
+    <Cell><Data ss:Type="String">building</Data></Cell>
+    <Cell><Data ss:Type="String">累積金錢的地方</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">妓院</Data></Cell>
+    <Cell><Data ss:Type="Number">1000</Data></Cell>
+    <Cell><Data ss:Type="Number">2000</Data></Cell>
+    <Cell><Data ss:Type="String">building</Data></Cell>
+    <Cell><Data ss:Type="String">春宵一刻值千金</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">煙館</Data></Cell>
+    <Cell><Data ss:Type="Number">500</Data></Cell>
+    <Cell><Data ss:Type="Number">2500</Data></Cell>
+    <Cell><Data ss:Type="String">building</Data></Cell>
+    <Cell><Data ss:Type="String">一天三根菸，快樂似神仙</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">賭場</Data></Cell>
+    <Cell><Data ss:Type="Number">300</Data></Cell>
+    <Cell><Data ss:Type="Number">3000</Data></Cell>
+    <Cell><Data ss:Type="String">building</Data></Cell>
+    <Cell><Data ss:Type="String">All_In</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">驛站</Data></Cell>
+    <Cell><Data ss:Type="Number">1500</Data></Cell>
+    <Cell><Data ss:Type="Number">900</Data></Cell>
+    <Cell><Data ss:Type="String">building</Data></Cell>
+    <Cell><Data ss:Type="String">餵馬費.住宿費.過路費</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">白銀店</Data></Cell>
+    <Cell><Data ss:Type="Number">800</Data></Cell>
+    <Cell><Data ss:Type="Number">1000</Data></Cell>
+    <Cell><Data ss:Type="String">building</Data></Cell>
+    <Cell><Data ss:Type="String">手續費</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">市場</Data></Cell>
+    <Cell><Data ss:Type="Number">1000</Data></Cell>
+    <Cell><Data ss:Type="Number">800</Data></Cell>
+    <Cell><Data ss:Type="String">building</Data></Cell>
+    <Cell><Data ss:Type="String">大採購~~</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">市舶司</Data></Cell>
+    <Cell><Data ss:Type="Number">0.1</Data></Cell>
+    <Cell><Data ss:Type="Number">400</Data></Cell>
+    <Cell><Data ss:Type="String">building</Data></Cell>
+    <Cell><Data ss:Type="String">中國在港口設立的海上對外貿易管理機構，相當於現代的海關。</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">深水港</Data></Cell>
     <Cell><Data ss:Type="Number">0.2</Data></Cell>
     <Cell><Data ss:Type="Number">200</Data></Cell>
-    <Cell><Data ss:Type="String">leanpub</Data></Cell>
-    <Cell><Data ss:Type="String">清中葉後，教育逐漸興盛</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">腦寮</Data></Cell>
-    <Cell><Data ss:Type="Number">0.1</Data></Cell>
-    <Cell><Data ss:Type="Number">100</Data></Cell>
     <Cell><Data ss:Type="String">building</Data></Cell>
-    <Cell><Data ss:Type="String">山區煉製樟腦的小工廠</Data></Cell>
+    <Cell><Data ss:Type="String">需要大型帆船停靠，一個吃水夠深的港口是必要的</Data></Cell>
    </Row>
    <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">茶行</Data></Cell>
-    <Cell><Data ss:Type="Number">0.5</Data></Cell>
+    <Cell><Data ss:Type="String">洋行</Data></Cell>
     <Cell><Data ss:Type="Number">500</Data></Cell>
-    <Cell><Data ss:Type="String">envira</Data></Cell>
-    <Cell><Data ss:Type="String">販賣茶葉的商行</Data></Cell>
+    <Cell><Data ss:Type="Number">300</Data></Cell>
+    <Cell><Data ss:Type="String">building</Data></Cell>
+    <Cell><Data ss:Type="String">華人與西方洋人的國際貿易公司.商行.代理行</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">水井</Data></Cell>
+    <Cell><Data ss:Type="Number">500</Data></Cell>
+    <Cell><Data ss:Type="Number">0.5</Data></Cell>
+    <Cell><Data ss:Type="String">building</Data></Cell>
+    <Cell><Data ss:Type="String">在沙漠中取水不利，有口水井多好啊</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">駱駝商隊休息站</Data></Cell>
+    <Cell><Data ss:Type="Number">1000</Data></Cell>
+    <Cell><Data ss:Type="Number">0.8</Data></Cell>
+    <Cell><Data ss:Type="String">building</Data></Cell>
+    <Cell><Data ss:Type="String">在沙漠中長途旅行，有個休息站多好啊</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">寺廟</Data></Cell>
+    <Cell><Data ss:Type="Number">5000</Data></Cell>
+    <Cell><Data ss:Type="Number">0.9</Data></Cell>
+    <Cell><Data ss:Type="String">building</Data></Cell>
+    <Cell><Data ss:Type="String">在沙摸中如果有個地方可以拜拜多好啊</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">佛窟</Data></Cell>
+    <Cell><Data ss:Type="Number">1000</Data></Cell>
+    <Cell><Data ss:Type="Number">0.5</Data></Cell>
+    <Cell><Data ss:Type="String">building</Data></Cell>
+    <Cell><Data ss:Type="String">在沙漠中能看到佛像有多好啊</Data></Cell>
    </Row>
   </Table>
   <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
@@ -111,48 +151,18 @@
     <PageMargins x:Bottom="0.75" x:Left="0.7" x:Right="0.7" x:Top="0.75"/>
    </PageSetup>
    <Unsynced/>
+   <Print>
+    <ValidPrinterInfo/>
+    <PaperSizeIndex>9</PaperSizeIndex>
+    <HorizontalResolution>1200</HorizontalResolution>
+    <VerticalResolution>1200</VerticalResolution>
+   </Print>
    <Selected/>
    <Panes>
     <Pane>
      <Number>3</Number>
-     <ActiveRow>1</ActiveRow>
-     <ActiveCol>3</ActiveCol>
-    </Pane>
-   </Panes>
-   <ProtectObjects>False</ProtectObjects>
-   <ProtectScenarios>False</ProtectScenarios>
-  </WorksheetOptions>
- </Worksheet>
- <Worksheet ss:Name="工作表3">
-  <Table ss:ExpandedColumnCount="5" ss:ExpandedRowCount="2" x:FullColumns="1"
-   x:FullRows="1" ss:DefaultColumnWidth="54" ss:DefaultRowHeight="16.5">
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">小學</Data></Cell>
-    <Cell><Data ss:Type="Number">0.3</Data></Cell>
-    <Cell><Data ss:Type="Number">300</Data></Cell>
-    <Cell><Data ss:Type="String">graduation-cap</Data></Cell>
-    <Cell><Data ss:Type="String">進行山區教育的學校</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">駐在所</Data></Cell>
-    <Cell><Data ss:Type="Number">0.8</Data></Cell>
-    <Cell><Data ss:Type="Number">800</Data></Cell>
-    <Cell><Data ss:Type="String">shield</Data></Cell>
-    <Cell><Data ss:Type="String">山區建設的核心，配備中型武裝的警察局</Data></Cell>
-   </Row>
-  </Table>
-  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
-   <PageSetup>
-    <Header x:Margin="0.3"/>
-    <Footer x:Margin="0.3"/>
-    <PageMargins x:Bottom="0.75" x:Left="0.7" x:Right="0.7" x:Top="0.75"/>
-   </PageSetup>
-   <Unsynced/>
-   <Panes>
-    <Pane>
-     <Number>3</Number>
-     <ActiveRow>2</ActiveRow>
-     <ActiveCol>3</ActiveCol>
+     <ActiveRow>7</ActiveRow>
+     <ActiveCol>5</ActiveCol>
     </Pane>
    </Panes>
    <ProtectObjects>False</ProtectObjects>
