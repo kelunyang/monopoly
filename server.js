@@ -2,50 +2,75 @@
 管理員權限中有一個清除全部session的功能
 管理員偷窺功能
 安裝程式
+不在回合中不可以擲骰子
+動畫應該要用css3 animation
 */
 var globaldir = "C:\\Users\\Kelunyang\\AppData\\Roaming\\npm\\node_modules\\";
-var dir = "C:\\Users\\Kelunyang\\OneDrive\\Webapps\\monopoly";
 var http = require("http");
 var url = require('url');
-var fs = require('fs');
+var fs = require(globaldir+'fs-extra');
 var crypto = require('crypto');
 var mkdirp = require('mkdirp');
 var mime = require(globaldir+'mime-types');
 var io = require(globaldir+'socket.io');
-var ios = require(globaldir+'socket.io-express-session');
+var ios = require(globaldir+'express-socket.io-session');
 var ss = require('socket.io-stream');
-var mysql = require(globaldir+'mysql');
+var mysql = require(globaldir+"promise-mysql");
 var MemoryStore = require(globaldir+'sessionstore');
 var express = require(globaldir+'express');
 var moment = require(globaldir+'moment');
 var xml = require('xml2js');
 var session = require("express-session");
-var cookieParser = require("cookie-parser");
 var bodyParser = require('body-parser');
-var rimraf = require('rimraf');
 var recaptcha2 = require("recaptcha2");
-var recaptchainst = new recaptcha2({
-	siteKey: "6Lc1QygTAAAAABWcKBCe1x9endamJhWG2sZj4a6Z",
-	secretKey:"6Lc1QygTAAAAAJbHu8jvQNrAxl-hBqpAFKBAj9Of"
-});
-var ingame = false;
-var sessionSecret = "mozillapersona";
-var mysqlServer = "localhost";
-var mysqlUser = "webapp";
-var mysqlPass = "75*0F*d4b6";
-var mysqlDB_string = "monopoly";
+var recaptchainst = null;
+var pool = null;
 var session_store = MemoryStore.createSessionStore();
 var sessioninstance = session({
-    secret: sessionSecret,
+	secret: 'IOUJGB(UG*(&R',
 	resave: true,
 	saveUninitialized: true,
-	store: session_store
+	store: session_store,
+	cookie: {maxAge: 1800000}
 })
+var api = {
+	recaptcha: {
+		key: undefined,
+		secret: undefined
+	},
+	mysql: {
+		host: undefined,
+		user: undefined,
+		password: undefined,
+		dbname: undefined
+	}
+}
+
 var app = express();
+app.use( bodyParser.json() );
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+	extended: true
+  })); 
 var server = http.Server(app);
-app.use(express.static(dir));
+app.use(express.static(__dirname));
 server.listen(80,function() {
 	serverlog("伺服器啟動");
+	fs.readFile(__dirname+'/apikeys.json', (err, data) => {
+		api = JSON.parse(data);
+		pool = mysql.createPool({
+			host: api.mysql.host,
+			user: api.mysql.user,
+			password: api.mysql.password,
+			database: api.mysql.dbname,
+			connectionLimit: 10,
+			multipleStatements: true
+		});
+		recaptchainst = new recaptcha2({
+			siteKey: api.recaptcha.key,
+			secretKey: api.recaptcha.secret
+		});
+		serverlog("程式載入完成！");
+	});
 });
 allClient = new Array(); //玩家陣列
 var serv_io = io(server);
@@ -54,91 +79,9 @@ serv_io.use(ios(sessioninstance));
 var questionDB = new Array();
 var stage = 0;
 var currentQuestion = null;
-//currentUser = null;	//如果照正常流程登入再操作，這個變數會保留下來
 var gameSession = new Object();	//session 暫存點
-/* Authericate */
-app.use(bodyParser());
-//app.use(json());
-//app.use(urlencode());
-//app.use(cookieParser());
 app.use(sessioninstance);
-/*require("express-persona")(app, {
-	audience: "http://kelunyangvpn.ddns.net", // Must match your browser's address bar 
-	verifyResponse: function(err, req, res, email) {
-		req.session.currentuser = {
-			email: email
-		}
-		req.session.authorized = true;
-		req.session.save();
-		var connection = mysql.createConnection({
-			host: 'localhost',
-			user: 'webapp',
-			password: '75*0F*d4b6',
-			database: 'monopoly'
-		});
-		connection.connect();
-		connection.query("SELECT * FROM user WHERE email = ?",[email],function(error, rows, fields){
-			if(error) {
-				connection.end();
-				throw error;
-			} else {
-				if(rows.length > 0) {
-					userlog(connection, req.session.currentuser.email, 1, "", function() {
-						connection.end();
-						req.session.currentuser = rows[0];
-						req.session.save();
-						serv_io.sockets.emit("getUser", {obj: req.session.currentuser, auth: false});
-					});
-				} else {
-					req.session.currentuser = {
-						email: email,
-						nickname: "未設定",
-						color: "336699",
-						icon: "question-circle",
-						ability: 0,
-						level: 0
-					}
-					req.session.save();
-					serv_io.sockets.emit("getUser", {obj: req.session.currentuser, auth: false});
-					connection.query('INSERT INTO `user` SET ?', req.session.currentuser, function(error){
-						if(error){
-							console.log('創建用戶資料失敗！');
-							connection.end();
-							throw error;
-						} else {
-							userlog(connection, req.session.currentuser.email, 0, "", function() {
-								userlog(connection, req.session.currentuser.email, 1, "", function() {
-									connection.end();
-								});
-							});
-						}
-					});
-				}
-			}
-		});
-		res.json({ status: "okay", email: email });
-	},
-	logoutResponse: function(err, req, res) {
-		if (req.session.authorized) {
-			req.session.authorized = null;
-		}
-		var connection = mysql.createConnection({
-			host: 'localhost',
-			user: 'webapp',
-			password: '75*0F*d4b6',
-			database: 'monopoly'
-		});
-		if(req.session.currentuser != null) {
-			connection.connect();
-			userlog(connection, req.session.currentuser.email, 2, "", function() {
-				connection.end();
-			});
-		}
-		req.session.currentuser = null;
-		req.session.save();
-		res.json({ status: "okay" });
-	}
-});*/
+
 
 /* configure */
 app.post("/login",function(req,res) {
@@ -146,12 +89,6 @@ app.post("/login",function(req,res) {
 	req.session.save();
 	res.send("done");*/
 	recaptchainst.validateRequest(req).then(function(){
-		var connection = mysql.createConnection({
-			host: mysqlServer,
-			user: mysqlUser,
-			password: mysqlPass,
-			database: mysqlDB_string
-		});
 		var ipaddress = req.ips.length == 0 ? req.ip : req.ips ;
     // validated and secure
 		switch(req.body.type) {
@@ -168,64 +105,55 @@ app.post("/login",function(req,res) {
 					level: 0,
 					tutorial: 1
 				}
-				connection.connect();
-				connection.query("INSERT INTO user SET ?", record,function(error){
-					if(error) {
-						connection.end();
+				pool.getConnection().then(async (connection) => {
+					await connection.query("INSERT INTO user SET ?", record);
+					return connection;
+				}).then(async(connection) => {
+					await connection.query("SELECT * FROM user WHERE email = ?", req.body.account).then((rows) => {
+						if(rows.length > 0) {
+							serverlog(req.body.account+"已建立 \n"+req.headers['user-agent'],ipaddress);
+							var user = rows[0];
+							res.json({
+								status: true,
+								level: rows[0].level,
+								msg: user.email+"("+user.nickname+")登入成功！"
+							});
+							req.session.currentuser = {
+								email: user.email,
+								nickname: user.nickname,
+								color: user.color,
+								icon: user.icon,
+								ability: user.ability,
+								level: user.level,
+								tutorial: user.tutorial
+							}
+							req.session.save();
+						} else {
+							res.json({
+								status: false,
+								msg: "帳號不存在"
+							});
+						}
+					}).catch((error) => {
 						res.json({
 							status: false,
 							msg: error.code
 						});
-					} else {
-						connection.query("SELECT * FROM user WHERE email = ?", req.body.account, function(error, rows, fields){
-							if(error) {
-								connection.end();
-								res.json({
-									status: false,
-									msg: error.code
-								});
-								serverlog(req.body.account+"帳號建立失敗 \n"+req.headers['user-agent'],ipaddress);
-							} else {
-								if(rows.length > 0) {
-									serverlog(req.body.account+"已建立 \n"+req.headers['user-agent'],ipaddress);
-									var user = rows[0];
-									res.json({
-										status: true,
-										level: rows[0].level,
-										msg: user.email+"("+user.nickname+")登入成功！"
-									});
-									req.session.currentuser = {
-										email: user.email,
-										nickname: user.nickname,
-										color: user.color,
-										icon: user.icon,
-										ability: user.ability,
-										level: user.level,
-										tutorial: user.tutorial
-									}
-									req.session.save();
-								} else {
-									res.json({
-										status: false,
-										msg: "帳號不存在"
-									});
-								}
-								connection.end();
-							}
-						});
-					}
+						serverlog(req.body.account+"帳號建立失敗 \n"+req.headers['user-agent'],ipaddress);
+					});
+					pool.releaseConnection(connection);
+				})
+				.catch((error) => {
+					res.json({
+						status: false,
+						msg: error.code
+					});
 				});
 			break;
 			case "login":
-				connection.connect();
-				connection.query("SELECT * FROM user WHERE email = ?", req.body.account, function(error, rows, fields){
-					if(error) {
-						connection.end();
-						res.json({
-							status: false,
-							msg: error.code
-						});
-					} else {
+				pool.getConnection().then(async (connection) => {
+					await connection.query("SELECT * FROM user WHERE email = ?", req.body.account)
+					.then((rows) => {
 						if(rows.length > 0) {
 							var user = rows[0];
 							if(user.password == crypto.pbkdf2Sync(req.body.pass,user.salt,100000,512,"sha512").toString("hex")) {
@@ -258,8 +186,14 @@ app.post("/login",function(req,res) {
 								msg: "帳號不存在！"
 							});
 						}
-						connection.end();
-					}
+					});
+					pool.releaseConnection(connection);
+				})
+				.catch((error) => {
+					res.json({
+						status: false,
+						msg: error.code
+					});
 				});
 			break;
 		}
@@ -302,39 +236,17 @@ app.get("/checkUser", function(req,res) {
 	}
 });
 app.get("/",function(req,res) {
-	fs.readFile(dir+'/index.htm', function(err, data){
+	fs.readFile(__dirname+'/index.htm', function(err, data){
 		res.send(data.toString());
 	});
 });
-/*app.get("/id",function(req,res) {
-	res.send(req.session.currentuser);
-});
-app.get("/listmapService", function(req,res) {
-	var connection = mysql.createConnection({
-		host: mysqlServer,
-		user: mysqlUser,
-		password: mysqlPass,
-		database: mysqlDB_string
-	});
-	connection.connect();
-	connection.query("SELECT * FROM gameboard ORDER BY createdate",function(error, rows, fields){
-		if(error){
-			connection.end();
-			throw error;
-		}
-		res.json(rows);
-		connection.end();
-	});
-});
-app.get("/readmapinfoService",function(req,res) {
-});*/
 serv_io.of("/fileupload").on("connection", function(socket) {
 	var sessioni = socket.handshake.session;
 	var ipaddress = socket.request.headers['x-forwarded-for'] || socket.request.connection.remoteAddress;
 	ss(socket).on("mapConfigs", function(stream, data) {
 		try {
 			//if(!sessioni.hasOwnProperty("currentuser")) throw "currentuser未設定";
-			stream.pipe(fs.createWriteStream(dir+"/data/"+data.boardid+"/"+data.type+".xml"));	//fs.createWriteStream opintion default set to override
+			stream.pipe(fs.createWriteStream(__dirname+"/data/"+data.boardid+"/"+data.type+".xml"));	//fs.createWriteStream opintion default set to override
 		} catch(e) {
 			serverlog("在fileupload操作失敗 \n"+socket.request.headers['user-agent']+"\n"+e.message+"\n"+e.stack,ipaddress);
 			socket.disconnect();
@@ -392,14 +304,6 @@ serv_io.sockets.on('connection', function(socket) {
 	socket.on("addTurn", function(data) {
 		try {
 			if(sessioni.gameSession[sessioni.currentgame].currentplayer.id == sessioni.currentuser.email) {
-				var connection = mysql.createConnection({
-					host: mysqlServer,
-					user: mysqlUser,
-					password: mysqlPass,
-					database: mysqlDB_string,
-					multipleStatements: true
-				});
-				connection.connect();
 				var newstage = sessioni.gameSession[sessioni.currentgame].currentstage;
 				data.players.forEach(function(item) {
 					sessioni.gameSession[sessioni.currentgame].players[item.uid].credit = item.credit;
@@ -416,12 +320,9 @@ serv_io.sockets.on('connection', function(socket) {
 							if(i != sessioni.gameSession[sessioni.currentgame].currentstage) {
 								var newrecord = new Array();
 								newstage = i;
-								connection.query("SELECT * FROM sessionplayer WHERE sid = ?",sessioni.currentgame,function(error, rows, fields){
-									if(error) {
-										connection.end();
-										socket.emit('updateplayerinfoerror');
-										throw error;
-									} else {
+								pool.getConnection().then(async (connection) => {
+									await connection.query("SELECT * FROM sessionplayer WHERE sid = ?",sessioni.currentgame)
+									.then((rows) => {
 										rows.forEach(function(item) {
 											var currentstage = sessioni.gameSession[sessioni.currentgame].stages[i];
 											switch(currentstage.effecttype) {
@@ -435,72 +336,73 @@ serv_io.sockets.on('connection', function(socket) {
 											sessioni.gameSession[sessioni.currentgame].players[item.uid].credit = item.score;
 											sessioni.gameSession[sessioni.currentgame].players[item.uid].position = item.position;
 										});
-									}
+									})
+									.catch((error) => {
+										socket.emit('updateplayerinfoerror');
+									})
+									pool.releaseConnection(connection);	
 								});
 							}
 							sessioni.gameSession[sessioni.currentgame].currentstage = i;
 							break;
 						}
 					}
-					connection.query("UPDATE gamesession SET ? WHERE id = ?",[
-						{
-							currentstage: newstage,
-							currentturn: sessioni.gameSession[sessioni.currentgame].currentturn
-						},
-						sessioni.currentgame
-					], function(err, results) {
-						if(err){
-							connection.end();
-							throw err;
-						} else {
-							var querystring = new Array();
+					pool.getConnection().then(async (connection) => {
+						var querystring = new Array();
+						await connection.query("UPDATE gamesession SET ? WHERE id = ?",[
+							{
+								currentstage: newstage,
+								currentturn: sessioni.gameSession[sessioni.currentgame].currentturn
+							},
+							sessioni.currentgame
+						]).then((rows) => {
 							var players = sessioni.gameSession[sessioni.currentgame].players;
 							Object.keys(players).forEach(function(key) {
 								var item = players[key];
 								querystring.push("UPDATE sessionplayer SET turn="+sessioni.gameSession[sessioni.currentgame].currentturn+", position="+item.position+", frozen="+item.frozen+" WHERE sid="+sessioni.currentgame+" AND uid='"+key+"'");
 							});
-							connection.query(querystring.join(";"), function(err, results) {
-								if(err){
-									connection.end();
-									//socket.emit('updateturnerror', {'error': true});
-									throw err;
-								} else {
-									Object.keys(serv_io.sockets.adapter.rooms["room"+sessioni.currentgame].sockets).forEach(function(key) {
-										var lock = false;
-										var nextsession = null;
-										var sessioncount = 0;
-										var firstsession = null;
-										Object.keys(serv_io.sockets.adapter.rooms["room"+sessioni.currentgame].sockets).forEach(function(key) {
-											if(lock) {
-												if(sessioncount != serv_io.sockets.adapter.rooms["room"+sessioni.currentgame].length) {
-													nextsession = key;
-													lock = false;
-												}
-											}
-											sessioncount++;
-											if(sessioncount == 1) {
-												firstsession = key;
-											} 
-											if(key == socket.id) {
-												lock = true;
-											}
-										});
-										if(nextsession == null) {	//firstsession根本不會rise，所以如果迴圈跑完還是null，那就是第一個了
-											nextsession = firstsession;
-										}
-										serv_io.sockets.connected[nextsession].emit('workingturn',{
-											currentstage: sessioni.gameSession[sessioni.currentgame].currentstage,
-											currentturn: sessioni.gameSession[sessioni.currentgame].currentturn,
-											currentsession: socket.id
-										});
-										serv_io.to("room"+sessioni.currentgame).emit('mapUpdated');
-									});
-								}
-							});
+						});
+						return {
+							querystring: querystring,
+							connection: connection
 						}
-						connection.end();
+					}).then(async (obj) => {
+						await obj.connection.query(obj.querystring.join(";"))
+						.then((rows) => {
+							Object.keys(serv_io.sockets.adapter.rooms["room"+sessioni.currentgame].sockets).forEach((key) => {
+								var lock = false;
+								var nextsession = null;
+								var sessioncount = 0;
+								var firstsession = null;
+								Object.keys(serv_io.sockets.adapter.rooms["room"+sessioni.currentgame].sockets).forEach((key) => {
+									if(lock) {
+										if(sessioncount != serv_io.sockets.adapter.rooms["room"+sessioni.currentgame].length) {
+											nextsession = key;
+											lock = false;
+										}
+									}
+									sessioncount++;
+									if(sessioncount == 1) {
+										firstsession = key;
+									} 
+									if(key == socket.id) {
+										lock = true;
+									}
+								});
+								if(nextsession == null) {	//firstsession根本不會rise，所以如果迴圈跑完還是null，那就是第一個了
+									nextsession = firstsession;
+								}
+								serv_io.sockets.connected[nextsession].emit('workingturn',{
+									currentstage: sessioni.gameSession[sessioni.currentgame].currentstage,
+									currentturn: sessioni.gameSession[sessioni.currentgame].currentturn,
+									currentsession: socket.id
+								});
+								serv_io.to("room"+sessioni.currentgame).emit('mapUpdated');
+							});
+						});
 						sessioni.save();
-					});
+						pool.releaseConnection(obj.connection);
+					});	
 				} else {
 					serv_io.to("room"+sessioni.currentgame).emit('gamesettled',{ 
 						message: "最終回合，第"+sessioni.gameSession[sessioni.currentgame].currentturn+"回合，遊戲結束",
@@ -521,38 +423,13 @@ serv_io.sockets.on('connection', function(socket) {
 		try {
 			sessioni.gameSession[sessioni.currentgame].currentplayer = sessioni.gameSession[sessioni.currentgame].players[data.playerid];
 			sessioni.save();
-			var connection = mysql.createConnection({
-				host: mysqlServer,
-				user: mysqlUser,
-				password: mysqlPass,
-				database: mysqlDB_string
-			});
-			connection.connect();
-			connection.query("UPDATE gamesession SET ? WHERE id = ?",[{currentplayer: data.playerid},sessioni.currentgame], function(err, results) {
-				if(err){
-					connection.end();
-					throw error;
-				} else {
-					connection.query("SELECT * FROM gamesession WHERE id = ?", [sessioni.currentgame], function(error, rows, fields){
-						if(error) {
-							connection.end();
-							throw error;
-						} else {
-							serv_io.to("room"+sessioni.currentgame).emit('boardcastturn', {
-								currentplayer: data.playerid
-							});
-							/*Object.keys(serv_io.sockets.adapter.rooms["room"+sessioni.currentgame].sockets).forEach(function(key) {
-								serv_io.sockets.connected[key].emit('boardcastturn',{
-									,
-									currentstage: data.currentstage,
-									currentturn: data.currentturn,
-								});
-							});*/
-							connection.end();
-						}
-					});
-				}
-			});
+			pool.getConnection().then(async (connection) => {
+				await connection.query("UPDATE gamesession SET ? WHERE id = ?",[{currentplayer: data.playerid},sessioni.currentgame])
+				serv_io.to("room"+sessioni.currentgame).emit('boardcastturn', {
+					currentplayer: data.playerid
+				});
+				pool.releaseConnection(connection);	
+			})
 			//serv_io.sockets.connected[gameSession[sessioni.currentgame].players[i].socketid].emit('messagein', sessioni.email+"結束，現在輪到"+gameSession[sessioni.currentgame].currentplayer.id);
 		} catch(e) {
 			serverlog("在responseTurn操作失敗 \n"+socket.request.headers['user-agent']+"\n"+e.message+"\n"+e.stack,ipaddress);
@@ -588,89 +465,85 @@ serv_io.sockets.on('connection', function(socket) {
 	socket.on("preparemapbackend", function(data) {	//這裡的data就是session id，棋局編號, type 是只要針對什麼進行讀取，先讀sql，再讀xml
 		try {
 			if(!sessioni.hasOwnProperty("currentgame")) throw "currentgame未設定";
-			ingame = true;
 			allClient[sessioni.email] = socket.id;
 			type = data.type;
 			data = sessioni.currentgame;
 			sessioni.gameSession[data] = sessioni.gameSession.hasOwnProperty(data) ? sessioni.gameSession[data] : new Object();
 			var obj = sessioni.gameSession[data];
 			if(type == 1) {
-				var connection = mysql.createConnection({
-					host: mysqlServer,
-					user: mysqlUser,
-					password: mysqlPass,
-					database: mysqlDB_string
-				});
-				connection.connect();
-				connection.query("SELECT * FROM gamesession WHERE id = ?", [data], function(error, rows, fields){
-					if(error) {
-						connection.end();
-						throw error;
-					} else {
+				pool.getConnection().then(async (connection) => {
+					var currentplayer = null;
+					await connection.query("SELECT * FROM gamesession WHERE id = ?", [data])
+					.then((rows) => {
 						bid = rows[0].bid;
 						id = rows[0].id;
-						var currentplayer = rows[0].currentplayer;
+						currentplayer = rows[0].currentplayer;
 						obj.maxround = rows[0].maxround;
 						obj.hosteduser = rows[0].hosteduser;
 						obj.currentstage = rows[0].currentstage;
 						obj.currentturn = 0;
 						obj.players = new Object();
-						connection.query("SELECT * FROM sessionplayer WHERE sid = ?", data, function(error, rows, fields){
-							if(error) {
-								connection.end();
-								throw error;
-							} else {
-								if(rows.length == 0) {
-									socket.emit('gameboardreadingError', {'error': true});
-									throw "已登出的用戶企圖存取遊戲";
+					});
+					return {
+						connection: connection,
+						currentplayer: currentplayer
+					};
+				}).then(async(retobj) => {
+					if(type == 1) {
+						await retobj.connection.query("SELECT * FROM sessionplayer WHERE sid = ?", data)
+						.then((rows) => {
+							if(rows.length == 0) {
+								socket.emit('gameboardreadingError', {'error': true});
+								throw "已登出的用戶企圖存取遊戲";
+							}
+							for(var i=0;i<rows.length;i++) {
+								obj.players[rows[i].uid] = {
+									id:rows[i].uid,
+									order: i,
+									asset: new Array(),
+									credit: 0,
+									score: rows[i].score,
+									position: 132
+								};
+								if(rows[i].uid == retobj.currentplayer) {
+									obj.currentplayer = obj.players[rows[i].uid];
 								}
-								for(var i=0;i<rows.length;i++) {
-									obj.players[rows[i].uid] = {
-										id:rows[i].uid,
-										order: i,
-										asset: new Array(),
-										credit: 0,
-										score: rows[i].score,
-										position: 132
-									};
-									if(rows[i].uid == currentplayer) {
-										obj.currentplayer = obj.players[rows[i].uid];
-									}
-								}
-								connection.query("SELECT * FROM gameboard WHERE id = ?",[bid],function(error, rows, fields){
-									if(error) {
-										connection.end();
-										socket.emit('gameboardreadingError', {'error': true});
-										throw error;
-									} else {
-										obj.boardinfo = new Object();
-										obj.boardinfo.name = rows[0].name;
-										obj.boardinfo.desc = rows[0].comment;
-										obj.boardinfo.maxround = obj.maxround;
-										obj.boardinfo.sid = sessioni.currentgame;
-										sessioni.save();
-										socket.emit('boardprepared', {
-											status: true,
-											id: id,
-											upgrades: obj.upgrades,
-											shortcut: obj.shortcuts,
-											roads: obj.roads,
-											stage: obj.stages,
-											incident: obj.incident,
-											localplayer: sessioni.currentuser.email,
-											currentplayer: obj.currentplayer,
-											info: obj.boardinfo,
-											type: 1
-										});
-									}
-									connection.end();
-								});
 							}
 						});
 					}
+					return retobj.connection;
+				}).then(async(connection) => {
+					if(type == 1) {
+						await connection.query("SELECT * FROM gameboard WHERE id = ?",[bid])
+						.then((rows) => {
+							obj.boardinfo = new Object();
+							obj.boardinfo.name = rows[0].name;
+							obj.boardinfo.desc = rows[0].comment;
+							obj.boardinfo.maxround = obj.maxround;
+							obj.boardinfo.sid = sessioni.currentgame;
+							sessioni.save();
+							socket.emit('boardprepared', {
+								status: true,
+								id: id,
+								upgrades: obj.upgrades,
+								shortcut: obj.shortcuts,
+								roads: obj.roads,
+								stage: obj.stages,
+								incident: obj.incident,
+								localplayer: sessioni.currentuser.email,
+								currentplayer: obj.currentplayer,
+								info: obj.boardinfo,
+								type: 1
+							});
+						})
+						.catch((error) => {
+							socket.emit('gameboardreadingError', {'error': true});
+						});
+					}
+					pool.releaseConnection(connection);	
 				});
 			} else if(type == 2) {
-				fs.readFile(dir+"/data/"+bid+"/stages.xml",function(err,data) {
+				fs.readFile(__dirname+"/data/"+bid+"/stages.xml",function(err,data) {
 					obj.stages = new Array();
 					var xmldata = xml.parseString(data, function(err, result) {
 						for(var i=0;i<result.Workbook.Worksheet.length;i++) {
@@ -701,7 +574,7 @@ serv_io.sockets.on('connection', function(socket) {
 					});
 					var boardname = ["incidents", "questions", "roads", "shortcuts", "upgrades"];
 					for(var i=0;i<boardname.length;i++) {
-						fs.readFile(dir+"/data/"+bid+"/"+boardname[i]+".xml",function(err, data) {
+						fs.readFile(__dirname+"/data/"+bid+"/"+boardname[i]+".xml",function(err, data) {
 							var xmldata = xml.parseString(data, function(err, result) {
 								switch(result.Workbook.DocumentProperties[0].Title[0]) {
 									case "incidents":
@@ -873,23 +746,14 @@ serv_io.sockets.on('connection', function(socket) {
 	socket.on("removeBrick", function(data) {
 		try {
 			if(!sessioni.hasOwnProperty("currentuser")) throw "currentuser未設定";
-			var connection = mysql.createConnection({
-				host: mysqlServer,
-				user: mysqlUser,
-				password: mysqlPass,
-				database: mysqlDB_string
-			});
 			var record = [
 				data.brick.index,
 				sessioni.currentgame
 			];
-			connection.connect();
-			connection.query("SELECT rid, owner FROM sessionblocks WHERE rid = ? AND sid = ?",record,function(error, rows, fields){
-				if(error) {
-					connection.end();
-					socket.emit('blockmanageError', {'error': true});
-					throw error;
-				} else {
+			pool.getConnection().then(async (connection) => {
+				var action = null;
+				await connection.query("SELECT rid, owner FROM sessionblocks WHERE rid = ? AND sid = ?",record)
+				.then((rows) => {
 					var uDB = new Array();
 					data.brick.upgrades.forEach(function(item) {
 						uDB.push(item.name);
@@ -899,27 +763,29 @@ serv_io.sockets.on('connection', function(socket) {
 					};
 					if(rows.length > 0) {
 						if(rows[0].owner == data.player.uid) {
-							connection.query("UPDATE sessionblocks SET ? WHERE rid = ? AND sid = ?",[newrecord,record], function(err, results) {
-								if(err) {
-									connection.end();
-									socket.emit('blockmanageError', {'error': true});
-									throw err;
-								} else {
-									serv_io.to("room"+sessioni.currentgame).emit('playerscoreUpdated');
-									serv_io.to("room"+sessioni.currentgame).emit('mapUpdated');
-									connection.end();
-								}
-							});
+							action = 1;
 						} else {
-							connection.end();
 							socket.emit('brickRemoveFailed', {'failed': true});
 						}
 					} else {
-						connection.end();
 						socket.emit('blockmanageError', {'error': true});
 						throw error;
 					}
-				}
+				})
+				.catch((error) => {
+					socket.emit('blockmanageError', {'error': true});
+				});
+				return connection;
+			}).then(async(connection) => {
+				await connection.query("UPDATE sessionblocks SET ? WHERE rid = ? AND sid = ?",[newrecord,record])
+				.then(() => {
+					serv_io.to("room"+sessioni.currentgame).emit('playerscoreUpdated');
+					serv_io.to("room"+sessioni.currentgame).emit('mapUpdated');
+				})
+				.catch((error) => {
+					socket.emit('blockmanageError', {'error': true});
+				});
+				pool.releaseConnection(connection);	
 			});
 		} catch(e) {
 			if(!e.hasOwnProperty("stack")) e.stack = "";
@@ -931,23 +797,14 @@ serv_io.sockets.on('connection', function(socket) {
 	socket.on("upgradeBrick", function(data) {
 		try {
 			if(!sessioni.hasOwnProperty("currentuser")) throw "currentuser未設定";
-			var connection = mysql.createConnection({
-				host: mysqlServer,
-				user: mysqlUser,
-				password: mysqlPass,
-				database: mysqlDB_string
-			});
 			var record = [
 				sessioni.currentgame,
 				data.brick.index
 			];
-			connection.connect();
-			connection.query("SELECT rid, owner, upgrades FROM sessionblocks WHERE sid = ? AND rid = ?",record,function(error, rows, fields){
-				if(error) {
-					connection.end();
-					socket.emit('blockmanageError', {'error': true});
-					throw error;
-				} else {
+			pool.getConnection().then(async (connection) => {
+				record = null;
+				await connection.query("SELECT rid, owner, upgrades FROM sessionblocks WHERE sid = ? AND rid = ?",record)
+				.then((rows) => {
 					if(rows.length > 0) {
 						if(rows[0].owner == data.player.uid) {
 							var upgrades = rows[0].upgrades == "" ? new Array() : rows[0].upgrades.split(",");
@@ -961,27 +818,29 @@ serv_io.sockets.on('connection', function(socket) {
 								record[0],
 								record[1]
 							]
-							connection.query("UPDATE sessionblocks SET ? WHERE sid = ? AND rid = ?",record, function(err, results) {
-								if(err) {
-									connection.end();
-									socket.emit('blockmanageError', {'error': true});
-									throw err;
-								} else {
-									serv_io.to("room"+sessioni.currentgame).emit('playerscoreUpdated');
-									serv_io.to("room"+sessioni.currentgame).emit('mapUpdated');
-									connection.end();
-								}
-							});
 						} else {
-							connection.end();
-							socket.emit('brickUpgradeFailed', {'failed': true});
+							throw error;
 						}
 					} else {
-						connection.end();
-						socket.emit('blockmanageError', {'error': true});
 						throw error;
 					}
+				})
+				.catch((error) => {
+					throw error
+				});
+				return {
+					record: record,
+					connection: connection
 				}
+			})
+			.then(async (obj) => {
+				await obj.connection.query("UPDATE sessionblocks SET ? WHERE sid = ? AND rid = ?",obj.record)
+				.then(() => {
+					serv_io.to("room"+sessioni.currentgame).emit('playerscoreUpdated');
+					serv_io.to("room"+sessioni.currentgame).emit('mapUpdated');
+				});
+			}).catch((error) => {
+				socket.emit('blockmanageError', {'error': true});
 			});
 		} catch(e) {
 			if(!e.hasOwnProperty("stack")) e.stack = "";
@@ -993,23 +852,15 @@ serv_io.sockets.on('connection', function(socket) {
 	socket.on("addBrick", function(data) {
 		try {
 			if(!sessioni.hasOwnProperty("currentuser")) throw "currentuser未設定";
-			var connection = mysql.createConnection({
-				host: mysqlServer,
-				user: mysqlUser,
-				password: mysqlPass,
-				database: mysqlDB_string
-			});
 			var record = [
 				data.brick.index,
 				sessioni.currentgame
 			];
-			connection.connect();
-			connection.query("SELECT rid, owner FROM sessionblocks WHERE sid = ? AND rid = ?",record,function(error, rows, fields){
-				if(error) {
-					connection.end();
-					socket.emit('blockmanageError', {'error': true});
-					throw error;
-				} else {
+			pool.getConnection().then(async (connection) => {
+				var record = null;
+				var action = null;
+				await connection.query("SELECT rid, owner FROM sessionblocks WHERE sid = ? AND rid = ?",record)
+				.then((rows) => {
 					var uDB = new Array();
 					data.brick.upgrades.forEach(function(item) {
 						uDB.push(item.name);
@@ -1031,38 +882,54 @@ serv_io.sockets.on('connection', function(socket) {
 					if(data.player.credit > data.brick.price) {
 						if(rows.length > 0) {
 							if(rows[0].owner == null) {
-								connection.query("UPDATE sessionblocks SET ? WHERE sid = ? AND rid = ?",record, function(err, results) {
-									if(err) {
-										connection.end();
-										socket.emit('blockmanageError', {'error': true});
-										throw err;
-									} else {
-										serv_io.to("room"+sessioni.currentgame).emit('playerscoreUpdated');
-										serv_io.to("room"+sessioni.currentgame).emit('mapUpdated');
-										connection.end();
-									}
-								});
+								action = 0;
 							} else {
-								connection.end();
-								socket.emit('brickAddFailed', {'failed': true});
+								throw {
+									id: 'brickAddFailed',
+									msg: {'failed': true}
+								}
 							}
 						} else {
-							connection.query("INSERT INTO sessionblocks SET ?", newrecord,function(err){
-								if(error){
-									connection.end();
-									socket.emit('blockmanageError', {'error': true});
-									throw error;
-								} else {
-									serv_io.to("room"+sessioni.currentgame).emit('playerscoreUpdated');
-									serv_io.to("room"+sessioni.currentgame).emit('mapUpdated');
-									connection.end();
-								}
-							});
+							action = 1;
 						}
 					} else {
-						socket.emit('pricelowError', "你的現金太少，無法購買"+data.brick.name);
-						connection.end();
+						throw {
+							id: 'pricelowError',
+							msg: "你的現金太少，無法購買"+data.brick.name
+						}
 					}
+				}).catch((error) => {
+					throw error;
+				});
+				return {
+					connection: connection,
+					action: action,
+					record: record
+				}
+			}).then(async (obj) => {
+				if(obj.action == 0) {
+					await obj.connection.query("UPDATE sessionblocks SET ? WHERE sid = ? AND rid = ?",obj.record)
+					.then(() => {
+						serv_io.to("room"+sessioni.currentgame).emit('playerscoreUpdated');
+						serv_io.to("room"+sessioni.currentgame).emit('mapUpdated');
+					}).catch((error) => {
+						throw error
+					});
+				} else if(obj.action == 1) {
+					await obj.connection.query("INSERT INTO sessionblocks SET ?", obj.record[0])
+					.then(() => {
+						serv_io.to("room"+sessioni.currentgame).emit('playerscoreUpdated');
+						serv_io.to("room"+sessioni.currentgame).emit('mapUpdated');
+					}).catch((error) => {
+						throw error
+					})
+				}
+				pool.releaseConnection(obj.connection);
+			}).catch((error) => {
+				if(error.id == "pricelowError") {
+					socket.emit('pricelowError', error.msg);
+				} else {
+					socket.emit('blockmanageError', {'error': true});
 				}
 			});
 		} catch(e) {
@@ -1074,23 +941,13 @@ serv_io.sockets.on('connection', function(socket) {
 	});
 	socket.on("requestBricklog", function() {
 		if(!sessioni.hasOwnProperty("currentuser")) throw "currentuser未設定";
-		var connection = mysql.createConnection({
-			host: mysqlServer,
-			user: mysqlUser,
-			password: mysqlPass,
-			database: mysqlDB_string,
-			multipleStatements: true
-		});
 		var record = [
 			sessioni.currentgame
 		];
-		connection.connect();
-		connection.query("SELECT * FROM sessionblocks WHERE sid = ?",record,function(error, blockrows, fields){
-			if(error) {
-				connection.end();
-				socket.emit('assetmanageError', {'error': true});
-				throw error;
-			} else {
+		pool.getConnection().then(async (connection) => {
+			var blockrows = null;
+			await connection.query("SELECT * FROM sessionblocks WHERE sid = ?",record)
+			.then((rows) => {
 				blockrows.forEach(function(b) {
 					var brick = null;
 					sessioni.gameSession[sessioni.currentgame].roads.forEach(function(r) {
@@ -1105,126 +962,141 @@ serv_io.sockets.on('connection', function(socket) {
 					b.name = brick != null ? brick.name : "";
 					b.price = brick != null ? brick.price : 0;
 				});
-				connection.query("SELECT * FROM gamesession WHERE id = ?",sessioni.currentgame,function(error, rows, sfields){
-					if(error) {
-						connection.end();
-						throw error;
-					} else {
-						sessioni.gameSession[sessioni.currentgame].currentturn = rows[0].currentturn;
-						sessioni.gameSession[sessioni.currentgame].currentstage = rows[0].currentstage;
-						var roadDB = new Array();
-						sessioni.gameSession[sessioni.currentgame].roads.forEach(function(item) {
-							if(item.stage <= sessioni.gameSession[sessioni.currentgame].currentstage) {
-								roadDB.push(item);
-							}
-						});
-						var shortcuts = sessioni.gameSession[sessioni.currentgame].shortcuts;
-						var players = sessioni.gameSession[sessioni.currentgame].players;
-						var shortcutstatus = false;
-						Object.keys(shortcuts).forEach(function(key) {
-							var shortcut = shortcuts[key];
-							if(sessioni.gameSession[sessioni.currentgame].currentturn == shortcut.startturn) {	//開始捷徑
-								shortcutstatus = {
-									name: shortcut.name,
-									status: true
-								}
-							}
-							if(sessioni.gameSession[sessioni.currentgame].currentturn == shortcut.endturn) {	//關閉捷徑
-								shortcutstatus = {
-									name: shortcut.name,
-									status: false
-								}
-								Object.keys(players).forEach(function(key) {
-									var item = players[key];
-									if(shortcut.bricks.indexOf(item.position.toString()) > 0) {	// 玩家在捷徑中
-										if(shortcut.bricks.indexOf(item.position.toString()) <= Math.round(shortcut.bricks.length / 2)) {
-											item.position = parseInt(shortcut.bricks[0],10);
-										} else {
-											item.position = parseInt(shortcut.bricks[shortcut.bricks.length - 1],10);
-										}
-									}
-								});
-							}
-						});
-						var querystring = new Array();
+			})
+			.catch((error) => {
+				socket.emit('assetmanageError', {'error': true});
+			})
+			return {
+				connection: connection,
+				blockrows: blockrows
+			}
+		}).then(async (obj) => {
+			var action = null;
+			var querystring = null;
+			var returnrows = null;
+			var roadDB = null;
+			var shortcutstatus = null;
+			await obj.connection.query("SELECT * FROM gamesession WHERE id = ?",sessioni.currentgame)
+			.then((rows) => {
+				returnrows = rows;
+				sessioni.gameSession[sessioni.currentgame].currentturn = rows[0].currentturn;
+				sessioni.gameSession[sessioni.currentgame].currentstage = rows[0].currentstage;
+				roadDB = new Array();
+				sessioni.gameSession[sessioni.currentgame].roads.forEach(function(item) {
+					if(item.stage <= sessioni.gameSession[sessioni.currentgame].currentstage) {
+						roadDB.push(item);
+					}
+				});
+				var shortcuts = sessioni.gameSession[sessioni.currentgame].shortcuts;
+				var players = sessioni.gameSession[sessioni.currentgame].players;
+				shortcutstatus = false;
+				Object.keys(shortcuts).forEach(function(key) {
+					var shortcut = shortcuts[key];
+					if(sessioni.gameSession[sessioni.currentgame].currentturn == shortcut.startturn) {	//開始捷徑
+						shortcutstatus = {
+							name: shortcut.name,
+							status: true
+						}
+					}
+					if(sessioni.gameSession[sessioni.currentgame].currentturn == shortcut.endturn) {	//關閉捷徑
+						shortcutstatus = {
+							name: shortcut.name,
+							status: false
+						}
 						Object.keys(players).forEach(function(key) {
 							var item = players[key];
-							querystring.push("UPDATE sessionplayer SET position="+item.position+" WHERE sid="+sessioni.currentgame+" AND uid='"+key+"'");
-						});
-						connection.query(querystring.join(";"), function(err, results) {
-							if(err){
-								connection.end();
-								//socket.emit('updateturnerror', {'error': true});
-								throw err;
-							} else {
-								connection.end();
-								socket.emit('getBricklog', {
-									info: {
-										currentturn: rows[0].currentturn,
-										currentstage: rows[0].currentstage
-									},
-									log: blockrows,
-									roadDB: roadDB,
-									shortcut: shortcutstatus
-								});
+							if(shortcut.bricks.indexOf(item.position.toString()) > 0) {	// 玩家在捷徑中
+								if(shortcut.bricks.indexOf(item.position.toString()) <= Math.round(shortcut.bricks.length / 2)) {
+									item.position = parseInt(shortcut.bricks[0],10);
+								} else {
+									item.position = parseInt(shortcut.bricks[shortcut.bricks.length - 1],10);
+								}
 							}
 						});
 					}
 				});
-			}
+				querystring = new Array();
+				Object.keys(players).forEach(function(key) {
+					var item = players[key];
+					querystring.push("UPDATE sessionplayer SET position="+item.position+" WHERE sid="+sessioni.currentgame+" AND uid='"+key+"'");
+				});
+			});
+			return {
+				connection: obj.connection,
+				rows: returnrows,
+				querystring: querystring,
+				roadDB: roadDB,
+				shortcutstatus: shortcutstatus,
+				blockrows: obj.blockrows
+			};
+		}).then(async(obj) => {
+			await obj.connection.query(obj.querystring.join(";"))
+			.then(() => {
+				socket.emit('getBricklog', {
+					info: {
+						currentturn: obj.rows[0].currentturn,
+						currentstage: obj.rows[0].currentstage
+					},
+					log: obj.blockrows,
+					roadDB: obj.roadDB,
+					shortcut: obj.shortcutstatus
+				});
+			});
+			pool.releaseConnection(obj.connection);	
 		});
 	});
 	socket.on("caculateAsset", function(data) {
 		if(!sessioni.hasOwnProperty("currentuser")) throw "currentuser未設定";
-		var connection = mysql.createConnection({
-			host: mysqlServer,
-			user: mysqlUser,
-			password: mysqlPass,
-			database: mysqlDB_string
-		});
 		var record = [
 			sessioni.currentgame
 		];
-		connection.connect();
-		connection.query("SELECT rid, owner, upgrades FROM sessionblocks WHERE sid = ?",record,function(error, blockrows, fields){
-			if(error) {
-				connection.end();
-				socket.emit('assetmanageError', {'error': true});
+		pool.getConnection().then(async (connection) => {
+			blockrows = null;
+			await connection.query("SELECT rid, owner, upgrades FROM sessionblocks WHERE sid = ?",record)
+			.then((rows) => {
+				blockrows = rows;
+			})
+			.catch((error) => {
 				throw error;
-			} else {
-				connection.query("SELECT uid, score FROM sessionplayer WHERE sid = ?",record, function(error, playerrows, fields) {
-					if(error) {
-						connection.end();
-						socket.emit('assetmanageError', {'error': true});
-						throw error;
-					} else {
-						var players = new Object();
-						playerrows.forEach(function(player) {
-							players[player.uid] = new Object();
-							players[player.uid].credit = player.score;
-							players[player.uid].asset = player.score;
-							blockrows.forEach(function(blockrow) {
-								var rent = 0.2;
-								if(blockrow.owner == player.uid) {
-									if(blockrow.upgrades != null) {
-										var upgrades = blockrow.upgrades == "" ? new Array() : blockrow.upgrades.split(",");
-										upgrades.forEach(function(up) {
-											rent += sessioni.gameSession[sessioni.currentgame].upgrades[up].rent;
-										});
-									}
-									sessioni.gameSession[sessioni.currentgame].roads.forEach(function(r) {
-										if(r.index == blockrow.rid) {
-											players[player.uid].asset += r.price * (1+rent);
-										}
-									});
+			})
+			return {
+				connection: connection,
+				blockrows: blockrows
+			};
+		}).then(async(obj) => {
+			await obj.connection.query("SELECT uid, score FROM sessionplayer WHERE sid = ?",record)
+			.then((playerrows) => {
+				var players = new Object();
+				playerrows.forEach(function(player) {
+					players[player.uid] = new Object();
+					players[player.uid].credit = player.score;
+					players[player.uid].asset = player.score;
+					obj.blockrows.forEach(function(blockrow) {
+						var rent = 0.2;
+						if(obj.blockrow.owner == player.uid) {
+							if(blockrow.upgrades != null) {
+								var upgrades = obj.blockrow.upgrades == "" ? new Array() : obj.blockrow.upgrades.split(",");
+								upgrades.forEach(function(up) {
+									rent += sessioni.gameSession[sessioni.currentgame].upgrades[up].rent;
+								});
+							}
+							sessioni.gameSession[sessioni.currentgame].roads.forEach(function(r) {
+								if(r.index == blockrow.rid) {
+									players[player.uid].asset += r.price * (1+rent);
 								}
 							});
-						});
-						socket.emit('playerAssets', players);
-					}
+						}
+					});
 				});
-			}
-		});
+				socket.emit('playerAssets', players);
+			})
+			.catch((error) => {
+				throw error;
+			})
+			pool.releaseConnection(obj.connection);	
+		}).catch((error) => {
+			socket.emit('assetmanageError', {'error': true});
+		})
 	});
 	socket.on("updateturn", function(data) {
 		try {
@@ -1232,19 +1104,9 @@ serv_io.sockets.on('connection', function(socket) {
 			sessioni.gameSession[sessioni.currentgame].currentplayer = sessioni.gameSession[sessioni.currentgame].players[data.currentplayer];
 			/*sessioni.gameSession[sessioni.currentgame].currentturn = data.currentturn;
 			sessioni.gameSession[sessioni.currentgame].currentstage = data.currentstage;*/
-			var connection = mysql.createConnection({
-				host: mysqlServer,
-				user: mysqlUser,
-				password: mysqlPass,
-				database: mysqlDB_string
-			});
-			connection.connect();
-			connection.query("SELECT * FROM sessionplayer WHERE sid = ?",sessioni.currentgame,function(error, rows, fields){
-				if(error) {
-					connection.end();
-					socket.emit('updateplayerinfoerror');
-					throw error;
-				} else {
+			pool.getConnection().then(async (connection) => {
+				await connection.query("SELECT * FROM sessionplayer WHERE sid = ?",sessioni.currentgame)
+				.then((rows) => {
 					rows.forEach(function(item) {
 						sessioni.gameSession[sessioni.currentgame].players[item.uid].credit = item.score;
 						sessioni.gameSession[sessioni.currentgame].players[item.uid].position = item.position;
@@ -1253,9 +1115,12 @@ serv_io.sockets.on('connection', function(socket) {
 						current: sessioni.gameSession[sessioni.currentgame].currentplayer.id, 
 						other: rows
 					});
-					connection.end();
 					sessioni.save();
-				}
+				})
+				.catch((error) => {
+					socket.emit('updateplayerinfoerror');
+				})
+				pool.releaseConnection(connection);	
 			});
 		} catch(e) {
 			if(!e.hasOwnProperty("stack")) e.stack = "";
@@ -1277,44 +1142,20 @@ serv_io.sockets.on('connection', function(socket) {
 	socket.on("removemap", function(data) {
 		try {
 			if(!sessioni.hasOwnProperty("currentuser")) throw "currentuser未設定";
-			var connection = mysql.createConnection({
-				host: mysqlServer,
-				user: mysqlUser,
-				password: mysqlPass,
-				database: mysqlDB_string
-			});
-			connection.connect();
-			connection.query("DELETE FROM sessionplayer WHERE bid = ?",[data.id], function(err, results) {
-				if(err) {
-					connection.end();
-					throw err;
-				} else {
-					rimraf(dir+"/data/"+data.id, function(error) {
-						if(error) {
-							connection.end();
-							throw err;
-						} else {
-							connection.query("DELETE FROM gamesession WHERE bid = ?",[data.id], function(err, results) {
-								if(err) {
-									connection.end();
-									throw err;
-								} else {
-									connection.query("DELETE FROM gameboard WHERE id = ?",[data.id], function(err, results) {
-										if(err) {
-											connection.end();
-											throw err;
-										} else {
-											userlog(connection, sessioni.currentuser.email, 4, JSON.stringify(data), function() {
-												socket.emit("gameboardRemoved", data);
-												connection.end();
-											});
-										}
-									});
-								}
-							});
-						}
+			pool.getConnection().then(async (connection) => {
+				await connection.query("DELETE FROM sessionplayer WHERE bid = ?",[data.id]);
+				return connection;
+			}).then(async(connection) => {
+				await connection.query("DELETE FROM gamesession WHERE bid = ?",[data.id]);
+				return connection;
+			}).then(async(connection) => {
+				await connection.query("DELETE FROM gameboard WHERE id = ?",[data.id]);
+				userlog(connection, sessioni.currentuser.email, 4, JSON.stringify(data), function() {
+					fs.remove(__dirname+"/data/"+data.id).then(() => {
+						socket.emit("gameboardRemoved", data);
 					});
-				}
+				});
+				pool.releaseConnection(connection);	
 			});
 		} catch(e) {
 			if(!e.hasOwnProperty("stack")) e.stack = "";
@@ -1336,40 +1177,21 @@ serv_io.sockets.on('connection', function(socket) {
 				sid = data.sid;
 			}
 			if(sid != undefined) {
-				var connection = mysql.createConnection({
-					host: mysqlServer,
-					user: mysqlUser,
-					password: mysqlPass,
-					database: mysqlDB_string
-				});
-				connection.connect();
-				connection.query("DELETE FROM sessionplayer WHERE sid = ?", sid, function(err, results) {
-					if(err) {
-						connection.end();
-						throw err;
-					} else {
-						connection.query("DELETE FROM sessionblocks WHERE sid = ?", sid, function(err, results) {
-							if(err) {
-								connection.end();
-								throw err;
-							} else {
-								connection.query("DELETE FROM gamesession WHERE id = ?", sid, function(err, results) {
-									if(err) {
-										connection.end();
-										throw err;
-									} else {
-										data.sid = sid;	//為了log寫回去
-										userlog(connection, sessioni.currentuser.email, 4, JSON.stringify(data), function() {
-											Object.keys(serv_io.sockets.connected).forEach(function(key) {
-												serv_io.sockets.connected[key].emit('sessionRemoved', data);
-											});
-											connection.end();
-										});
-									}
-								});
-							}
+				pool.getConnection().then(async (connection) => {
+					await connection.query("DELETE FROM sessionplayer WHERE sid = ?", sid);
+					return connection;
+				}).then(async(connection) => {
+					await connection.query("DELETE FROM sessionblocks WHERE sid = ?", sid);
+					return connection;
+				}).then(async(connection) => {
+					await connection.query("DELETE FROM gamesession WHERE id = ?", sid);
+					data.sid = sid;	//為了log寫回去
+					userlog(connection, sessioni.currentuser.email, 4, JSON.stringify(data), function() {
+						Object.keys(serv_io.sockets.connected).forEach(function(key) {
+							serv_io.sockets.connected[key].emit('sessionRemoved', data);
 						});
-					}
+					});
+					pool.releaseConnection(connection);	
 				});
 			}
 		} catch(e) {
@@ -1382,28 +1204,17 @@ serv_io.sockets.on('connection', function(socket) {
 	socket.on("exitsession", function(data) {
 		try {
 			if(!sessioni.hasOwnProperty("currentgame")) throw "currentgame未設定";
-			var connection = mysql.createConnection({
-				host: mysqlServer,
-				user: mysqlUser,
-				password: mysqlPass,
-				database: mysqlDB_string
-			});
-			connection.connect();
-			connection.query("DELETE FROM sessionplayer WHERE uid = ? AND sid = ?", [data.uid, data.sid], function(err, results) {
-				if(err) {
-					connection.end();
-					throw err;
-				} else {
-					userlog(connection, sessioni.currentuser.email, 4, JSON.stringify(data), function() {
-						socket.leave("room"+sessioni.currentgame);
-						//delete sessioni.currentgame;
-						Object.keys(serv_io.sockets.connected).forEach(function(key) {
-							serv_io.sockets.connected[key].emit('socket.requestuestsessionUsers', data.sid);
-						});
-						socket.emit("sessionleaved", data);
-						connection.end();
+			pool.getConnection().then(async (connection) => {
+				await connection.query("DELETE FROM sessionplayer WHERE uid = ? AND sid = ?", [data.uid, data.sid]);
+				userlog(connection, sessioni.currentuser.email, 4, JSON.stringify(data), function() {
+					socket.leave("room"+sessioni.currentgame);
+					//delete sessioni.currentgame;
+					Object.keys(serv_io.sockets.connected).forEach(function(key) {
+						serv_io.sockets.connected[key].emit('socket.requestuestsessionUsers', data.sid);
 					});
-				}
+					socket.emit("sessionleaved", data);
+				});
+				pool.releaseConnection(connection);	
 			});
 		} catch(e) {
 			if(!e.hasOwnProperty("stack")) e.stack = "";
@@ -1415,24 +1226,14 @@ serv_io.sockets.on('connection', function(socket) {
 	socket.on("joinsession", function(data) {
 		try {
 			if(!sessioni.hasOwnProperty("currentuser")) throw "currentuser未設定";
-			var connection = mysql.createConnection({
-				host: mysqlServer,
-				user: mysqlUser,
-				password: mysqlPass,
-				database: mysqlDB_string
-			});
 			var record = {
 				sid: data.sid,
 				uid: sessioni.currentuser.email,
 				bid: data.bid,
 			};
-			connection.connect();
-			connection.query("INSERT INTO sessionplayer SET ?", record,function(error){
-				if(error){
-					connection.end();
-					socket.emit('joinsessionerror', {'error': true});
-					throw error;
-				} else {
+			pool.getConnection().then(async (connection) => {
+				await connection.query("INSERT INTO sessionplayer SET ?", record)
+				.then(() => {
 					socket.emit('gamesessionjoined', data.sid);
 					sessioni.currentgame = data.sid;
 					socket.join("room"+sessioni.currentgame);
@@ -1440,8 +1241,11 @@ serv_io.sockets.on('connection', function(socket) {
 						serv_io.sockets.connected[key].emit('requestsessionUsers', data.sid);
 					});
 					sessioni.save();
-					connection.end();
-				}
+				})
+				.catch((error) => {
+					socket.emit('joinsessionerror', {'error': true});
+				});
+				pool.releaseConnection(connection);	
 			});
 		} catch(e) {
 			if(!e.hasOwnProperty("stack")) e.stack = "";
@@ -1453,12 +1257,6 @@ serv_io.sockets.on('connection', function(socket) {
 	socket.on("createsession", function(data) {
 		try {
 			if(!sessioni.hasOwnProperty("currentuser")) throw "currentuser未設定";
-			var connection = mysql.createConnection({
-				host: mysqlServer,
-				user: mysqlUser,
-				password: mysqlPass,
-				database: mysqlDB_string
-			});
 			var record = {
 				bid: data.bid,
 				createdate: moment().unix(),
@@ -1469,38 +1267,50 @@ serv_io.sockets.on('connection', function(socket) {
 				currentstage: 0,
 				currentturn: 0
 			};
+			var action = 0;
 			var createdate = record.createdate;
-			connection.connect();
-			connection.query("INSERT INTO gamesession SET ?", record,function(error){
-				if(error){
-					socket.emit('gamesessionmanageerror', {'error': true});
-				} else {
-					connection.query("SELECT * FROM gamesession WHERE createdate = ?",createdate,function(error, rows, fields){
-						if(error) {
-							socket.emit('gamesessionmanageerror', {'error': true});
-						} else {
-							record = {
-								sid: rows[0].id,
-								uid: rows[0].hosteduser,
-								bid: rows[0].bid,
-							}
-							connection.query("INSERT INTO sessionplayer SET ?", record,function(error){
-								if(error){
-									connection.query("DELETE FROM gamesession WHERE createdate = ?", createdate, function(err, results) {
-										socket.emit('gamesessionmanageerror', {'error': error.code});
-									});
-								} else {
-									sessioni.currentgame = rows[0].id;
-									socket.join("room"+sessioni.currentgame);
-									Object.keys(serv_io.sockets.connected).forEach(function(key) {
-										serv_io.sockets.connected[key].emit('gamesessioncreated');
-									});
-									connection.end();
-								}
-							});
-						}
+			pool.getConnection().then(async (connection) => {
+				await connection.query("INSERT INTO gamesession SET ?", record);
+				return connection;
+			}).then(async (connection) => {
+				var returnrows = null;
+				await connection.query("SELECT * FROM gamesession WHERE createdate = ?",createdate)
+				.then((rows) => {
+					returnrows = rows;
+					record = {
+						sid: rows[0].id,
+						uid: rows[0].hosteduser,
+						bid: rows[0].bid,
+					}
+				}).catch((error) => {
+					throw error;
+				})
+				return {
+					connection: connection,
+					rows: returnrows
+				}
+			}).then(async(obj) => {
+				await obj.connection.query("INSERT INTO sessionplayer SET ?", record)
+				.then(() => {
+					sessioni.currentgame = obj.rows[0].id;
+					socket.join("room"+sessioni.currentgame);
+					Object.keys(serv_io.sockets.connected).forEach(function(key) {
+						serv_io.sockets.connected[key].emit('gamesessioncreated');
+					});
+				})
+				.catch((error) => {
+					action = error.code;
+				})
+				return obj.connection;
+			}).then(async(connection) => {
+				if(action != 0) {
+					await connection.query("DELETE FROM gamesession WHERE createdate = ?", createdate).then(() => {
+						socket.emit('gamesessionmanageerror', {'error': action});
 					});
 				}
+				pool.releaseConnection(connection);	
+			}).catch((error) => {
+				socket.emit('gamesessionmanageerror', {'error': true});
 			});
 		} catch(e) {
 			if(!e.hasOwnProperty("stack")) e.stack = "";
@@ -1512,12 +1322,6 @@ serv_io.sockets.on('connection', function(socket) {
 	socket.on("uploadmap", function(data) {
 		try {
 			if(!sessioni.hasOwnProperty("currentuser")) throw "currentuser未設定";
-			var connection = mysql.createConnection({
-				host: mysqlServer,
-				user: mysqlUser,
-				password: mysqlPass,
-				database: mysqlDB_string
-			});
 			var record = {
 				name: data.name,
 				comment: data.comment,
@@ -1525,39 +1329,33 @@ serv_io.sockets.on('connection', function(socket) {
 				user: sessioni.currentuser.email
 			};
 			if(data.type == 0) {
-				connection.connect();
-				connection.query("INSERT INTO gameboard SET ?", record,function(error){
-					if(error){
-						connection.end();
+				pool.getConnection().then(async (connection) => {
+					await connection.query("INSERT INTO gameboard SET ?", record)
+					.catch((error) => {
 						socket.emit('gameboardmanageError', {'error': true});
-						throw error;
-					} else {
-						connection.query("SELECT * FROM gameboard WHERE createdate = ?",[record.createdate],function(error, rows, fields){
-							if(error) {
-								connection.end();
-								socket.emit('gameboardmanageError', {'error': true});
-								throw error;
-							} else {
-								mkdirp(dir+"/data/"+rows[0].id,function(err) {
-									socket.emit('gameboardModified', rows[0]);
-									connection.end();
-								});
-							}
+					})
+					return connection;
+				}).then(async(connection) => {
+					await connection.query("SELECT * FROM gameboard WHERE createdate = ?",[record.createdate])
+					.then((rows) => {
+						mkdirp(__dirname+"/data/"+rows[0].id,function(err) {
+							socket.emit('gameboardModified', rows[0]);
 						});
-					}
+					})
+					.catch((error) => {
+						socket.emit('gameboardmanageError', {'error': true});
+					})
+					pool.releaseConnection(connection);	
 				});
 			} else {
-				connection.connect();
-				connection.query("UPDATE gameboard SET ? WHERE id = ?",[record,data.type], function(err, results) {
-					if(err) {
-						connection.end();
-						throw err;
-					} else {
+				pool.getConnection().then(async (connection) => {
+					await connection.query("UPDATE gameboard SET ? WHERE id = ?",[record,data.type])
+					.then(() => {
 						userlog(connection, sessioni.currentuser.email, 3, JSON.stringify(data), function() {
 							socket.emit("gameboardModified", data);
-							connection.end();
 						});
-					}
+					});
+					pool.releaseConnection(connection);	
 				});
 			}
 		} catch(e) {
@@ -1570,30 +1368,21 @@ serv_io.sockets.on('connection', function(socket) {
 	socket.on("querymap", function(data) {
 		try {
 			if(!sessioni.hasOwnProperty("currentuser")) throw "currentuser未設定";
-			var connection = mysql.createConnection({
-				host: mysqlServer,
-				user: mysqlUser,
-				password: mysqlPass,
-				database: mysqlDB_string
-			});
-			connection.connect();
-			connection.query("SELECT * FROM gameboard WHERE id = ?", [data], function(error, rows, fields){
-				if(error) {
-					connection.end();
-					socket.emit('gameboardmanageError', {'error': true});
-					throw error;
-				} else {
-					fs.readdir(dir+"/data/"+data, function(error, list) {
+			pool.getConnection().then(async (connection) => {
+				await connection.query("SELECT * FROM gameboard WHERE id = ?", [data])
+				.then((rows) => {
+					fs.readdir(__dirname+"/data/"+data, function(error, list) {
 						if(error) {
 							socket.emit('gameboardmanageError', {'error': true});
-							connection.end();
-							throw error;
 						} else {
 							socket.emit("gameboardInfo", {"data": rows[0], "files": list});
-							connection.end();
 						}
 					});
-				}
+				})
+				.catch((error) => {
+					socket.emit('gameboardmanageError', {'error': true});
+				});
+				pool.releaseConnection(connection);	
 			});
 		} catch(e) {
 			if(!e.hasOwnProperty("stack")) e.stack = "";
@@ -1603,32 +1392,14 @@ serv_io.sockets.on('connection', function(socket) {
 		}
 	});
 	socket.on("updatescore", function(data) {
-		var connection = mysql.createConnection({
-			host: 'localhost',
-			user: 'webapp',
-			password: '75*0F*d4b6',
-			database: 'monopoly'
-		});
 		var row = {
 			score: data.score
 		};
-		connection.connect();
-		connection.query("UPDATE sessionplayer SET ? WHERE uid = ? AND sid = ?",[row,sessioni.currentuser.email, sessioni.currentgame], function(err, results) {
-			if(err) {
-				connection.end();
-				throw err;
-			} else {
-				connection.query("SELECT * FROM sessionplayer WHERE sid = ? AND uid = ?", [sessioni.currentgame, sessioni.currentuser.email], function(error, rows, fields){
-					if(error) {
-						connection.end();
-						throw error;
-					} else {
-						serv_io.to("room"+sessioni.currentgame).emit('playerscoreUpdated');
-						connection.end();
-					}
-				});
-			}
-		});
+		pool.getConnection().then(async (connection) => {
+			await connection.query("UPDATE sessionplayer SET ? WHERE uid = ? AND sid = ?",[row,sessioni.currentuser.email, sessioni.currentgame])
+			serv_io.to("room"+sessioni.currentgame).emit('playerscoreUpdated');
+			pool.releaseConnection(connection);	
+		})
 	});
 	socket.on('queryQuestion', function(data) {	//問題按照回合重建
 		try {
@@ -1685,23 +1456,14 @@ serv_io.sockets.on('connection', function(socket) {
 	socket.on("setUser",function(data) {
 		try {
 			if(!sessioni.hasOwnProperty("currentuser")) throw "currentuser未設定";
-			var connection = mysql.createConnection({
-				host: 'localhost',
-				user: 'webapp',
-				password: '75*0F*d4b6',
-				database: 'monopoly'
-			});
-			connection.connect();
-			connection.query("UPDATE user SET ? WHERE email = ?",[data,sessioni.currentuser.email], function(err, results) {
-				if(err) {
-					connection.end();
-					throw err;
-				} else {
+			pool.getConnection().then(async (connection) => {
+				await connection.query("UPDATE user SET ? WHERE email = ?",[data,sessioni.currentuser.email])
+				.then(() => {
 					userlog(connection, sessioni.currentuser.email, 3, JSON.stringify(data), function() {
-						connection.end();
 						socket.emit("donesetUser", data);
 					});
-				}
+				});
+				pool.releaseConnection(connection);	
 			});
 		} catch(e) {
 			if(!e.hasOwnProperty("stack")) e.stack = "";
@@ -1713,51 +1475,42 @@ serv_io.sockets.on('connection', function(socket) {
 	socket.on("removeuser", function(data) {
 		try {
 			if(!sessioni.hasOwnProperty("currentuser")) throw "currentuser未設定";
-			var connection = mysql.createConnection({
-				host: mysqlServer,
-				user: mysqlUser,
-				password: mysqlPass,
-				database: mysqlDB_string
-			});
-			connection.query("SELECT * FROM gameboard WHERE user = ?",[data.user],function(error, rows, fields){
-				if(error) {
-					connection.end();
-					socket.emit('userdelError', {'error': true});
-					throw error;
-				} else {
+			pool.getConnection().then(async (connection) => {
+				await connection.query("SELECT * FROM gameboard WHERE user = ?",[data.user])
+				.then((rows) => {
 					for(var i=0;i<rows.length;i++) {
-						rimraf(dir+"/data/"+row[i].id, function(error) {
+						fs.remove(__dirname+"/data/"+row[i].id)
+						.catch(() => {
 							socket.emit('userdelError', {'error': true});
 							throw err;
 						});
 					}
-					connection.query("DELETE FROM user WHERE email = ?",[data.user], function(err, results) {
-						if(err) {
-							connection.end();
-							socket.emit('userdelError', {'error': true});
-							throw err;
-						} else {
-							connection.query("DELETE FROM userlog WHERE user = ?",[data.user], function(err, results) {
-								if(err) {
-									connection.end();
-									socket.emit('userdelError', {'error': true});
-									throw err;
-								} else {
-									connection.query("DELETE FROM gameboard WHERE user = ?",[data.user], function(err, results) {
-										if(err) {
-											connection.end();
-											socket.emit('userdelError', {'error': true});
-											throw err;
-										} else {
-											socket.emit('userdeldone', {'user': data.user});
-											connection.end();
-										}
-									});
-								}
-							});
-						}
-					});
-				}
+				})
+				.catch((error) => {
+					socket.emit('userdelError', {'error': true});
+				});
+				return connection;
+			}).then(async(connection) => {
+				await connection.query("DELETE FROM user WHERE email = ?",[data.user])
+				.catch((error) => {
+					socket.emit('userdelError', {'error': true});
+				})
+				return connection;
+			}).then(async(connection) => {
+				await connection.query("DELETE FROM userlog WHERE user = ?",[data.user])
+				.catch((error) => {
+					socket.emit('userdelError', {'error': true});
+				})
+				return connection;
+			}).then(async(connection) => {
+				await connection.query("DELETE FROM gameboard WHERE user = ?",[data.user])
+				.then(() => {
+					socket.emit('userdeldone', {'user': data.user});
+				})
+				.catch((error) => {
+					socket.emit('userdelError', {'error': true});
+				});
+				pool.releaseConnection(connection);	
 			});
 		} catch(e) {
 			if(!e.hasOwnProperty("stack")) e.stack = "";
@@ -1769,20 +1522,12 @@ serv_io.sockets.on('connection', function(socket) {
 	socket.on('requestuserList',function(data) {
 		try {
 			if(!sessioni.hasOwnProperty("currentuser")) throw "currentuser未設定";
-			var connection = mysql.createConnection({
-				host: 'localhost',
-				user: 'webapp',
-				password: '75*0F*d4b6',
-				database: 'monopoly'
-			});
-			connection.connect();
-			connection.query("SELECT * FROM user",function(error, rows, fields){
-				if(error) {
-					connection.end();
-					throw error;
-				} else {
+			pool.getConnection().then(async (connection) => {
+				await connection.query("SELECT * FROM user")
+				.then((rows) => {
 					socket.emit("getuserList", rows);
-				}
+				});
+				pool.releaseConnection(connection);	
 			});
 		} catch(e) {
 			if(!e.hasOwnProperty("stack")) e.stack = "";
@@ -1804,24 +1549,13 @@ serv_io.sockets.on('connection', function(socket) {
 					currentuser.score -= currentstage.effectvalue;
 				break;
 			}
-			var connection = mysql.createConnection({
-				host: mysqlServer,
-				user: mysqlUser,
-				password: mysqlPass,
-				database: mysqlDB_string,
-				multipleStatements: true
-			});
-			connection.connect();
-			connection.query("UPDATE sessionplayer SET score=? WHERE sid=? AND uid=?",[currentuser.score, sessioni.currentgame, currentuser.id], function(err, results) {
-				if(err){
-					connection.end();
-					//socket.emit('updateturnerror', {'error': true});
-					throw err;
-				} else {
+			pool.getConnection().then(async (connection) => {
+				await connection.query("UPDATE sessionplayer SET score=? WHERE sid=? AND uid=?",[currentuser.score, sessioni.currentgame, currentuser.id])
+				.then(() => {
 					serv_io.to("room"+sessioni.currentgame).emit('userOnline',{ user: sessioni.currentuser.email });
 					sessioni.save();
-					connection.end();
-				}
+				});
+				pool.releaseConnection(connection);	
 			});
 		} catch(e) {
 			if(!e.hasOwnProperty("stack")) e.stack = "";
@@ -1835,18 +1569,9 @@ serv_io.sockets.on('connection', function(socket) {
 			if(!sessioni.hasOwnProperty("currentuser")) throw "currentuser未設定";
 			var sid = !data.sid ? sessioni.currentgame : data.sid; 
 			var output = new Object();
-			var connection = mysql.createConnection({
-				host: 'localhost',
-				user: 'webapp',
-				password: '75*0F*d4b6',
-				database: 'monopoly'
-			});
-			connection.connect();
-			connection.query("SELECT * FROM sessionplayer WHERE sid = ?", sid, function(err, rows, fields) {
-				if(err) {
-					connection.end();
-					throw err;
-				} else {
+			pool.getConnection().then(async (connection) => {
+				await connection.query("SELECT * FROM sessionplayer WHERE sid = ?", sid)
+				.then((rows) => {
 					var current = undefined;
 					if(sessioni.gameSession.hasOwnProperty(sid)) {
 						current = sessioni.gameSession[sid].currentplayer;
@@ -1890,9 +1615,9 @@ serv_io.sockets.on('connection', function(socket) {
 							players: output
 						});
 					});
-				}
+				});
 				sessioni.save();
-				connection.end();
+				pool.releaseConnection(connection);	
 			});
 		} catch(e) {
 			if(!e.hasOwnProperty("stack")) e.stack = "";
@@ -1904,36 +1629,29 @@ serv_io.sockets.on('connection', function(socket) {
 	socket.on('requestspecificUser',function(data) {
 		try {
 			if(!sessioni.hasOwnProperty("currentgame")) throw "currentgame未設定";
-			var connection = mysql.createConnection({
-				host: 'localhost',
-				user: 'webapp',
-				password: '75*0F*d4b6',
-				database: 'monopoly'
-			});
-			connection.connect();
-			connection.query("SELECT * FROM user WHERE email = ?", data.user,function(error, rows, fields){
-				if(error) {
-					connection.end();
-					throw error;
-				} else {
-					var user = rows[0];
-					connection.query("SELECT * FROM sessionplayer WHERE uid = ? AND sid = ?", [data.user,sessioni.currentgame], function(error, rows, fields){
-						if(error) {
-							connection.end();
-							throw error;
-						} else {
-							socket.emit('getspecificUser', {
-								email: user.email,
-								nickname: user.nickname,
-								color: user.color,
-								icon: user.icon,
-								asset: rows[0].asset,
-								position: rows[0].position
-							});
-							connection.end();
-						}
-					});
+			pool.getConnection().then(async (connection) => {
+				var user = null;
+				await connection.query("SELECT * FROM user WHERE email = ?", data.user)
+				.then((rows) => {
+					user = rows[0];
+				});
+				return {
+					user: user,
+					connection: connection
 				}
+			}).then(async(obj) => {
+				await obj.connection.query("SELECT * FROM sessionplayer WHERE uid = ? AND sid = ?", [data.user,sessioni.currentgame])
+				.then((rows) => {
+					socket.emit('getspecificUser', {
+						email: obj.user.email,
+						nickname: obj.user.nickname,
+						color: obj.user.color,
+						icon: obj.user.icon,
+						asset: rows[0].asset,
+						position: rows[0].position
+					});
+				});
+				pool.releaseConnection(obj.connection);	
 			});
 		} catch(e) {
 			if(!e.hasOwnProperty("stack")) e.stack = "";
@@ -1945,20 +1663,12 @@ serv_io.sockets.on('connection', function(socket) {
 	socket.on('requestuserDetail',function(data) {
 		try {
 			if(!sessioni.hasOwnProperty("currentuser")) throw "currentuser未設定";
-			var connection = mysql.createConnection({
-				host: 'localhost',
-				user: 'webapp',
-				password: '75*0F*d4b6',
-				database: 'monopoly'
-			});
-			connection.connect();
-			connection.query("SELECT * FROM userlog WHERE user = ?",[data.user],function(error, rows, fields){
-				if(error) {
-					connection.end();
-					throw error;
-				} else {
+			pool.getConnection().then(async (connection) => {
+				await connection.query("SELECT * FROM userlog WHERE user = ?",[data.user])
+				.then((rows) => {
 					socket.emit("getuserDetail", rows);
-				}
+				});
+				pool.releaseConnection(connection);	
 			});
 		} catch(e) {
 			if(!e.hasOwnProperty("stack")) e.stack = "";
@@ -1970,21 +1680,12 @@ serv_io.sockets.on('connection', function(socket) {
 	socket.on('requestboardList',function(data) {
 		try {
 			if(!sessioni.hasOwnProperty("currentuser")) throw "currentuser未設定";
-			var connection = mysql.createConnection({
-				host: 'localhost',
-				user: 'webapp',
-				password: '75*0F*d4b6',
-				database: 'monopoly'
-			});
-			connection.connect();
-			connection.query("SELECT * FROM gameboard",function(error, rows, fields){
-				if(error) {
-					connection.end();
-					throw error;
-				} else {
-					connection.end();
+			pool.getConnection().then(async (connection) => {
+				await connection.query("SELECT * FROM gameboard")
+				.then((rows) => {
 					socket.emit("getboardList", rows);
-				}
+				});
+				pool.releaseConnection(connection);	
 			});
 		} catch(e) {
 			if(!e.hasOwnProperty("stack")) e.stack = "";
@@ -1996,31 +1697,23 @@ serv_io.sockets.on('connection', function(socket) {
 	socket.on('requestsessionList',function(data) {
 		try {
 			if(!sessioni.hasOwnProperty("currentuser")) throw "currentuser未設定";
-			var connection = mysql.createConnection({
-				host: 'localhost',
-				user: 'webapp',
-				password: '75*0F*d4b6',
-				database: 'monopoly'
-			});
-			connection.connect();
-			connection.query("SELECT * FROM gamesession",function(error, srows, sfields){
-				if(error) {
-					connection.end();
-					throw error;
-				} else {
-					connection.query("SELECT * FROM gameboard",function(error, brows, bfields){
-						if(error) {
-							connection.end();
-							throw error;
-						} else {
-							connection.end();
-							socket.emit("getsessionList", {
-								sessions: srows,
-								boards: brows
-							});
-						}
-					});
+			pool.getConnection().then(async (connection) => {
+				var srows = null;
+				await connection.query("SELECT * FROM gamesession").then((rows) => {
+					srows = rows;
+				});
+				return {
+					connection: connection,
+					srows: srows
 				}
+			}).then(async(obj) => {
+				await obj.connection.query("SELECT * FROM gameboard").then((rows) => {
+					socket.emit("getsessionList", {
+						sessions: obj.srows,
+						boards: rows
+					});
+				});
+				pool.releaseConnection(obj.connection);	
 			});
 		} catch(e) {
 			if(!e.hasOwnProperty("stack")) e.stack = "";
@@ -2032,39 +1725,37 @@ serv_io.sockets.on('connection', function(socket) {
 	socket.on('requestsessionDetail',function(data) {
 		try {
 			if(!sessioni.hasOwnProperty("currentuser")) throw "currentuser未設定";
-			var connection = mysql.createConnection({
-				host: 'localhost',
-				user: 'webapp',
-				password: '75*0F*d4b6',
-				database: 'monopoly'
-			});
-			connection.connect();
-			connection.query("SELECT * FROM gamesession WHERE id = ?",data.sid,function(error, srows, sfields){
-				if(error) {
-					connection.end();
-					throw error;
-				} else {
-					connection.query("SELECT * FROM sessionplayer WHERE sid = ?",data.sid,function(error, prows, bfields){
-						if(error) {
-							connection.end();
-							throw error;
-						} else {
-							connection.query("SELECT * FROM user",function(error, urows, fields){
-								if(error) {
-									connection.end();
-									throw error;
-								} else {
-									connection.end();
-									socket.emit("getsessionDetail", {
-										session: srows,
-										sessionplayers: prows,
-										players: urows
-									});
-								}
-							});
-						}
-					});
+			pool.getConnection().then(async (connection) => {
+				var srows = null;
+				await connection.query("SELECT * FROM gamesession WHERE id = ?",data.sid)
+				.then((rows) => {
+					srows = rows;
+				})
+				return {
+					connection: connection,
+					srows: srows
 				}
+			}).then(async(obj) => {
+				var prows = null;
+				await obj.connection.query("SELECT * FROM sessionplayer WHERE sid = ?",data.sid).then((rows) => {
+					prows = rows;
+				})
+				return {
+					connection: obj.connection,
+					srows: obj.srows,
+					prows: prows
+				}
+			}).then(async(obj) => {
+				var urows = null;
+				await obj.connection.query("SELECT * FROM user").then((rows) => {
+					urows = rows;
+				});
+				socket.emit("getsessionDetail", {
+					session: obj.srows,
+					sessionplayers: obj.prows,
+					players: urows
+				});
+				pool.releaseConnection(obj.connection);	
 			});
 		} catch(e) {
 			if(!e.hasOwnProperty("stack")) e.stack = "";
@@ -2076,24 +1767,15 @@ serv_io.sockets.on('connection', function(socket) {
 	socket.on('requestplayerList',function(data) {
 		try {
 			if(!sessioni.hasOwnProperty("currentgame")) throw "currentgame未設定";
-			var connection = mysql.createConnection({
-				host: 'localhost',
-				user: 'webapp',
-				password: '75*0F*d4b6',
-				database: 'monopoly'
-			});
-			connection.connect();
-			connection.query("SELECT * FROM sessionplayer WHERE sid = ?", data.id, function(error, rows, fields){
-				if(error) {
-					connection.end();
-					throw error;
-				} else {
+			pool.getConnection().then(async (connection) => {
+				await connection.query("SELECT * FROM sessionplayer WHERE sid = ?", data.id)
+				.then((rows) => {
 					for(var i=0;i<rows.length;i++) {
 						rows[i].email = rows[i].uid;
 					}
 					serv_io.to("room"+sessioni.currentgame).emit('getplayerList',{users: rows, hosted: sessioni.gameSession[sessioni.currentgame].hosteduser});
-					connection.end();
-				}
+				});
+				pool.releaseConnection(connection);	
 			});
 		} catch(e) {
 			if(!e.hasOwnProperty("stack")) e.stack = "";
@@ -2111,11 +1793,12 @@ function userlog(connection, user, action, comment, callback) {	//callback 要�
 		comment: comment,
 		action: action
 	}
-	connection.query('INSERT INTO `userlog` SET ?', userdata, function(error){
-		if(error){
-			throw error;
-		}
-		callback();
+	pool.getConnection().then(async (connection) => {
+		await connection.query('INSERT INTO `userlog` SET ?', userdata)
+		.then(() => {
+			callback();
+			pool.releaseConnection(connection);	
+		})
 	});
 }
 
@@ -2139,20 +1822,5 @@ function serverlog(message,ipaddress) {	//display message with date in console.l
 			console.log('檔案寫入錯誤');
 		}
 	});
-	console.log("["+moment().format("YYYY/MM/DD HH:mm:SS")+"]"+ipaddress+message);
+	console.log("["+moment().format("YYYY/MM/DD HH:mm:SS")+"][monopoly]"+ipaddress+message);
 }
-
-/*var server = http.createServer(function(request, response) {
-	var path = url.parse(request.url).pathname;
-	fs.readFile(dir + path, function(error, data) {
-	if (error){
-	  response.writeHead(404);
-	  response.write("opps this doesn't exist - 404");
-	} else {
-		response.writeHead(200, {"Content-Type": mime.lookup(path)});
-		response.write(data, "utf8");
-	}
-	response.end();
-	});
-});
-server.listen(80);*/
